@@ -36,9 +36,9 @@ class UserTest {
     em.persist(user);
 
     //then
-    log.info("createdAt: {}, modifiedAt: {}", user.getCreatedAt(), user.getModifiedAt());
+    log.info("createdAt: {}, modifiedAt: {}", user.getCreatedAt(), user.getUpdatedAt());
     Assertions.assertThat(user.getCreatedAt()).isAfter(now);
-    Assertions.assertThat(user.getModifiedAt()).isAfter(now);
+    Assertions.assertThat(user.getUpdatedAt()).isAfter(now);
   }
 
 }
