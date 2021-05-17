@@ -15,6 +15,7 @@ import javax.persistence.*;
     sequenceName = "USER_SEQ",
     allocationSize = 10)
 @Table(
+    name = "users",
     uniqueConstraints = {
         @UniqueConstraint(name = "email_unique", columnNames = {"email"}),
         @UniqueConstraint(name = "phone_number_unique", columnNames = {"phoneNumber"})
