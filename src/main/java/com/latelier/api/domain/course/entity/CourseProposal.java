@@ -2,10 +2,13 @@ package com.latelier.api.domain.course.entity;
 
 import com.latelier.api.domain.model.BaseTimeEntity;
 import com.latelier.api.domain.user.entity.User;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SequenceGenerator(
     name = "COURSE_PROPOSAL_SEQ_GENERATOR",
     sequenceName = "COURSE_PROPOSAL_SEQ",

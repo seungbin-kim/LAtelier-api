@@ -9,15 +9,15 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SequenceGenerator(
-    name = "WISH_LIST_SEQ_GENERATOR",
-    sequenceName = "WISH_LIST_SEQ",
+    name = "ENROLMENT_SEQ_GENERATOR",
+    sequenceName = "ENROLMENT_SEQ",
     allocationSize = 10)
-public class WishList {
+public class Enrolment {
 
   @Id
   @GeneratedValue(
       strategy = GenerationType.SEQUENCE,
-      generator = "WISH_LIST_SEQ_GENERATOR")
+      generator = "ENROLMENT_SEQ_GENERATOR")
   @Column(columnDefinition = "bigint")
   private Long id;
 

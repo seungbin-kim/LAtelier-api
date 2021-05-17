@@ -2,11 +2,14 @@ package com.latelier.api.domain.course.entity;
 
 import com.latelier.api.domain.model.BaseTimeEntity;
 import com.latelier.api.domain.user.entity.User;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SequenceGenerator(
     name = "COURSE_SEQ_GENERATOR",
     sequenceName = "COURSE_SEQ",
@@ -25,9 +28,9 @@ public class Course extends BaseTimeEntity {
   private User teacher;
 
   @Column(length = 50)
-  private String className;
+  private String courseName;
 
-  @Column(length = 1000)
+  @Column(length = 500)
   private String explanation;
 
   @Column(columnDefinition = "int")

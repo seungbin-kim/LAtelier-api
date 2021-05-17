@@ -8,23 +8,19 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SequenceGenerator(
-    name = "COURSE_TAG_SEQ_GENERATOR",
-    sequenceName = "MEETING_INFORMATION_SEQ",
+    name = "CATEGORY_SEQ_GENERATOR",
+    sequenceName = "CATEGORY_SEQ",
     allocationSize = 10)
-public class CourseTag {
+public class Category {
 
   @Id
   @GeneratedValue(
       strategy = GenerationType.SEQUENCE,
-      generator = "MEETING_INFORMATION_SEQ_GENERATOR")
+      generator = "CATEGORY_SEQ_GENERATOR")
   @Column(columnDefinition = "bigint")
   private Long id;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "course_id", columnDefinition = "bigint")
-  private Course course;
-
   @Column(length = 10)
-  private String tagName;
+  private String categoryName;
 
 }

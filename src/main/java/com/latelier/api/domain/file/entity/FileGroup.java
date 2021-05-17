@@ -1,8 +1,12 @@
 package com.latelier.api.domain.file.entity;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SequenceGenerator(
     name = "FILE_GROUP_SEQ_GENERATOR",
     sequenceName = "FILE_GROUP_SEQ",

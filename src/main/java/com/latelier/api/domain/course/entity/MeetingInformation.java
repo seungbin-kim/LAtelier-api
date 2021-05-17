@@ -1,6 +1,5 @@
-package com.latelier.api.domain.user.entity;
+package com.latelier.api.domain.course.entity;
 
-import com.latelier.api.domain.course.entity.Course;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -9,23 +8,19 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SequenceGenerator(
-    name = "WISH_LIST_SEQ_GENERATOR",
-    sequenceName = "WISH_LIST_SEQ",
+    name = "MEETING_INFORMATION_SEQ_GENERATOR",
+    sequenceName = "MEETING_INFORMATION_SEQ",
     allocationSize = 10)
-public class WishList {
+public class MeetingInformation {
 
   @Id
   @GeneratedValue(
       strategy = GenerationType.SEQUENCE,
-      generator = "WISH_LIST_SEQ_GENERATOR")
+      generator = "MEETING_INFORMATION_SEQ_GENERATOR")
   @Column(columnDefinition = "bigint")
   private Long id;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id", columnDefinition = "bigint")
-  private User user;
-
-  @ManyToOne(fetch = FetchType.LAZY)
+  @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "course_id", columnDefinition = "bigint")
   private Course course;
 

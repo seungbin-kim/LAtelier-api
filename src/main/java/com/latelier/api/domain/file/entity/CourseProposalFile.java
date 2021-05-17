@@ -1,10 +1,13 @@
-package com.latelier.api.domain.course.entity;
+package com.latelier.api.domain.file.entity;
 
-import com.latelier.api.domain.file.entity.File;
+import com.latelier.api.domain.course.entity.CourseProposal;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SequenceGenerator(
     name = "COURSE_PROPOSAL_FILE_SEQ_GENERATOR",
     sequenceName = "COURSE_PROPOSAL_FILE_SEQ",

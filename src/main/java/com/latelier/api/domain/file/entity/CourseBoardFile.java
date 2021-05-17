@@ -1,6 +1,6 @@
-package com.latelier.api.domain.course.entity;
+package com.latelier.api.domain.file.entity;
 
-import com.latelier.api.domain.user.entity.User;
+import com.latelier.api.domain.course.entity.CourseBoard;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -9,27 +9,24 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SequenceGenerator(
-    name = "COMMENT_SEQ_GENERATOR",
-    sequenceName = "COMMENT_SEQ",
+    name = "COURSE_BOARD_FILE_SEQ_GENERATOR",
+    sequenceName = "COURSE_BOARD_FILE_SEQ",
     allocationSize = 10)
-public class Comment {
+public class CourseBoardFile {
 
   @Id
   @GeneratedValue(
       strategy = GenerationType.SEQUENCE,
-      generator = "COMMENT_SEQ_GENERATOR")
+      generator = "COURSE_BOARD_FILE_SEQ_GENERATOR")
   @Column(columnDefinition = "bigint")
   private Long id;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "board_id", columnDefinition = "bigint")
+  @JoinColumn(name = "course_board_id", columnDefinition = "bigint")
   private CourseBoard board;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id", columnDefinition = "bigint")
-  private User user;
-
-  @Column(length = 500)
-  private String content;
+  @JoinColumn(name = "file_id", columnDefinition = "bigint")
+  private File file;
 
 }

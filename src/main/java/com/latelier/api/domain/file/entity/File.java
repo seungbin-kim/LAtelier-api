@@ -1,10 +1,13 @@
 package com.latelier.api.domain.file.entity;
 
 import com.latelier.api.domain.model.BaseTimeEntity;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SequenceGenerator(
     name = "FILE_SEQ_GENERATOR",
     sequenceName = "FILE_SEQ",
@@ -19,8 +22,8 @@ public class File extends BaseTimeEntity {
   private Long id;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "file_group_id", columnDefinition = "bigint")
-  private FileGroup fileGroup;
+  @JoinColumn(name = "group_id", columnDefinition = "bigint")
+  private FileGroup group;
 
   @Column(length = 50)
   private String originalFileName;
