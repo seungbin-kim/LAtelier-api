@@ -22,8 +22,8 @@ public class Enrolment {
   private Long id;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id", columnDefinition = "bigint")
-  private User user;
+  @JoinColumn(name = "member_id", columnDefinition = "bigint")
+  private Member member;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "course_id", columnDefinition = "bigint")

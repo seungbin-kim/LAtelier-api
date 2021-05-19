@@ -1,6 +1,6 @@
 package com.latelier.api.domain.course.entity;
 
-import com.latelier.api.domain.user.entity.User;
+import com.latelier.api.domain.user.entity.Member;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -22,8 +22,8 @@ public class CourseReview {
   private Long id;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id", columnDefinition = "bigint")
-  private User user;
+  @JoinColumn(name = "member_id", columnDefinition = "bigint")
+  private Member member;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "course_id", columnDefinition = "bigint")

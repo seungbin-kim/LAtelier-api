@@ -11,23 +11,22 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SequenceGenerator(
-    name = "USER_SEQ_GENERATOR",
-    sequenceName = "USER_SEQ",
+    name = "MEMBER_SEQ_GENERATOR",
+    sequenceName = "MEMBER_SEQ",
     allocationSize = 1)
 @Table(
-    name = "users",
     uniqueConstraints = {
         @UniqueConstraint(name = "email_unique", columnNames = {"email"}),
         @UniqueConstraint(name = "phone_number_unique", columnNames = {"phoneNumber"})
     })
-public class User extends BaseTimeEntity {
+public class Member extends BaseTimeEntity {
 
   @Id
   @GeneratedValue(
       strategy = GenerationType.SEQUENCE,
-      generator = "USER_SEQ_GENERATOR"
+      generator = "MEMBER_SEQ_GENERATOR"
   )
-  @Column(name = "user_id" ,columnDefinition = "bigint")
+  @Column(columnDefinition = "bigint")
   private Long id;
 
   @Column(length = 50, nullable = false)
@@ -59,7 +58,7 @@ public class User extends BaseTimeEntity {
   private String zipcode;
 
   @Builder
-  public User(String email, String phoneNumber) {
+  public Member(String email, String phoneNumber) {
     this.email = email;
     this.phoneNumber = phoneNumber;
   }

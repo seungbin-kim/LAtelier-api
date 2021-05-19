@@ -1,7 +1,7 @@
 package com.latelier.api.domain.course.entity;
 
 import com.latelier.api.domain.model.BaseTimeEntity;
-import com.latelier.api.domain.user.entity.User;
+import com.latelier.api.domain.user.entity.Member;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -27,8 +27,8 @@ public class CourseBoard extends BaseTimeEntity {
   private Course course;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id", columnDefinition = "bigint")
-  private User user;
+  @JoinColumn(name = "member_id", columnDefinition = "bigint")
+  private Member member;
 
   @Column(length = 50)
   private String title;

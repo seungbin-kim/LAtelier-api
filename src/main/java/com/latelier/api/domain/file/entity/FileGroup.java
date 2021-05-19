@@ -17,7 +17,7 @@ public class FileGroup {
   @GeneratedValue(
       strategy = GenerationType.SEQUENCE,
       generator = "FILE_GROUP_SEQ_GENERATOR")
-  @Column(name = "file_group_id", columnDefinition = "bigint")
+  @Column(columnDefinition = "bigint")
   private Long id;
 
   @Column(length = 10)

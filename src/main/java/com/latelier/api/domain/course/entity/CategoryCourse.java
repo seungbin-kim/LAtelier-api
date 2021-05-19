@@ -17,6 +17,7 @@ public class CategoryCourse {
   @GeneratedValue(
       strategy = GenerationType.SEQUENCE,
       generator = "CATEGORY_COURSE_SEQ_GENERATOR")
+  @Column(columnDefinition = "bigint")
   private Long id;
 
   @ManyToOne(fetch = FetchType.LAZY)

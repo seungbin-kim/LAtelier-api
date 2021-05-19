@@ -18,7 +18,7 @@ public class File extends BaseTimeEntity {
   @GeneratedValue(
       strategy = GenerationType.SEQUENCE,
       generator = "FILE_SEQ_GENERATOR")
-  @Column(name = "file_id", columnDefinition = "bigint")
+  @Column(columnDefinition = "bigint")
   private Long id;
 
   @ManyToOne(fetch = FetchType.LAZY)

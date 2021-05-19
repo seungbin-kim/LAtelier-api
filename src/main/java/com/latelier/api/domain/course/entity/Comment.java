@@ -1,6 +1,6 @@
 package com.latelier.api.domain.course.entity;
 
-import com.latelier.api.domain.user.entity.User;
+import com.latelier.api.domain.user.entity.Member;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -26,8 +26,8 @@ public class Comment {
   private CourseBoard board;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id", columnDefinition = "bigint")
-  private User user;
+  @JoinColumn(name = "member_id", columnDefinition = "bigint")
+  private Member member;
 
   @Column(length = 500)
   private String content;

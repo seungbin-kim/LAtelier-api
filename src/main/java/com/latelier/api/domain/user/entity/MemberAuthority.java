@@ -8,21 +8,21 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SequenceGenerator(
-    name = "USER_AUTHORITY_SEQ_GENERATOR",
+    name = "MEMBER_AUTHORITY_SEQ_GENERATOR",
     sequenceName = "USER_AUTHORITY_SEQ",
     allocationSize = 1)
-public class UserAuthority {
+public class MemberAuthority {
 
   @Id
   @GeneratedValue(
       strategy = GenerationType.SEQUENCE,
-      generator = "USER_AUTHORITY_SEQ_GENERATOR")
+      generator = "MEMBER_AUTHORITY_SEQ_GENERATOR")
   @Column(columnDefinition = "bigint")
   private Long id;
 
   @ManyToOne
-  @JoinColumn(name = "user_id", columnDefinition = "bigint")
-  private User user;
+  @JoinColumn(name = "member_id", columnDefinition = "bigint")
+  private Member member;
 
   @ManyToOne
   @JoinColumn(name = "authority_id", columnDefinition = "bigint")

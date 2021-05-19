@@ -1,6 +1,6 @@
 package com.latelier.api.domain;
 
-import com.latelier.api.domain.user.entity.User;
+import com.latelier.api.domain.user.entity.Member;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,9 +15,9 @@ import java.time.LocalDateTime;
 
 @AutoConfigureTestDatabase
 @DataJpaTest
-class UserTest {
+class MemberTest {
 
-  private final Logger log = LoggerFactory.getLogger(UserTest.class);
+  private final Logger log = LoggerFactory.getLogger(MemberTest.class);
 
   @Autowired
   EntityManager em;
@@ -27,18 +27,18 @@ class UserTest {
   void jpaAuditingTest() throws Exception {
     //given
     LocalDateTime now = LocalDateTime.now();
-    User user = User.builder()
+    Member member = Member.builder()
         .email("test@test.com")
         .phoneNumber("01012345678")
         .build();
 
     //when
-    em.persist(user);
+    em.persist(member);
 
     //then
-    log.info("createdAt: {}, modifiedAt: {}", user.getCreatedAt(), user.getUpdatedAt());
-    Assertions.assertThat(user.getCreatedAt()).isAfter(now);
-    Assertions.assertThat(user.getUpdatedAt()).isAfter(now);
+    log.info("createdAt: {}, modifiedAt: {}", member.getCreatedAt(), member.getUpdatedAt());
+    Assertions.assertThat(member.getCreatedAt()).isAfter(now);
+    Assertions.assertThat(member.getUpdatedAt()).isAfter(now);
   }
 
 }

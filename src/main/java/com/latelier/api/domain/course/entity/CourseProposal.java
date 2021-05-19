@@ -1,7 +1,7 @@
 package com.latelier.api.domain.course.entity;
 
 import com.latelier.api.domain.model.BaseTimeEntity;
-import com.latelier.api.domain.user.entity.User;
+import com.latelier.api.domain.user.entity.Member;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -19,15 +19,16 @@ public class CourseProposal extends BaseTimeEntity {
   @GeneratedValue(
       strategy = GenerationType.SEQUENCE,
       generator = "COURSE_PROPOSAL_SEQ_GENERATOR")
+  @Column(columnDefinition = "bigint")
   private Long id;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id", columnDefinition = "bigint")
-  private User user;
+  @JoinColumn(name = "member_id", columnDefinition = "bigint")
+  private Member member;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "manager_id", columnDefinition = "bigint")
-  private User manager;
+  private Member manager;
 
   @Column(length = 1000)
   private String explanation;
