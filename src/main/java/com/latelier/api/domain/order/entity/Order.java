@@ -13,7 +13,7 @@ import javax.persistence.*;
 @SequenceGenerator(
     name = "ORDER_SEQ_GENERATOR",
     sequenceName = "ORDER_SEQ",
-    allocationSize = 10)
+    allocationSize = 1)
 @Table(name = "orders")
 public class Order extends BaseTimeEntity {
 

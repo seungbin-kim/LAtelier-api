@@ -10,7 +10,7 @@ import javax.persistence.*;
 @SequenceGenerator(
     name = "USER_AUTHORITY_SEQ_GENERATOR",
     sequenceName = "USER_AUTHORITY_SEQ",
-    allocationSize = 10)
+    allocationSize = 1)
 public class UserAuthority {
 
   @Id

@@ -11,7 +11,7 @@ import javax.persistence.*;
 @SequenceGenerator(
     name = "COURSE_REVIEW_SEQ_GENERATOR",
     sequenceName =  "COURSE_REVIEW_SEQ",
-    allocationSize = 10)
+    allocationSize = 1)
 public class CourseReview {
 
   @Id

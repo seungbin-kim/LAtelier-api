@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @SequenceGenerator(
     name = "COURSE_SEQ_GENERATOR",
     sequenceName = "COURSE_SEQ",
-    allocationSize = 10)
+    allocationSize = 1)
 public class Course extends BaseTimeEntity {
 
   @Id

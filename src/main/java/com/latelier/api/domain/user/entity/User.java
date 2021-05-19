@@ -13,7 +13,7 @@ import javax.persistence.*;
 @SequenceGenerator(
     name = "USER_SEQ_GENERATOR",
     sequenceName = "USER_SEQ",
-    allocationSize = 10)
+    allocationSize = 1)
 @Table(
     name = "users",
     uniqueConstraints = {

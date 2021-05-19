@@ -11,7 +11,7 @@ import javax.persistence.*;
 @SequenceGenerator(
     name = "ORDER_ITEM_SEQ_GENERATOR",
     sequenceName = "ORDER_ITEM_SEQ",
-    allocationSize = 10)
+    allocationSize = 1)
 public class OrderCourse {
 
   @Id

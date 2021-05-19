@@ -11,7 +11,7 @@ import javax.persistence.*;
 @SequenceGenerator(
     name = "WISH_LIST_SEQ_GENERATOR",
     sequenceName = "WISH_LIST_SEQ",
-    allocationSize = 10)
+    allocationSize = 1)
 public class WishList {
 
   @Id

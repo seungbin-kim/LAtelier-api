@@ -11,7 +11,7 @@ import javax.persistence.*;
 @SequenceGenerator(
     name = "FILE_SEQ_GENERATOR",
     sequenceName = "FILE_SEQ",
-    allocationSize = 10)
+    allocationSize = 1)
 public class File extends BaseTimeEntity {
 
   @Id

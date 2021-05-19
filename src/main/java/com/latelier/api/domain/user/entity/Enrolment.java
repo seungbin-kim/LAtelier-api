@@ -11,7 +11,7 @@ import javax.persistence.*;
 @SequenceGenerator(
     name = "ENROLMENT_SEQ_GENERATOR",
     sequenceName = "ENROLMENT_SEQ",
-    allocationSize = 10)
+    allocationSize = 1)
 public class Enrolment {
 
   @Id

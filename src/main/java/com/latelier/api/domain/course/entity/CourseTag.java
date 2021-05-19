@@ -10,7 +10,7 @@ import javax.persistence.*;
 @SequenceGenerator(
     name = "COURSE_TAG_SEQ_GENERATOR",
     sequenceName = "MEETING_INFORMATION_SEQ",
-    allocationSize = 10)
+    allocationSize = 1)
 public class CourseTag {
 
   @Id

@@ -10,8 +10,7 @@ import javax.persistence.*;
 @SequenceGenerator(
     name = "FILE_GROUP_SEQ_GENERATOR",
     sequenceName = "FILE_GROUP_SEQ",
-    allocationSize = 10
-)
+    allocationSize = 1)
 public class FileGroup {
 
   @Id

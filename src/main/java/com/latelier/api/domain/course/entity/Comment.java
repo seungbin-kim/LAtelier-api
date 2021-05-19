@@ -11,7 +11,7 @@ import javax.persistence.*;
 @SequenceGenerator(
     name = "COMMENT_SEQ_GENERATOR",
     sequenceName = "COMMENT_SEQ",
-    allocationSize = 10)
+    allocationSize = 1)
 public class Comment {
 
   @Id

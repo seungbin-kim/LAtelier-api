@@ -11,7 +11,7 @@ import javax.persistence.*;
 @SequenceGenerator(
     name = "COURSE_PROPOSAL_FILE_SEQ_GENERATOR",
     sequenceName = "COURSE_PROPOSAL_FILE_SEQ",
-    allocationSize = 10)
+    allocationSize = 1)
 public class CourseProposalFile {
 
   @Id

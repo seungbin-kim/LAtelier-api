@@ -10,7 +10,7 @@ import javax.persistence.*;
 @SequenceGenerator(
     name = "CATEGORY_SEQ_GENERATOR",
     sequenceName = "CATEGORY_SEQ",
-    allocationSize = 10)
+    allocationSize = 1)
 public class Category {
 
   @Id
