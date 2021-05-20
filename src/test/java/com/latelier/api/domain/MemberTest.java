@@ -1,6 +1,6 @@
 package com.latelier.api.domain;
 
-import com.latelier.api.domain.user.entity.Member;
+import com.latelier.api.domain.member.entity.Member;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

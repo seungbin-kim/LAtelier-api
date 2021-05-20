@@ -1,7 +1,7 @@
 package com.latelier.api.domain.course.entity;
 
 import com.latelier.api.domain.model.BaseTimeEntity;
-import com.latelier.api.domain.user.entity.Member;
+import com.latelier.api.domain.member.entity.Member;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 

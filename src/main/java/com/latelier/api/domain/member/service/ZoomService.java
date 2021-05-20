@@ -1,8 +1,8 @@
-package com.latelier.api.domain.user.service;
+package com.latelier.api.domain.member.service;
 
-import com.latelier.api.domain.user.packet.ReqZoomMeeting;
-import com.latelier.api.domain.user.packet.ReqZoomOAuthToken;
-import com.latelier.api.domain.user.packet.ResZoomMeeting;
+import com.latelier.api.domain.member.packet.ReqZoomMeeting;
+import com.latelier.api.domain.member.packet.ReqZoomOAuthToken;
+import com.latelier.api.domain.member.packet.ResZoomMeeting;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;

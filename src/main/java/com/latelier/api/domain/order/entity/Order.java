@@ -2,7 +2,7 @@ package com.latelier.api.domain.order.entity;
 
 import com.latelier.api.domain.model.BaseTimeEntity;
 import com.latelier.api.domain.order.enumeration.OrderStatus;
-import com.latelier.api.domain.user.entity.Member;
+import com.latelier.api.domain.member.entity.Member;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 

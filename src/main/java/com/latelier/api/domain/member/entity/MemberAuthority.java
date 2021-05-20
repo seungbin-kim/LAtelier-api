@@ -1,4 +1,4 @@
-package com.latelier.api.domain.user.entity;
+package com.latelier.api.domain.member.entity;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

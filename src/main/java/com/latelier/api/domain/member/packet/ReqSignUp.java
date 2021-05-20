@@ -1,4 +1,4 @@
-package com.latelier.api.domain.user.packet;
+package com.latelier.api.domain.member.packet;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

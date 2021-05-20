@@ -1,4 +1,4 @@
-package com.latelier.api.domain.user.entity;
+package com.latelier.api.domain.member.entity;
 
 import com.latelier.api.domain.course.entity.Course;
 import lombok.AccessLevel;

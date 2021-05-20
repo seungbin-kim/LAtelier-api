@@ -1,4 +1,4 @@
-package com.latelier.api.domain.user.entity;
+package com.latelier.api.domain.member.entity;
 
 import com.latelier.api.domain.model.BaseTimeEntity;
 import com.latelier.api.domain.file.entity.File;
@@ -56,6 +56,8 @@ public class Member extends BaseTimeEntity {
 
   @Column(length = 10)
   private String zipcode;
+
+  private boolean isActive;
 
   @Builder
   public Member(String email, String phoneNumber) {
