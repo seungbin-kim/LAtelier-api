@@ -1,5 +1,6 @@
-package com.latelier.api.domain.user.entity;
+package com.latelier.api.domain.member.entity;
 
+import com.latelier.api.domain.member.enumeration.Role;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -20,7 +21,8 @@ public class Authority {
   @Column(columnDefinition = "bigint")
   private Long id;
 
-  @Column(length = 10)
-  private String authorityName;
+  @Column(length = 20)
+  @Enumerated(EnumType.STRING)
+  private Role authorityName;
 
 }
