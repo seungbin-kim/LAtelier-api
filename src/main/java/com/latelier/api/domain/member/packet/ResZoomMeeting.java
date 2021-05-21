@@ -1,8 +1,10 @@
 package com.latelier.api.domain.member.packet;
 
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
-@Data
+@Getter
+@EqualsAndHashCode
 public class ResZoomMeeting {
 
   private String created_at;
@@ -22,7 +24,8 @@ public class ResZoomMeeting {
   private Integer type;
   private String uuid;
 
-  @Data
+  @Getter
+  @EqualsAndHashCode
   public class Settings {
     private Boolean allow_multiple_devices;
     private String alternative_hosts;
@@ -52,12 +55,14 @@ public class ResZoomMeeting {
     private Boolean waiting_room;
     private Boolean watermark;
 
-    @Data
+    @Getter
+    @EqualsAndHashCode
     public class ApprovedOrDeniedCountriesOrRegions {
       private Boolean enable;
     }
 
-    @Data
+    @Getter
+    @EqualsAndHashCode
     public class BreakoutRoom {
       private Boolean enable;
     }

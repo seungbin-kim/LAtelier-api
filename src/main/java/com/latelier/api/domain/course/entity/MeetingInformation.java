@@ -1,12 +1,13 @@
 package com.latelier.api.domain.course.entity;
 
 import lombok.AccessLevel;
-import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SequenceGenerator(
     name = "MEETING_INFORMATION_SEQ_GENERATOR",
@@ -14,12 +15,15 @@ import javax.persistence.*;
     allocationSize = 1)
 public class MeetingInformation {
 
-  @Builder
-  private MeetingInformation(Course course, String meetingId, String meetingPw) {
+  public MeetingInformation(final Course course,
+                             final String meetingId,
+                             final String meetingPw) {
+
     this.course = course;
     this.meetingId = meetingId;
     this.meetingPw = meetingPw;
   }
+
 
   @Id
   @GeneratedValue(

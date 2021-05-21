@@ -1,8 +1,10 @@
 package com.latelier.api.domain.member.packet;
 
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
-@Data
+@Getter
+@EqualsAndHashCode
 public class ReqZoomMeeting {
 
   private String topic;
@@ -11,7 +13,7 @@ public class ReqZoomMeeting {
 
   private String timezone;
 
-  public ReqZoomMeeting(String topic) {
+  public ReqZoomMeeting(final String topic) {
     this.topic = topic;
     this.type = 1;
     this.timezone = "Asia/Seoul";

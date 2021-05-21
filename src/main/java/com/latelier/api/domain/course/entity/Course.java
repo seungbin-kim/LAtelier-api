@@ -3,11 +3,13 @@ package com.latelier.api.domain.course.entity;
 import com.latelier.api.domain.model.BaseTimeEntity;
 import com.latelier.api.domain.member.entity.Member;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+@Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SequenceGenerator(

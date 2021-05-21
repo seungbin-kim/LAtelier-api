@@ -1,9 +1,11 @@
 package com.latelier.api.domain.member.packet;
 
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
-@Data
-public class ReqZoomOAuthToken {
+@Getter
+@EqualsAndHashCode
+public class ResZoomOAuthToken {
 
   private String access_token;
 
