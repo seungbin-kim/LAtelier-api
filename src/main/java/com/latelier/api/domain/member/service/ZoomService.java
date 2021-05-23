@@ -1,9 +1,17 @@
 package com.latelier.api.domain.member.service;
 
+import com.latelier.api.domain.course.entity.Course;
+import com.latelier.api.domain.course.exception.CourseNotFoundException;
+import com.latelier.api.domain.course.repository.CourseRepository;
+import com.latelier.api.domain.course.service.MeetingInformationService;
+import com.latelier.api.domain.member.exception.NotBeObtainAccessTokenException;
+import com.latelier.api.domain.member.exception.NotBeObtainMeetingInformationException;
 import com.latelier.api.domain.member.packet.ReqZoomMeeting;
-import com.latelier.api.domain.member.packet.ReqZoomOAuthToken;
+import com.latelier.api.domain.member.packet.ResZoomOAuthToken;
 import com.latelier.api.domain.member.packet.ResZoomMeeting;
-import org.springframework.beans.factory.annotation.Value;
+import com.latelier.api.global.properties.ZoomProperties;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -12,79 +20,107 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.Optional;
+
+@Slf4j
 @Service
+@RequiredArgsConstructor
 public class ZoomService {
 
-  private final String zoomKey;
-
-  private final String zoomOAuthUrl;
-
-  private final String zoomCreateMeetingUrl;
-
-  private final String redirectUrl;
+  private final ZoomProperties zoomProperties;
 
   private final RestTemplate restTemplate;
 
-  public ZoomService(
-      @Value("${zoom.app.prod}") final String zoomKey,
-      @Value("${zoom.url.oauth}") final String zoomOAuthUrl,
-      @Value("${zoom.url.create-meeting}") final String zoomCreateMeetingUrl,
-      @Value("${zoom.url.redirect}") final String redirectUrl,
-      final RestTemplate restTemplate) {
+  private final CourseRepository courseRepository;
 
-    this.zoomKey = zoomKey;
-    this.zoomOAuthUrl = zoomOAuthUrl;
-    this.zoomCreateMeetingUrl = zoomCreateMeetingUrl;
-    this.redirectUrl = redirectUrl;
-    this.restTemplate = restTemplate;
-  }
+  private final MeetingInformationService meetingInformationService;
+
 
   /**
-   * 회의생성 API 호출
-   * @param code Authorization Code
+   * 회의생성
+   *
+   * @param code     Authorization Code
+   * @param courseId Course ID
    * @return redirect url
    */
-  public String createCourseMeeting(final String code) {
-    String accessToken = requestAccessToken(code);
+  public String createCourseMeeting(final String code,
+                                    final Long courseId) {
 
-    ReqZoomMeeting reqZoomMeeting = new ReqZoomMeeting("test");
+    // TODO 로그인 구현 후, 강사의 강의가 맞는지 확인하는 로직 필요
+
+    Optional<Course> byCourseId = courseRepository.findById(courseId);
+    Course course = byCourseId.orElseThrow(() -> new CourseNotFoundException(courseId));
+
+    String accessToken = requestAccessToken(code)
+        .orElseThrow(NotBeObtainAccessTokenException::new);
+
+    ResZoomMeeting resZoomMeeting = requestMeetingCreation(accessToken, course.getCourseName())
+        .orElseThrow(NotBeObtainMeetingInformationException::new);
+
+    meetingInformationService.addMeetingInformation(
+        course,
+        resZoomMeeting.getId(),
+        resZoomMeeting.getPassword());
+
+    return resZoomMeeting.getStart_url();
+  }
+
+
+  /**
+   * 액세스 토큰을 사용하여 회의생성 API 호출
+   *
+   * @param accessToken 강사의 액세스 토큰
+   * @param courseName  강의 이름
+   * @return 회의생성 API 응답
+   */
+  private Optional<ResZoomMeeting> requestMeetingCreation(final String accessToken,
+                                                          final String courseName) {
+
+    String meetingCreationUrl = zoomProperties.getUrl().getMeetingCreation();
+
+    ReqZoomMeeting reqZoomMeeting = new ReqZoomMeeting(courseName);
     HttpHeaders httpHeaders = new HttpHeaders();
     httpHeaders.add("Authorization", "Bearer " + accessToken);
     httpHeaders.setContentType(MediaType.APPLICATION_JSON);
 
     HttpEntity<ReqZoomMeeting> zoomMeetingRequestHttpEntity = new HttpEntity<>(reqZoomMeeting, httpHeaders);
-
     ResZoomMeeting resZoomMeeting = restTemplate.postForObject(
-        zoomCreateMeetingUrl,
+        meetingCreationUrl,
         zoomMeetingRequestHttpEntity,
         ResZoomMeeting.class);
 
-    return resZoomMeeting != null ? resZoomMeeting.getStart_url() : null;
+    return Optional.ofNullable(resZoomMeeting);
   }
+
 
   /**
    * 액세스토큰 요청
+   *
    * @param code Authorization Code
    * @return Access Token
    */
-  private String requestAccessToken(final String code) {
-    HttpHeaders httpHeaders = new HttpHeaders();
-    httpHeaders.add("Authorization", "Basic " + zoomKey);
+  private Optional<String> requestAccessToken(final String code) {
 
-    UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(zoomOAuthUrl)
+    String prod = zoomProperties.getOauthApp().getProd();
+    String oauthUrl = zoomProperties.getUrl().getOauth();
+    String redirectUrl = zoomProperties.getUrl().getRedirect();
+
+    HttpHeaders httpHeaders = new HttpHeaders();
+    httpHeaders.add("Authorization", "Basic " + prod);
+
+    UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(oauthUrl)
         .queryParam("grant_type", "authorization_code")
         .queryParam("code", code)
         .queryParam("redirect_uri", redirectUrl)
         .build();
 
     HttpEntity<?> entity = new HttpEntity<>(httpHeaders);
-
-    ReqZoomOAuthToken zoomOAuthToken = restTemplate.postForObject(
+    ResZoomOAuthToken zoomOAuthToken = restTemplate.postForObject(
         uriComponents.toUri(),
         entity,
-        ReqZoomOAuthToken.class);
+        ResZoomOAuthToken.class);
 
-    return zoomOAuthToken != null ? zoomOAuthToken.getAccess_token() : null;
+    return Optional.ofNullable(zoomOAuthToken).map(ResZoomOAuthToken::getAccess_token);
   }
 
 }
