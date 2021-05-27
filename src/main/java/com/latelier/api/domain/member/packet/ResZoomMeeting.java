@@ -27,6 +27,7 @@ public class ResZoomMeeting {
   @Getter
   @EqualsAndHashCode
   public class Settings {
+
     private Boolean allow_multiple_devices;
     private String alternative_hosts;
     private Integer approval_type;
@@ -58,13 +59,17 @@ public class ResZoomMeeting {
     @Getter
     @EqualsAndHashCode
     public class ApprovedOrDeniedCountriesOrRegions {
+
       private Boolean enable;
+
     }
 
     @Getter
     @EqualsAndHashCode
     public class BreakoutRoom {
+
       private Boolean enable;
+
     }
 
   }

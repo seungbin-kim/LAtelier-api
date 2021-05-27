@@ -18,6 +18,7 @@ public class ReqZoomMeeting {
 
 
   public static ReqZoomMeeting createReqZoomMeeting(final String topic) {
+
     return new ReqZoomMeeting(topic, 1, "Asia/Seoul");
   }
 
