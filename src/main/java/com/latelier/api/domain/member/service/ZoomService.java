@@ -78,7 +78,7 @@ public class ZoomService {
 
     String meetingCreationUrl = zoomProperties.getUrl().getMeetingCreation();
 
-    ReqZoomMeeting reqZoomMeeting = new ReqZoomMeeting(courseName);
+    ReqZoomMeeting reqZoomMeeting = ReqZoomMeeting.createReqZoomMeeting(courseName);
     HttpHeaders httpHeaders = new HttpHeaders();
     httpHeaders.add("Authorization", "Bearer " + accessToken);
     httpHeaders.setContentType(MediaType.APPLICATION_JSON);
