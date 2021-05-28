@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -28,9 +31,8 @@ public class CourseController {
       value = "강의 입장정보 요청",
       notes = "SDK 에서 강의에 입장하기위한 정보를 요청합니다.")
   @ApiImplicitParams({
-      @ApiImplicitParam(name = "courseId", value = "강의 ID", required = true, dataType = "long", paramType = "path", example = "1")
-  })
-  public ResponseEntity<Result<ResMeetingInformation>> getMeetingV1(@PathVariable final Long courseId) {
+      @ApiImplicitParam(name = "courseId", value = "강의 ID", required = true, dataType = "long", paramType = "path", example = "1")})
+  public ResponseEntity<Result<ResMeetingInformation>> getMeetingV1(@PathVariable final Long courseId) throws NoSuchAlgorithmException, InvalidKeyException {
 
     return
         ResponseEntity.ok(
