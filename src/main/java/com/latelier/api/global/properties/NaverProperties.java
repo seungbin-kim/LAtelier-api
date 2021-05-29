@@ -31,6 +31,8 @@ public class NaverProperties {
 
       private final String url;
 
+      private final String serviceId;
+
     }
 
   }

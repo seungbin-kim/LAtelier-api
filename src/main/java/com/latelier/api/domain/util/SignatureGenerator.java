@@ -63,8 +63,8 @@ public class SignatureGenerator {
     try {
       String space = " ";
       String newLine = "\n";
-      String method = "GET";
-      String url = naverProperties.getCloudPlatform().getSens().getUrl();
+      String method = "POST";
+      String url = "/sms/v2/services/" + naverProperties.getCloudPlatform().getSens().getServiceId() + "/messages";
       String accessKey = naverProperties.getCloudPlatform().getKey();
       String secretKey = naverProperties.getCloudPlatform().getSecret();
 
@@ -83,7 +83,6 @@ public class SignatureGenerator {
       mac.init(signingKey);
 
       byte[] rawHmac = mac.doFinal(message.getBytes("UTF-8"));
-
       return Base64.getEncoder().encodeToString(rawHmac);
     } catch (NoSuchAlgorithmException | InvalidKeyException | UnsupportedEncodingException e) {
       log.error(e.getMessage());
