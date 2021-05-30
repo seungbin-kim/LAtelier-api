@@ -10,5 +10,5 @@ import org.springframework.context.annotation.Configuration;
     value = {
         ZoomProperties.class,
         NaverProperties.class})
-public class PropertiesConfiguration {
+public class PropertiesConfig {
 }
