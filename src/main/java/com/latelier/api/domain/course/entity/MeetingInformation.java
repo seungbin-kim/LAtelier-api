@@ -15,16 +15,6 @@ import javax.persistence.*;
     allocationSize = 1)
 public class MeetingInformation {
 
-  public MeetingInformation(final Course course,
-                             final String meetingId,
-                             final String meetingPw) {
-
-    this.course = course;
-    this.meetingId = meetingId;
-    this.meetingPw = meetingPw;
-  }
-
-
   @Id
   @GeneratedValue(
       strategy = GenerationType.SEQUENCE,
@@ -41,5 +31,15 @@ public class MeetingInformation {
 
   @Column(length = 50)
   private String meetingPw;
+
+
+  public MeetingInformation(final Course course,
+                            final String meetingId,
+                            final String meetingPw) {
+
+    this.course = course;
+    this.meetingId = meetingId;
+    this.meetingPw = meetingPw;
+  }
 
 }

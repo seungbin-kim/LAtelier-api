@@ -17,15 +17,13 @@ import javax.persistence.*;
 @Table(
     uniqueConstraints = {
         @UniqueConstraint(name = "email_unique", columnNames = {"email"}),
-        @UniqueConstraint(name = "phone_number_unique", columnNames = {"phoneNumber"})
-    })
+        @UniqueConstraint(name = "phone_number_unique", columnNames = {"phoneNumber"})})
 public class Member extends BaseTimeEntity {
 
   @Id
   @GeneratedValue(
       strategy = GenerationType.SEQUENCE,
-      generator = "MEMBER_SEQ_GENERATOR"
-  )
+      generator = "MEMBER_SEQ_GENERATOR")
   @Column(columnDefinition = "bigint")
   private Long id;
 
@@ -58,6 +56,7 @@ public class Member extends BaseTimeEntity {
   private String zipcode;
 
   private boolean isActive;
+
 
   @Builder
   public Member(String email, String phoneNumber) {

@@ -1,6 +1,5 @@
 package com.latelier.api.domain.util;
 
-import com.latelier.api.global.error.exception.SignatureGenerationException;
 import com.latelier.api.global.properties.NaverProperties;
 import com.latelier.api.global.properties.ZoomProperties;
 import lombok.RequiredArgsConstructor;
