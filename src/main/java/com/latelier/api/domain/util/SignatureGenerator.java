@@ -67,7 +67,7 @@ public class SignatureGenerator {
       String accessKey = naverProperties.getCloudPlatform().getKey();
       String secretKey = naverProperties.getCloudPlatform().getSecret();
 
-      String message = new StringBuilder()
+      String message = new StringBuffer()
           .append(method)
           .append(space)
           .append(url)
