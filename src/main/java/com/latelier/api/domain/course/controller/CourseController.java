@@ -1,6 +1,6 @@
 package com.latelier.api.domain.course.controller;
 
-import com.latelier.api.domain.course.packet.ResMeetingInformation;
+import com.latelier.api.domain.course.packet.response.ResMeetingInformation;
 import com.latelier.api.domain.course.service.MeetingInformationService;
 import com.latelier.api.domain.model.Result;
 import io.swagger.annotations.ApiImplicitParam;

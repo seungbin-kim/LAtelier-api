@@ -3,7 +3,7 @@ package com.latelier.api.domain.course.service;
 import com.latelier.api.domain.course.entity.Course;
 import com.latelier.api.domain.course.entity.MeetingInformation;
 import com.latelier.api.domain.course.exception.CourseMeetingNotFoundException;
-import com.latelier.api.domain.course.packet.ResMeetingInformation;
+import com.latelier.api.domain.course.packet.response.ResMeetingInformation;
 import com.latelier.api.domain.course.repository.MeetingInformationRepository;
 import com.latelier.api.domain.util.SignatureGenerator;
 import com.latelier.api.global.properties.ZoomProperties;

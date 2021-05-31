@@ -1,4 +1,4 @@
-package com.latelier.api.domain.member.packet;
+package com.latelier.api.domain.member.packet.response;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

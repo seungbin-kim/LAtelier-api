@@ -1,4 +1,4 @@
-package com.latelier.api.domain.course.packet;
+package com.latelier.api.domain.course.packet.response;
 
 import com.latelier.api.domain.course.entity.MeetingInformation;
 import io.swagger.annotations.ApiModel;
