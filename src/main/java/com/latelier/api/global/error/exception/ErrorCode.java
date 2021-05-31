@@ -20,9 +20,16 @@ public enum ErrorCode {
   LOGIN_INPUT_INVALID(400, "M001", "Login input is invalid"),
   EMAIL_DUPLICATION(409, "M002", "Email is Duplication"),
   PHONE_NUMBER_DUPLICATION(409, "M003", "Phone Number is Duplication"),
+  SMS_VERIFICATION_FAILED(400, "M004", "Sms Verification Failed"),
 
-  NOT_OBTAIN_ACCESS_TOKEN(500, "M010", "Not Obtain Access Token"),
-  NOT_OBTAIN_MEETING_INFORMATION(500, "M011", "Not Obtain Meeting Information"),
+  // Zoom
+  NOT_OBTAIN_ACCESS_TOKEN(500, "Z001", "Not Obtain Access Token"),
+  NOT_OBTAIN_MEETING_INFORMATION(500, "Z002", "Not Obtain Meeting Information"),
+  ACCESS_TOKEN_REQUEST_FAILED(500, "Z003", "Access Token Request Failed"),
+  ZOOM_API_CALL_FAILED(500, "Z004", "Zoom API Request Failed"),
+
+  // Naver
+  SMS_API_CALL_FAILED(500, "N001", "SMS API Request Failed"),
 
   // Course
   COURSE_NOT_FOUND(404, "CS001", "Course Not Found"),
