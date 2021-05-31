@@ -6,9 +6,11 @@ import com.latelier.api.domain.course.repository.CourseRepository;
 import com.latelier.api.domain.course.service.MeetingInformationService;
 import com.latelier.api.domain.member.exception.NotBeObtainAccessTokenException;
 import com.latelier.api.domain.member.exception.NotBeObtainMeetingInformationException;
+import com.latelier.api.domain.member.exception.ZoomAccessTokenRequestException;
+import com.latelier.api.domain.member.exception.ZoomApiRequestException;
 import com.latelier.api.domain.member.packet.request.ReqZoomMeeting;
-import com.latelier.api.domain.member.packet.response.ResZoomOAuthToken;
 import com.latelier.api.domain.member.packet.response.ResZoomMeeting;
+import com.latelier.api.domain.member.packet.response.ResZoomOAuthToken;
 import com.latelier.api.global.properties.ZoomProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +18,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -25,6 +28,7 @@ import java.util.Optional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ZoomService {
 
   private final ZoomProperties zoomProperties;
@@ -43,6 +47,7 @@ public class ZoomService {
    * @param courseId Course ID
    * @return redirect url
    */
+  @Transactional
   public String createCourseMeeting(final String code,
                                     final Long courseId) {
 
@@ -84,12 +89,17 @@ public class ZoomService {
     httpHeaders.setContentType(MediaType.APPLICATION_JSON);
 
     HttpEntity<ReqZoomMeeting> zoomMeetingRequestHttpEntity = new HttpEntity<>(reqZoomMeeting, httpHeaders);
-    ResZoomMeeting resZoomMeeting = restTemplate.postForObject(
-        meetingCreationUrl,
-        zoomMeetingRequestHttpEntity,
-        ResZoomMeeting.class);
 
-    return Optional.ofNullable(resZoomMeeting);
+    try {
+      ResZoomMeeting resZoomMeeting = restTemplate.postForObject(
+          meetingCreationUrl,
+          zoomMeetingRequestHttpEntity,
+          ResZoomMeeting.class);
+
+      return Optional.ofNullable(resZoomMeeting);
+    } catch (Exception e) {
+      throw new ZoomApiRequestException();
+    }
   }
 
 
@@ -115,12 +125,17 @@ public class ZoomService {
         .build();
 
     HttpEntity<?> entity = new HttpEntity<>(httpHeaders);
-    ResZoomOAuthToken zoomOAuthToken = restTemplate.postForObject(
-        uriComponents.toUri(),
-        entity,
-        ResZoomOAuthToken.class);
 
-    return Optional.ofNullable(zoomOAuthToken).map(ResZoomOAuthToken::getAccess_token);
+    try {
+      ResZoomOAuthToken zoomOAuthToken = restTemplate.postForObject(
+          uriComponents.toUri(),
+          entity,
+          ResZoomOAuthToken.class);
+
+      return Optional.ofNullable(zoomOAuthToken).map(ResZoomOAuthToken::getAccess_token);
+    } catch (Exception e) {
+      throw new ZoomAccessTokenRequestException();
+    }
   }
 
 }

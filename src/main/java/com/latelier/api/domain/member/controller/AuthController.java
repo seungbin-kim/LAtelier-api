@@ -1,6 +1,7 @@
 package com.latelier.api.domain.member.controller;
 
-import com.latelier.api.domain.member.packet.ReqSmsAuthentication;
+import com.latelier.api.domain.member.packet.request.ReqSmsAuthentication;
+import com.latelier.api.domain.member.packet.request.ReqSmsVerification;
 import com.latelier.api.domain.member.service.SmsService;
 import com.latelier.api.domain.member.service.ZoomService;
 import io.swagger.annotations.ApiImplicitParam;
@@ -28,9 +29,6 @@ public class AuthController {
 
   private final SmsService smsService;
 
-  /*
-  TODO ControllerAdvise 작성하기. URISyntaxException, RestClientException, exception 클래스의 예외들
-   */
 
   @GetMapping("/zoom/callback")
   @ApiOperation(
@@ -38,8 +36,10 @@ public class AuthController {
       notes = "Zoom OAuth 인증 후 회의생성 API 를 호출하여 start url 을 반환합니다.")
   @ApiImplicitParams({
       @ApiImplicitParam(name = "code", value = "authorization code", required = true, dataType = "string", paramType = "query"),
-      @ApiImplicitParam(name = "state", value = "회의를 생성할 강의 ID", required = true, dataType = "long", paramType = "query")
-  })
+      @ApiImplicitParam(name = "state", value = "회의를 생성할 강의 ID", required = true, dataType = "long", paramType = "query")})
+  @ApiResponses({
+      @ApiResponse(responseCode = "303", description = "성공적으로 회의가 생성되어 start url 반환"),
+      @ApiResponse(responseCode = "500", description = "액세스 토큰을 얻지 못하거나 회의 생성에 실패")})
   public ResponseEntity<?> callback(@RequestParam final String code,
                                     @RequestParam(name = "state") final Long courseId) throws URISyntaxException {
 
@@ -61,13 +61,32 @@ public class AuthController {
       value = "SMS 인증 문자보내기",
       notes = "인증번호를 생성하여 사용자에게 문자를 전송합니다.")
   @ApiImplicitParams({
-      @ApiImplicitParam(name = "request", value = "authorization code", required = true)})
+      @ApiImplicitParam(name = "request", value = "수신 휴대폰번호", required = true)})
   @ApiResponses({
-      @ApiResponse(responseCode = "202", description = "인증번호 전송 성공")})
+      @ApiResponse(responseCode = "202", description = "인증번호 전송 성공"),
+      @ApiResponse(responseCode = "409", description = "휴대폰 번호 중복"),
+      @ApiResponse(responseCode = "500", description = "메세지 전송 실패")})
   public ResponseEntity<?> sendSms(@RequestBody @Valid final ReqSmsAuthentication request) {
 
     smsService.sendCertificationNumber(request.getPhoneNumber());
     return ResponseEntity.status(HttpStatus.ACCEPTED).build();
   }
+
+
+  @PostMapping("/sms/verification")
+  @ApiOperation(
+      value = "SMS 인증번호 확인",
+      notes = "전송된 인증번호의 일치여부를 확인합니다.")
+  @ApiImplicitParams({
+      @ApiImplicitParam(name = "request", value = "휴대폰번호와 인증번호", required = true)})
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "인증번호 확인 성공"),
+      @ApiResponse(responseCode = "400", description = "인증번호 확인 실패")})
+  public ResponseEntity<?> smsVerification(@RequestBody @Valid ReqSmsVerification request) {
+
+    smsService.verifySms(request.getPhoneNumber(), request.getCertificationNumber());
+    return ResponseEntity.status(HttpStatus.OK).build();
+  }
+
 
 }
