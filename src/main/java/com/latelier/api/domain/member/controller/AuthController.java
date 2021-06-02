@@ -60,8 +60,6 @@ public class AuthController {
   @ApiOperation(
       value = "SMS 인증 문자보내기",
       notes = "인증번호를 생성하여 사용자에게 문자를 전송합니다.")
-  @ApiImplicitParams({
-      @ApiImplicitParam(name = "request", value = "수신 휴대폰번호", required = true)})
   @ApiResponses({
       @ApiResponse(responseCode = "202", description = "인증번호 전송 성공"),
       @ApiResponse(responseCode = "409", description = "휴대폰 번호 중복"),
@@ -77,8 +75,6 @@ public class AuthController {
   @ApiOperation(
       value = "SMS 인증번호 확인",
       notes = "전송된 인증번호의 일치여부를 확인합니다.")
-  @ApiImplicitParams({
-      @ApiImplicitParam(name = "request", value = "휴대폰번호와 인증번호", required = true)})
   @ApiResponses({
       @ApiResponse(responseCode = "200", description = "인증번호 확인 성공"),
       @ApiResponse(responseCode = "400", description = "인증번호 확인 실패")})

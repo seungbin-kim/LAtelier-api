@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class Result<T> {
+public class ResultResponse<T> {
 
   private final T content;
 

@@ -2,7 +2,7 @@ package com.latelier.api.domain.course.controller;
 
 import com.latelier.api.domain.course.packet.response.ResMeetingInformation;
 import com.latelier.api.domain.course.service.MeetingInformationService;
-import com.latelier.api.domain.model.Result;
+import com.latelier.api.domain.model.ResultResponse;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -13,9 +13,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 
 @Slf4j
 @RestController
@@ -32,11 +29,11 @@ public class CourseController {
       notes = "SDK 에서 강의에 입장하기위한 정보를 요청합니다.")
   @ApiImplicitParams({
       @ApiImplicitParam(name = "courseId", value = "강의 ID", required = true, dataType = "long", paramType = "path", example = "1")})
-  public ResponseEntity<Result<ResMeetingInformation>> getMeetingV1(@PathVariable final Long courseId) throws NoSuchAlgorithmException, InvalidKeyException {
+  public ResponseEntity<ResultResponse<ResMeetingInformation>> getMeetingV1(@PathVariable final Long courseId) {
 
     return
         ResponseEntity.ok(
-            Result.<ResMeetingInformation>builder()
+            ResultResponse.<ResMeetingInformation>builder()
                 .content(meetingInformationService.getMeetingInformation(courseId))
                 .build()
         );
