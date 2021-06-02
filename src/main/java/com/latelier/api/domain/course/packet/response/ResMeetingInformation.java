@@ -16,8 +16,7 @@ public class ResMeetingInformation {
 
   @ApiModelProperty(
       value = "API KEY",
-      name = "apiKey",
-      notes = "SDK 사용에 필요한 API KEY")
+      name = "apiKey")
   private final String apiKey;
 
   @ApiModelProperty(
@@ -28,20 +27,17 @@ public class ResMeetingInformation {
 
   @ApiModelProperty(
       value = "미팅 비밀번호",
-      name = "meetingPassword",
-      notes = "미팅 입장에 필요한 비밀번호")
+      name = "meetingPassword")
   private final String meetingPassword;
 
   @ApiModelProperty(
       value = "이름",
-      name = "userName",
-      notes = "학생의 실명")
+      name = "userName")
   private final String userName;
 
   @ApiModelProperty(
       value = "Signature",
-      name = "signature",
-      notes = "Client Web SDK 사용시 필요한 시그니처")
+      name = "signature")
   private final String signature;
 
 

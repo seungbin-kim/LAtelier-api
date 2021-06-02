@@ -16,8 +16,7 @@ public class ReqSmsAuthentication {
   @ApiModelProperty(
       value = "휴대폰 번호",
       name = "phoneNumber",
-      notes = "인증에 필요한 휴대폰 번호",
-      example = "01012345678")
+      example = "01000000000")
   @Pattern(regexp = "^01[0-9]{8,9}$", message = "올바른 형식이 아닙니다.")
   @NotBlank
   private String phoneNumber;
