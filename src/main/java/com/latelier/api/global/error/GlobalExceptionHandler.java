@@ -3,8 +3,8 @@ package com.latelier.api.global.error;
 import com.latelier.api.global.error.exception.BusinessException;
 import com.latelier.api.global.error.exception.ErrorCode;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -12,6 +12,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+
+import static org.springframework.http.HttpStatus.*;
 
 @Slf4j
 @ControllerAdvice
@@ -27,7 +29,7 @@ public class GlobalExceptionHandler {
     final ErrorResponse response = ErrorResponse.of(ErrorCode.INVALID_INPUT_VALUE, e.getBindingResult());
     return
         ResponseEntity
-            .status(HttpStatus.BAD_REQUEST)
+            .status(BAD_REQUEST)
             .body(response);
   }
 
@@ -43,7 +45,7 @@ public class GlobalExceptionHandler {
     final ErrorResponse response = ErrorResponse.of(e);
     return
         ResponseEntity
-            .status(HttpStatus.BAD_REQUEST)
+            .status(BAD_REQUEST)
             .body(response);
   }
 
@@ -58,7 +60,7 @@ public class GlobalExceptionHandler {
     final ErrorResponse response = ErrorResponse.of(ErrorCode.METHOD_NOT_ALLOWED);
     return
         ResponseEntity
-            .status(HttpStatus.METHOD_NOT_ALLOWED)
+            .status(METHOD_NOT_ALLOWED)
             .body(response);
   }
 
@@ -73,7 +75,7 @@ public class GlobalExceptionHandler {
     final ErrorResponse response = ErrorResponse.of(ErrorCode.INVALID_TOKEN);
     return
         ResponseEntity
-            .status(HttpStatus.valueOf(ErrorCode.INVALID_TOKEN.getStatus()))
+            .status(valueOf(response.getStatus()))
             .body(response);
   }
 
@@ -88,11 +90,29 @@ public class GlobalExceptionHandler {
     final ErrorResponse response = ErrorResponse.of(ErrorCode.INSUFFICIENT_SCOPE);
     return
         ResponseEntity
-            .status(HttpStatus.valueOf(ErrorCode.INSUFFICIENT_SCOPE.getStatus()))
+            .status(valueOf(response.getStatus()))
             .body(response);
   }
 
 
+  /**
+   * JSON 요청 형태가 아닌 경우
+   */
+  @ExceptionHandler(HttpMessageNotReadableException.class)
+  protected ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(final HttpMessageNotReadableException e) {
+
+    log.error("handleHttpMessageNotReadableException", e);
+    final ErrorResponse response = ErrorResponse.of(ErrorCode.INCORRECT_FORMAT);
+    return
+        ResponseEntity
+            .status(valueOf(response.getStatus()))
+            .body(response);
+  }
+
+
+  /**
+   * 비즈니스 예외
+   */
   @ExceptionHandler(BusinessException.class)
   protected ResponseEntity<ErrorResponse> handleBusinessException(final BusinessException e) {
 
@@ -101,7 +121,7 @@ public class GlobalExceptionHandler {
     final ErrorResponse response = ErrorResponse.of(errorCode);
     return
         ResponseEntity
-            .status(HttpStatus.valueOf(errorCode.getStatus()))
+            .status(valueOf(errorCode.getStatus()))
             .body(response);
   }
 
@@ -116,7 +136,7 @@ public class GlobalExceptionHandler {
     final ErrorResponse response = ErrorResponse.of(ErrorCode.INTERNAL_SERVER_ERROR);
     return
         ResponseEntity
-            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .status(INTERNAL_SERVER_ERROR)
             .body(response);
   }
 

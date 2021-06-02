@@ -14,7 +14,8 @@ public enum ErrorCode {
   INSUFFICIENT_SCOPE(403, "C004", "Insufficient Scope"),
   NOT_FOUND(404, "C005", "Not Found"),
   DUPLICATION(409, "C006", "Duplication"),
-  INTERNAL_SERVER_ERROR(500, "C007", "Server Error"),
+  INCORRECT_FORMAT(400, "C007", "Incorrect Format"),
+  INTERNAL_SERVER_ERROR(500, "C050", "Server Error"),
 
   // Member
   LOGIN_INPUT_INVALID(400, "M001", "Login input is invalid"),
