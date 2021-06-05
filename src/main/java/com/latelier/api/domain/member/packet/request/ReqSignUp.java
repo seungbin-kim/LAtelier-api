@@ -74,6 +74,14 @@ public class ReqSignUp {
       example = "안녕하세요.")
   private String introduction;
 
+  @Max(
+      value = 100,
+      message = "최대 100자 입니다.")
+  private String address;
 
+  @Max(
+      value = 10,
+      message = "최대 10자 입니다.")
+  private String zip;
 
 }
