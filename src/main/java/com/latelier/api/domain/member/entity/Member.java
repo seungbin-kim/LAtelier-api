@@ -49,11 +49,8 @@ public class Member extends BaseTimeEntity {
   @Column(length = 500)
   private String introduction;
 
-  @Column(length = 100)
-  private String address;
-
-  @Column(length = 10)
-  private String zipcode;
+  @Embedded
+  private Address address;
 
   private boolean isActive;
 
