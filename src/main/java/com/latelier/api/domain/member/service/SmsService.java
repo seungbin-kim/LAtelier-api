@@ -1,6 +1,6 @@
 package com.latelier.api.domain.member.service;
 
-import com.latelier.api.domain.member.exception.PhoneNumberDuplicationException;
+import com.latelier.api.domain.member.exception.DuplicatePhoneNumberException;
 import com.latelier.api.domain.member.exception.SmsApiRequestException;
 import com.latelier.api.domain.member.exception.SmsVerificationException;
 import com.latelier.api.domain.member.packet.request.ReqSms;
@@ -47,7 +47,7 @@ public class SmsService {
   public void sendCertificationNumber(final String phoneNumber) {
 
     if (memberRepository.existsByPhoneNumber(phoneNumber)) {
-      throw new PhoneNumberDuplicationException(phoneNumber);
+      throw new DuplicatePhoneNumberException(phoneNumber);
     }
 
     int randomNumber = getRandomNumber();
