@@ -14,7 +14,7 @@ import javax.persistence.Embeddable;
 public class Address {
 
     @Builder
-    public Address(final String address, final String zip) {
+    private Address(final String address, final String zip) {
         this.address = address;
         this.zip = zip;
     }

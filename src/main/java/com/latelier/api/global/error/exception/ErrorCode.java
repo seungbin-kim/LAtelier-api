@@ -19,9 +19,10 @@ public enum ErrorCode {
 
   // Member
   LOGIN_INPUT_INVALID(400, "M001", "Login input is invalid"),
-  EMAIL_DUPLICATION(409, "M002", "Email is Duplication"),
-  PHONE_NUMBER_DUPLICATION(409, "M003", "Phone Number is Duplication"),
-  SMS_VERIFICATION_FAILED(400, "M004", "Sms Verification Failed"),
+  SMS_VERIFICATION_FAILED(400, "M002", "Sms Verification Failed"),
+  DUPLICATE_EMAIL(409, "M003", "Duplicate Email"),
+  DUPLICATE_PHONE_NUMBER(409, "M004", "Duplicate Phone Number"),
+  DUPLICATE_EMAIL_AND_PHONE_NUMBER(409, "M004", "Duplicate Email And Phone Number"),
 
   // Zoom
   NOT_OBTAIN_ACCESS_TOKEN(500, "Z001", "Not Obtain Access Token"),

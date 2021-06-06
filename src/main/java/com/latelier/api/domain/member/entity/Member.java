@@ -4,11 +4,13 @@ import com.latelier.api.domain.model.BaseTimeEntity;
 import com.latelier.api.domain.file.entity.File;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SequenceGenerator(
     name = "MEMBER_SEQ_GENERATOR",
@@ -56,7 +58,7 @@ public class Member extends BaseTimeEntity {
 
 
   @Builder
-  public Member(final String email, final String phoneNumber, final File file,
+  private Member(final String email, final String phoneNumber, final File file,
                 final String name, final String nickname, final String password,
                 final String introduction, final Address address) {
 
