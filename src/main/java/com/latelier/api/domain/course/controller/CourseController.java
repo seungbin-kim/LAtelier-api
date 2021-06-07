@@ -29,14 +29,13 @@ public class CourseController {
       notes = "SDK 에서 강의에 입장하기위한 정보를 요청합니다.")
   @ApiImplicitParams({
       @ApiImplicitParam(name = "courseId", value = "강의 ID", required = true, dataType = "long", paramType = "path", example = "1")})
-  public ResponseEntity<?> getMeetingV1(@PathVariable final Long courseId) {
+  public ResponseEntity<ResultResponse<ResMeetingInformation>> getMeetingV1(@PathVariable final Long courseId) {
 
     return
         ResponseEntity.ok(
             ResultResponse.<ResMeetingInformation>builder()
                 .content(meetingInformationService.getMeetingInformation(courseId))
-                .build()
-        );
+                .build());
   }
 
 }

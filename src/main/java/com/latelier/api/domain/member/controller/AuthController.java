@@ -40,7 +40,7 @@ public class AuthController {
   @ApiResponses({
       @ApiResponse(responseCode = "303", description = "성공적으로 회의가 생성되어 start url 반환"),
       @ApiResponse(responseCode = "500", description = "액세스 토큰을 얻지 못하거나 회의 생성에 실패")})
-  public ResponseEntity<?> callback(@RequestParam final String code,
+  public ResponseEntity<Void> callback(@RequestParam final String code,
                                     @RequestParam(name = "state") final Long courseId) throws URISyntaxException {
 
     /*
@@ -64,7 +64,7 @@ public class AuthController {
       @ApiResponse(responseCode = "202", description = "인증번호 전송 성공"),
       @ApiResponse(responseCode = "409", description = "휴대폰 번호 중복"),
       @ApiResponse(responseCode = "500", description = "메세지 전송 실패")})
-  public ResponseEntity<?> sendSms(@RequestBody @Valid final ReqSmsAuthentication request) {
+  public ResponseEntity<Void> sendSms(@RequestBody @Valid final ReqSmsAuthentication request) {
 
     smsService.sendCertificationNumber(request.getPhoneNumber());
     return ResponseEntity.status(HttpStatus.ACCEPTED).build();
@@ -78,7 +78,7 @@ public class AuthController {
   @ApiResponses({
       @ApiResponse(responseCode = "200", description = "인증번호 확인 성공"),
       @ApiResponse(responseCode = "400", description = "인증번호 확인 실패")})
-  public ResponseEntity<?> smsVerification(@RequestBody @Valid ReqSmsVerification request) {
+  public ResponseEntity<Void> smsVerification(@RequestBody @Valid ReqSmsVerification request) {
 
     smsService.verifySms(request.getPhoneNumber(), request.getCertificationNumber());
     return ResponseEntity.status(HttpStatus.OK).build();
