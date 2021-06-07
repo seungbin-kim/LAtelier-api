@@ -27,17 +27,17 @@ public class MemberController {
   @PostMapping("/v1/users")
   @ApiOperation(
       value = "사용자 등록",
-      notes = "사용자 정보를 등록합니다.",
-      response = ResSignUp.class)
+      notes = "사용자 정보를 등록합니다.")
   @ApiResponses({
       @ApiResponse(responseCode = "200", description = "회원등록 성공"),
       @ApiResponse(responseCode = "409", description = "이메일 또는 휴대폰번호 중복")})
-  public ResponseEntity<?> signUpV1(@RequestBody @Valid final ReqSignUp reqSignUp) {
+  public ResponseEntity<ResultResponse<ResSignUp>> signUpV1(@RequestBody @Valid final ReqSignUp reqSignUp) {
 
     ResSignUp response = memberService.addMember(reqSignUp);
     return ResponseEntity.ok(
         ResultResponse.<ResSignUp>builder()
-            .content(response));
+            .content(response)
+            .build());
   }
 
 }
