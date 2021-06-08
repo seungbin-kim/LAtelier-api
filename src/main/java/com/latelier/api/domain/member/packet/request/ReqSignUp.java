@@ -27,9 +27,9 @@ public class ReqSignUp {
   @Pattern(
       regexp = "^01[0-9]{8,9}$",
       message = "올바른 형식이 아닙니다.")
-  @NotBlank(message = "전화번호는 필수입니다.")
+  @NotBlank(message = "휴대폰번호는 필수입니다.")
   @ApiModelProperty(
-      value = "전화번호",
+      value = "휴대폰번호",
       name = "phoneNumber",
       example = "01000000000",
       required = true)
@@ -59,14 +59,15 @@ public class ReqSignUp {
   @Pattern(
       regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[$@$!%*#?&])[A-Za-z\\d$@$!%*#?&]{8,16}$",
       message = "비밀번호는 최소 8자에서 최대 16자, 최소 하나의 문자와 숫자, 특수문자를 포함해야 합니다.")
+  @NotBlank(message = "비밀번호는 필수입니다.")
   @ApiModelProperty(
       value = "비밀번호",
       name = "password",
       example = "!mypassword486@")
   private String password;
 
-  @Max(
-      value = 500,
+  @Size(
+      max = 500,
       message = "최대 500자 입니다.")
   @ApiModelProperty(
       value = "자기소개",
@@ -74,14 +75,14 @@ public class ReqSignUp {
       example = "안녕하세요.")
   private String introduction;
 
-  @Max(
-      value = 100,
-      message = "최대 100자 입니다.")
+  @Size(
+      max = 100,
+      message = "주소는 최대 100자 입니다.")
   private String address;
 
-  @Max(
-      value = 10,
-      message = "최대 10자 입니다.")
+  @Size(
+      max = 10,
+      message = "우편번호는 최대 10자 입니다.")
   private String zip;
 
 }

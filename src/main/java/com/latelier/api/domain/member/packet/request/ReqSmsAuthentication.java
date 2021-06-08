@@ -14,11 +14,11 @@ import javax.validation.constraints.Pattern;
 public class ReqSmsAuthentication {
 
   @ApiModelProperty(
-      value = "휴대폰 번호",
+      value = "휴대폰번호",
       name = "phoneNumber",
       example = "01000000000")
   @Pattern(regexp = "^01[0-9]{8,9}$", message = "올바른 형식이 아닙니다.")
-  @NotBlank
+  @NotBlank(message = "휴대폰번호는 필수입니다.")
   private String phoneNumber;
 
 }
