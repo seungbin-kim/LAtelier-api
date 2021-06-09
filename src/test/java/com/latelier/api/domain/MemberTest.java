@@ -1,6 +1,7 @@
 package com.latelier.api.domain;
 
 import com.latelier.api.domain.member.entity.Member;
+import com.latelier.api.domain.member.repository.MemberRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
 
 @AutoConfigureTestDatabase
@@ -20,7 +20,8 @@ class MemberTest {
   private final Logger log = LoggerFactory.getLogger(MemberTest.class);
 
   @Autowired
-  EntityManager em;
+  MemberRepository memberRepository;
+
 
   @Test
   @DisplayName("생성일_수정일_테스트")
@@ -30,15 +31,17 @@ class MemberTest {
     Member member = Member.builder()
         .email("test@test.com")
         .phoneNumber("01012345678")
+        .name("test")
+        .nickname("testNickname")
         .build();
 
     //when
-    em.persist(member);
+    Member savedMember = memberRepository.save(member);
 
     //then
-    log.info("createdAt: {}, modifiedAt: {}", member.getCreatedAt(), member.getUpdatedAt());
-    Assertions.assertThat(member.getCreatedAt()).isAfter(now);
-    Assertions.assertThat(member.getUpdatedAt()).isAfter(now);
+    log.info("createdAt: {}, modifiedAt: {}", savedMember.getCreatedAt(), savedMember.getUpdatedAt());
+    Assertions.assertThat(savedMember.getCreatedAt()).isAfter(now);
+    Assertions.assertThat(savedMember.getUpdatedAt()).isAfter(now);
   }
 
 }
