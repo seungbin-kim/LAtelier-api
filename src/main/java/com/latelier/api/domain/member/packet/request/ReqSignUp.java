@@ -51,10 +51,10 @@ public class ReqSignUp {
   @NotBlank(message = "닉네임은 필수입니다.")
   @ApiModelProperty(
       value = "닉네임",
-      name = "nickName",
-      example = "myNickName",
+      name = "nickname",
+      example = "myNickname",
       required = true)
-  private String nickName;
+  private String nickname;
 
   @Pattern(
       regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[$@$!%*#?&])[A-Za-z\\d$@$!%*#?&]{8,16}$",

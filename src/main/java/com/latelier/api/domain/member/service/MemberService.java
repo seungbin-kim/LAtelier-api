@@ -58,7 +58,7 @@ public class MemberService {
         .name(reqSignUp.getName())
         .phoneNumber(reqSignUp.getPhoneNumber())
         .email(reqSignUp.getEmail())
-        .nickname(reqSignUp.getNickName())
+        .nickname(reqSignUp.getNickname())
         .introduction(reqSignUp.getIntroduction())
         .address(address)
         .build();
