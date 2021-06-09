@@ -50,7 +50,7 @@ public class MemberService {
 
     Address address = Address.builder()
         .address(reqSignUp.getAddress())
-        .zip(reqSignUp.getZip())
+        .zipCode(reqSignUp.getZipCode())
         .build();
 
     return Member.builder()

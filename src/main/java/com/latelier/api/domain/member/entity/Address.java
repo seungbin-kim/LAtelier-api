@@ -14,9 +14,9 @@ import javax.persistence.Embeddable;
 public class Address {
 
     @Builder
-    private Address(final String address, final String zip) {
+    private Address(final String address, final String zipCode) {
         this.address = address;
-        this.zip = zip;
+        this.zipCode = zipCode;
     }
 
 
@@ -24,6 +24,6 @@ public class Address {
     private String address;
 
     @Column(length = 10)
-    private String zip;
+    private String zipCode;
 
 }

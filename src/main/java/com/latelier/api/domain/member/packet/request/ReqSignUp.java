@@ -83,6 +83,6 @@ public class ReqSignUp {
   @Size(
       max = 10,
       message = "우편번호는 최대 10자 입니다.")
-  private String zip;
+  private String zipCode;
 
 }
