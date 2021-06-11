@@ -41,7 +41,7 @@ public class AuthController {
       @ApiResponse(responseCode = "303", description = "성공적으로 회의가 생성되어 start url 반환"),
       @ApiResponse(responseCode = "500", description = "액세스 토큰을 얻지 못하거나 회의 생성에 실패")})
   public ResponseEntity<Void> callback(@RequestParam final String code,
-                                    @RequestParam(name = "state") final Long courseId) throws URISyntaxException {
+                                       @RequestParam(name = "state") final Long courseId) throws URISyntaxException {
 
     /*
     TODO 이미 회의가 생성된경우(미팅정보존재시), 또 생성하지 못하게 해야함(시작 버튼을 2번누를시 문제)
@@ -52,7 +52,10 @@ public class AuthController {
     String startUrl = zoomService.createCourseMeeting(code, courseId);
 
     URI uri = new URI(startUrl);
-    return ResponseEntity.status(HttpStatus.SEE_OTHER).location(uri).build();
+    return ResponseEntity
+        .status(HttpStatus.SEE_OTHER)
+        .location(uri)
+        .build();
   }
 
 
@@ -67,7 +70,9 @@ public class AuthController {
   public ResponseEntity<Void> sendSms(@RequestBody @Valid final ReqSmsAuthentication request) {
 
     smsService.sendCertificationNumber(request.getPhoneNumber());
-    return ResponseEntity.status(HttpStatus.ACCEPTED).build();
+    return ResponseEntity
+        .status(HttpStatus.ACCEPTED)
+        .build();
   }
 
 
@@ -81,7 +86,9 @@ public class AuthController {
   public ResponseEntity<Void> smsVerification(@RequestBody @Valid ReqSmsVerification request) {
 
     smsService.verifySms(request.getPhoneNumber(), request.getCertificationNumber());
-    return ResponseEntity.status(HttpStatus.OK).build();
+    return ResponseEntity
+        .status(HttpStatus.OK)
+        .build();
   }
 
 

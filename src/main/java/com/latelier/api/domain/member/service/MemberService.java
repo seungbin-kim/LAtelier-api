@@ -53,15 +53,16 @@ public class MemberService {
         .zipCode(reqSignUp.getZipCode())
         .build();
 
-    return Member.builder()
-        .password(passwordEncoder.encode(reqSignUp.getPassword()))
-        .name(reqSignUp.getName())
-        .phoneNumber(reqSignUp.getPhoneNumber())
-        .email(reqSignUp.getEmail())
-        .nickname(reqSignUp.getNickname())
-        .introduction(reqSignUp.getIntroduction())
-        .address(address)
-        .build();
+    return
+        Member.builder()
+            .password(passwordEncoder.encode(reqSignUp.getPassword()))
+            .name(reqSignUp.getName())
+            .phoneNumber(reqSignUp.getPhoneNumber())
+            .email(reqSignUp.getEmail())
+            .nickname(reqSignUp.getNickname())
+            .introduction(reqSignUp.getIntroduction())
+            .address(address)
+            .build();
   }
 
 

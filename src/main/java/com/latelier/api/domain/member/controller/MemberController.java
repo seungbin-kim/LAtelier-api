@@ -34,8 +34,8 @@ public class MemberController {
   public ResponseEntity<ResultResponse<ResSignUp>> signUpV1(@RequestBody @Valid final ReqSignUp reqSignUp) {
 
     ResSignUp response = memberService.addMember(reqSignUp);
-    return ResponseEntity.ok(
-        ResultResponse.<ResSignUp>builder()
+    return
+        ResponseEntity.ok(ResultResponse.<ResSignUp>builder()
             .content(response)
             .build());
   }
