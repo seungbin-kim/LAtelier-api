@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.latelier.api.domain.member.packet.request.ReqSmsAuthentication;
 import com.latelier.api.domain.member.packet.request.ReqSmsVerification;
 import com.latelier.api.domain.member.repository.SmsCertificationRepository;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,12 +31,8 @@ class AuthControllerTest {
   @Autowired
   ApplicationContext context;
 
-  static ObjectMapper objectMapper;
-
-  @BeforeAll
-  static void init() {
-    objectMapper = new ObjectMapper();
-  }
+  @Autowired
+  ObjectMapper objectMapper;
 
 
   @Test
