@@ -46,7 +46,7 @@ public class AuthController {
     /*
     TODO 이미 회의가 생성된경우(미팅정보존재시), 또 생성하지 못하게 해야함(시작 버튼을 2번누를시 문제)
           미팅정보가 들어가는 테이블 유니크조건걸기(동일강의 2개가있으면 안됨)
-          강의종료시 테이블내용 지워야함
+          강의종료시 테이블내용은 지워져야함...!
      */
 
     String startUrl = zoomService.createCourseMeeting(code, courseId);
