@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Transactional
@@ -49,7 +50,9 @@ class AuthControllerTest {
         .content(content));
 
     // then
-    perform.andExpect(status().isAccepted());
+    perform
+        .andExpect(status().isAccepted())
+        .andDo(print());
   }
 
 
@@ -72,7 +75,9 @@ class AuthControllerTest {
         .content(content));
 
     // then
-    perform.andExpect(status().isOk());
+    perform
+        .andExpect(status().isOk())
+        .andDo(print());
   }
 
 }
