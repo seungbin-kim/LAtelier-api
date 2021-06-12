@@ -7,7 +7,6 @@ import com.latelier.api.domain.member.repository.SmsCertificationRepository;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -25,7 +24,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 @SpringBootTest
 @AutoConfigureMockMvc
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class AuthControllerTest {
 
   @Autowired
@@ -34,10 +32,10 @@ class AuthControllerTest {
   @Autowired
   ApplicationContext context;
 
-  ObjectMapper objectMapper;
+  static ObjectMapper objectMapper;
 
   @BeforeAll
-  void init() {
+  static void init() {
     objectMapper = new ObjectMapper();
   }
 
