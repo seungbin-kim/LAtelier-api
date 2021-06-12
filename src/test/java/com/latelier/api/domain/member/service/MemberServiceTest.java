@@ -70,7 +70,7 @@ class MemberServiceTest {
     // then
     assertEquals(email, resSignUp.getEmail());
     assertEquals(name, resSignUp.getName());
-    assertEquals(nickname, resSignUp.getNickName());
+    assertEquals(nickname, resSignUp.getNickname());
     assertEquals(phoneNumber, resSignUp.getPhoneNumber());
   }
 

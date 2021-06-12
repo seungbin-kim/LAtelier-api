@@ -32,9 +32,9 @@ public class ResSignUp {
 
   @ApiModelProperty(
       value = "닉네임",
-      name = "nickName",
-      example = "myNickName")
-  private final String nickName;
+      name = "nickname",
+      example = "myNickname")
+  private final String nickname;
 
 
   public static ResSignUp createSignUpResponse(final Member member) {
