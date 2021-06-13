@@ -1,7 +1,10 @@
 package com.latelier.api.domain.member.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.latelier.api.domain.member.entity.Member;
 import com.latelier.api.domain.member.packet.request.ReqSignUp;
+import com.latelier.api.domain.member.repository.MemberRepository;
+import com.latelier.api.global.error.exception.ErrorCode;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -13,6 +16,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
@@ -35,13 +39,17 @@ class MemberControllerTest {
   @Autowired
   ObjectMapper objectMapper;
 
+  @Autowired
+  ApplicationContext context;
+
 
   @DisplayName("회원등록_성공")
-  @ParameterizedTest(name = "{index} {displayName} name={0}")
+  @ParameterizedTest(name = "[{index}] {displayName} name={0}")
   @CsvSource({
       "홍길동, 01011111111, test1@a.b, myNickname1, !myPassword486@",
-      "홍길순, 01000000000, test2@a.b, myNickname2, !!myPassword486@"})
-  void signUp(@AggregateWith(SignUpRequestAggregator.class) ReqSignUp req) throws Exception {
+      "홍길순, 01022222222, test2@a.b, myNickname2, !myPassword486@",
+      "홍길복, 01033333333, test3@a.b, myNickname3, !myPassword486@"})
+  void signUpSuccess(@AggregateWith(SignUpRequestAggregator.class) ReqSignUp req) throws Exception {
     // given
     String content = objectMapper.writeValueAsString(req);
 
@@ -60,6 +68,109 @@ class MemberControllerTest {
         .andExpect(jsonPath("$.content.nickname").value(req.getNickname()))
         .andDo(print());
   }
+
+
+  @DisplayName("회원등록_실패_이메일중복")
+  @ParameterizedTest(name = "[{index}] {displayName} email={2}")
+  @CsvSource({
+      "홍길동, 01011111111, test@a.b, myNickname1, !myPassword486@",
+      "홍길순, 01022222222, test@a.b, myNickname2, !myPassword486@",
+      "홍길복, 01033333333, test@a.b, myNickname3, !myPassword486@"})
+  void signUpEmailDuplicate(@AggregateWith(SignUpRequestAggregator.class) ReqSignUp req) throws Exception {
+    // given
+    MemberRepository memberRepository = context.getBean(MemberRepository.class);
+    Member member = Member.builder()
+        .name("테스터")
+        .phoneNumber("01000000000")
+        .email("test@a.b")
+        .nickname("nickname")
+        .password("password")
+        .build();
+    memberRepository.save(member);
+
+    String content = objectMapper.writeValueAsString(req);
+
+    // when
+    ResultActions perform = mockMvc.perform(post("/api/v1/users")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(content)
+        .accept(MediaType.APPLICATION_JSON));
+
+    // then
+    perform
+        .andExpect(status().isConflict())
+        .andExpect(jsonPath("$.message").value(ErrorCode.DUPLICATE_EMAIL.getMessage()))
+        .andDo(print());
+  }
+
+
+  @DisplayName("회원등록_실패_휴대폰중복")
+  @ParameterizedTest(name = "[{index}] {displayName} phoneNumber={1}")
+  @CsvSource({
+      "홍길동, 01000000000, test1@a.b, myNickname1, !myPassword486@",
+      "홍길순, 01000000000, test2@a.b, myNickname2, !myPassword486@",
+      "홍길복, 01000000000, test3@a.b, myNickname3, !myPassword486@"})
+  void signUpPhoneNumberDuplicate(@AggregateWith(SignUpRequestAggregator.class) ReqSignUp req) throws Exception {
+    // given
+    MemberRepository memberRepository = context.getBean(MemberRepository.class);
+    Member member = Member.builder()
+        .name("테스터")
+        .phoneNumber("01000000000")
+        .email("test@a.b")
+        .nickname("nickname")
+        .password("password")
+        .build();
+    memberRepository.save(member);
+
+    String content = objectMapper.writeValueAsString(req);
+
+    // when
+    ResultActions perform = mockMvc.perform(post("/api/v1/users")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(content)
+        .accept(MediaType.APPLICATION_JSON));
+
+    // then
+    perform
+        .andExpect(status().isConflict())
+        .andExpect(jsonPath("$.message").value(ErrorCode.DUPLICATE_PHONE_NUMBER.getMessage()))
+        .andDo(print());
+  }
+
+
+  @DisplayName("회원등록_실패_이메일_휴대폰중복")
+  @ParameterizedTest(name = "[{index}] {displayName} email={2}, phoneNumber={1}")
+  @CsvSource({
+      "홍길동, 01000000000, test@a.b, myNickname1, !myPassword486@",
+      "홍길순, 01000000000, test@a.b, myNickname2, !myPassword486@",
+      "홍길복, 01000000000, test@a.b, myNickname3, !myPassword486@"})
+  void signUpDuplicate(@AggregateWith(SignUpRequestAggregator.class) ReqSignUp req) throws Exception {
+    // given
+    MemberRepository memberRepository = context.getBean(MemberRepository.class);
+    Member member = Member.builder()
+        .name("테스터")
+        .phoneNumber("01000000000")
+        .email("test@a.b")
+        .nickname("nickname")
+        .password("password")
+        .build();
+    memberRepository.save(member);
+
+    String content = objectMapper.writeValueAsString(req);
+
+    // when
+    ResultActions perform = mockMvc.perform(post("/api/v1/users")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(content)
+        .accept(MediaType.APPLICATION_JSON));
+
+    // then
+    perform
+        .andExpect(status().isConflict())
+        .andExpect(jsonPath("$.message").value(ErrorCode.DUPLICATE_EMAIL_AND_PHONE_NUMBER.getMessage()))
+        .andDo(print());
+  }
+
 
   static class SignUpRequestAggregator implements ArgumentsAggregator {
     @Override
