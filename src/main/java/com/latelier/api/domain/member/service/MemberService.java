@@ -1,7 +1,9 @@
 package com.latelier.api.domain.member.service;
 
 import com.latelier.api.domain.member.entity.Address;
+import com.latelier.api.domain.member.entity.Authority;
 import com.latelier.api.domain.member.entity.Member;
+import com.latelier.api.domain.member.enumeration.Role;
 import com.latelier.api.domain.member.exception.DuplicateEmailAndPhoneNumberException;
 import com.latelier.api.domain.member.exception.DuplicateEmailException;
 import com.latelier.api.domain.member.exception.DuplicatePhoneNumberException;
@@ -53,16 +55,20 @@ public class MemberService {
         .zipCode(reqSignUp.getZipCode())
         .build();
 
-    return
-        Member.builder()
-            .password(passwordEncoder.encode(reqSignUp.getPassword()))
-            .name(reqSignUp.getName())
-            .phoneNumber(reqSignUp.getPhoneNumber())
-            .email(reqSignUp.getEmail())
-            .nickname(reqSignUp.getNickname())
-            .introduction(reqSignUp.getIntroduction())
-            .address(address)
-            .build();
+    Member member = Member.builder()
+        .password(passwordEncoder.encode(reqSignUp.getPassword()))
+        .name(reqSignUp.getName())
+        .phoneNumber(reqSignUp.getPhoneNumber())
+        .email(reqSignUp.getEmail())
+        .nickname(reqSignUp.getNickname())
+        .introduction(reqSignUp.getIntroduction())
+        .address(address)
+        .build();
+
+    member
+        .getAuthorities()
+        .add(new Authority(Role.ROLE_USER));
+    return member;
   }
 
 
