@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -55,6 +57,13 @@ public class Member extends BaseTimeEntity {
   private Address address;
 
   private boolean isActive = true;
+
+  @ManyToMany
+  @JoinTable(
+      name = "member_authority",
+      joinColumns = {@JoinColumn(name = "member_id", referencedColumnName = "member_id")},
+      inverseJoinColumns = {@JoinColumn(name = "authority_name", referencedColumnName = "authority_name")})
+  private Set<Authority> authorities = new HashSet<>();
 
 
   @Builder
