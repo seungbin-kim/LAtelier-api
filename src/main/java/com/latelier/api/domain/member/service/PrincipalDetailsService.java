@@ -2,9 +2,9 @@ package com.latelier.api.domain.member.service;
 
 import com.latelier.api.domain.member.entity.Member;
 import com.latelier.api.domain.member.exception.NotActivatedMemberException;
-import com.latelier.api.domain.member.exception.NotFoundEmailException;
 import com.latelier.api.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -32,7 +32,7 @@ public class PrincipalDetailsService implements UserDetailsService {
 
     return memberRepository.findByEmailWithAuthorities(email)
         .map(this::createUserDetails)
-        .orElseThrow(() -> new NotFoundEmailException(email));
+        .orElseThrow(() -> new InternalAuthenticationServiceException("찾을 수 없는 사용자." + email));
   }
 
 

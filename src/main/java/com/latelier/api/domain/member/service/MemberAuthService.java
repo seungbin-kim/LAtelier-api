@@ -5,7 +5,6 @@ import com.latelier.api.domain.util.TokenProvider;
 import com.latelier.api.global.error.exception.BusinessException;
 import com.latelier.api.global.error.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -38,8 +37,8 @@ public class MemberAuthService {
       Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
       return tokenProvider.createToken(authentication);
-    } catch (BadCredentialsException e) {
-      throw new BusinessException(ErrorCode.LOGIN_INPUT_INVALID);
+    } catch (Exception e) {
+      throw new BusinessException(e.getMessage(), ErrorCode.LOGIN_INPUT_INVALID);
     }
   }
 
