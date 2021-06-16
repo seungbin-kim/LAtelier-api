@@ -1,18 +1,24 @@
 package com.latelier.api.domain.member.controller;
 
+import com.latelier.api.domain.member.packet.request.ReqSignIn;
 import com.latelier.api.domain.member.packet.request.ReqSmsAuthentication;
 import com.latelier.api.domain.member.packet.request.ReqSmsVerification;
+import com.latelier.api.domain.member.packet.response.ResToken;
+import com.latelier.api.domain.member.service.MemberAuthService;
 import com.latelier.api.domain.member.service.SmsService;
 import com.latelier.api.domain.member.service.ZoomService;
+import com.latelier.api.domain.model.Result;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.Authorization;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -29,11 +35,33 @@ public class AuthController {
 
   private final SmsService smsService;
 
+  private final MemberAuthService signInService;
+
+
+  @PostMapping("/sign-in")
+  @ApiOperation(
+      value = "로그인",
+      notes = "로그인 정보를 받아 Json Web Token 을 반환합니다.")
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "로그인처리 성공"),
+      @ApiResponse(responseCode = "400", description = "이메일 또는 비밀번호 불일치")})
+  public ResponseEntity<Result<ResToken>> signIn(@RequestBody @Valid final ReqSignIn reqSignIn) {
+
+    String token = signInService.signIn(reqSignIn);
+    ResToken resToken = new ResToken(token);
+    return ResponseEntity
+        .ok(Result.<ResToken>builder()
+            .content(resToken)
+            .build());
+  }
+
 
   @GetMapping("/zoom/callback")
+  @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
   @ApiOperation(
       value = "Zoom OAuth 인증과 회의생성 API 호출",
-      notes = "Zoom OAuth 인증 후 회의생성 API 를 호출하여 start url 을 반환합니다.")
+      notes = "Zoom OAuth 인증 후 회의생성 API 를 호출하여 start url 을 반환합니다.",
+      authorizations = {@Authorization(value = "JWT")})
   @ApiImplicitParams({
       @ApiImplicitParam(name = "code", value = "authorization code", required = true, dataType = "string", paramType = "query"),
       @ApiImplicitParam(name = "state", value = "회의를 생성할 강의 ID", required = true, dataType = "long", paramType = "query")})

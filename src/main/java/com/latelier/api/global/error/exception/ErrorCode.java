@@ -11,10 +11,11 @@ public enum ErrorCode {
   METHOD_NOT_ALLOWED(405, "C001", "Method Not Allowed"),
   INVALID_INPUT_VALUE(400, "C002", "Invalid Input Value"),
   INVALID_TOKEN(401, "C003", "Invalid Token"),
-  INSUFFICIENT_SCOPE(403, "C004", "Insufficient Scope"),
-  NOT_FOUND(404, "C005", "Not Found"),
-  DUPLICATION(409, "C006", "Duplicate"),
-  INCORRECT_FORMAT(400, "C007", "Incorrect Format"),
+  UNAUTHORIZED(401, "C004", "Unauthorized"),
+  INSUFFICIENT_SCOPE(403, "C005", "Insufficient Scope"),
+  NOT_FOUND(404, "C006", "Not Found"),
+  DUPLICATION(409, "C007", "Duplicate"),
+  INCORRECT_FORMAT(400, "C008", "Incorrect Format"),
   INTERNAL_SERVER_ERROR(500, "C050", "Server Error"),
 
   // Member
@@ -22,7 +23,9 @@ public enum ErrorCode {
   SMS_VERIFICATION_FAILED(400, "M002", "Sms Verification Failed"),
   DUPLICATE_EMAIL(409, "M003", "Duplicate Email"),
   DUPLICATE_PHONE_NUMBER(409, "M004", "Duplicate Phone Number"),
-  DUPLICATE_EMAIL_AND_PHONE_NUMBER(409, "M004", "Duplicate Email And Phone Number"),
+  DUPLICATE_EMAIL_AND_PHONE_NUMBER(409, "M005", "Duplicate Email And Phone Number"),
+  NOT_FOUND_EMAIL(404, "M006", "Not Found Email"),
+  NOT_ACTIVATED(404, "M010", "Not Activated"),
 
   // Zoom
   NOT_OBTAIN_ACCESS_TOKEN(500, "Z001", "Not Obtain Access Token"),

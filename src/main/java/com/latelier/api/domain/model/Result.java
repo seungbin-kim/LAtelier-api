@@ -8,7 +8,7 @@ import lombok.Getter;
 @Getter
 @Builder
 @ApiModel("응답")
-public class ResultResponse<T> {
+public class Result<T> {
 
   @ApiModelProperty(
       value = "응답 데이터",

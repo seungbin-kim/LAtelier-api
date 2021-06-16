@@ -54,7 +54,7 @@ class MemberControllerTest {
     String content = objectMapper.writeValueAsString(req);
 
     // when
-    ResultActions perform = mockMvc.perform(post("/api/v1/users")
+    ResultActions perform = mockMvc.perform(post("/api/members")
         .contentType(MediaType.APPLICATION_JSON)
         .content(content)
         .accept(MediaType.APPLICATION_JSON));
@@ -91,7 +91,7 @@ class MemberControllerTest {
     String content = objectMapper.writeValueAsString(req);
 
     // when
-    ResultActions perform = mockMvc.perform(post("/api/v1/users")
+    ResultActions perform = mockMvc.perform(post("/api/members")
         .contentType(MediaType.APPLICATION_JSON)
         .content(content)
         .accept(MediaType.APPLICATION_JSON));
@@ -125,7 +125,7 @@ class MemberControllerTest {
     String content = objectMapper.writeValueAsString(req);
 
     // when
-    ResultActions perform = mockMvc.perform(post("/api/v1/users")
+    ResultActions perform = mockMvc.perform(post("/api/members")
         .contentType(MediaType.APPLICATION_JSON)
         .content(content)
         .accept(MediaType.APPLICATION_JSON));
@@ -138,7 +138,7 @@ class MemberControllerTest {
   }
 
 
-  @DisplayName("회원등록_실패_이메일_휴대폰중복")
+  @DisplayName("회원등록_실패_모두중복")
   @ParameterizedTest(name = "[{index}] {displayName} email={2}, phoneNumber={1}")
   @CsvSource({
       "홍길동, 01000000000, test@a.b, myNickname1, !myPassword486@",
@@ -159,7 +159,7 @@ class MemberControllerTest {
     String content = objectMapper.writeValueAsString(req);
 
     // when
-    ResultActions perform = mockMvc.perform(post("/api/v1/users")
+    ResultActions perform = mockMvc.perform(post("/api/members")
         .contentType(MediaType.APPLICATION_JSON)
         .content(content)
         .accept(MediaType.APPLICATION_JSON));
@@ -173,6 +173,7 @@ class MemberControllerTest {
 
 
   static class SignUpRequestAggregator implements ArgumentsAggregator {
+
     @Override
     public Object aggregateArguments(ArgumentsAccessor accessor, ParameterContext context) throws ArgumentsAggregationException {
 

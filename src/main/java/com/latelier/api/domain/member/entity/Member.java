@@ -56,9 +56,9 @@ public class Member extends BaseTimeEntity {
   @Embedded
   private Address address;
 
-  private boolean isActive = true;
+  private boolean activated = true;
 
-  @ManyToMany
+  @ManyToMany(fetch = FetchType.LAZY)
   @JoinTable(
       name = "member_authority",
       joinColumns = {@JoinColumn(name = "member_id", referencedColumnName = "id")},
@@ -83,7 +83,7 @@ public class Member extends BaseTimeEntity {
 
 
   public void changeActiveState(boolean bool) {
-    this.isActive = bool;
+    this.activated = bool;
   }
 
 }

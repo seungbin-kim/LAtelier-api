@@ -2,10 +2,12 @@ package com.latelier.api.domain.member.entity;
 
 import com.latelier.api.domain.member.enumeration.Role;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+@Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Authority {
