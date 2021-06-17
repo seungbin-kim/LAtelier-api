@@ -7,6 +7,7 @@ import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.latelier.api.global.properties.JwtProperties;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -19,6 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class TokenProvider {
@@ -60,7 +62,7 @@ public class TokenProvider {
 
     Claim roles = decodedJWT.getClaims().get("roles");
 
-    List<SimpleGrantedAuthority> authorities = Arrays.stream(roles.toString().split(","))
+    List<SimpleGrantedAuthority> authorities = Arrays.stream(roles.asString().split(","))
         .map(SimpleGrantedAuthority::new)
         .collect(Collectors.toList());
 
@@ -85,8 +87,9 @@ public class TokenProvider {
 
       return jwtVerifier.verify(token);
     } catch (Exception e) {
-      throw new InvalidTokenException();
+      log.error("토큰해독 실패", e);
     }
+    return null;
   }
 
 }

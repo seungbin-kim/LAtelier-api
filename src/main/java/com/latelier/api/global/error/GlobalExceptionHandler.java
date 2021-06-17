@@ -66,7 +66,7 @@ public class GlobalExceptionHandler {
 
 
   /**
-   * 권한 자체가 없는 경우
+   * 인증 실패
    */
   @ExceptionHandler(AuthenticationException.class)
   protected ResponseEntity<ErrorResponse> handleAccessDeniedException(final AuthenticationException e) {
@@ -81,7 +81,7 @@ public class GlobalExceptionHandler {
 
 
   /**
-   * Authentication 객체가 필요한 권한이 없는 경우
+   * 필요한 권한이 없는 경우
    */
   @ExceptionHandler(AccessDeniedException.class)
   protected ResponseEntity<ErrorResponse> handleAccessDeniedException(final AccessDeniedException e) {

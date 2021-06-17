@@ -61,7 +61,7 @@ public class AuthController {
   @ApiOperation(
       value = "Zoom OAuth 인증과 회의생성 API 호출",
       notes = "Zoom OAuth 인증 후 회의생성 API 를 호출하여 start url 을 반환합니다.",
-      authorizations = {@Authorization(value = "JWT")})
+      authorizations = {@Authorization(value = "Authorization")})
   @ApiImplicitParams({
       @ApiImplicitParam(name = "code", value = "authorization code", required = true, dataType = "string", paramType = "query"),
       @ApiImplicitParam(name = "state", value = "회의를 생성할 강의 ID", required = true, dataType = "long", paramType = "query")})

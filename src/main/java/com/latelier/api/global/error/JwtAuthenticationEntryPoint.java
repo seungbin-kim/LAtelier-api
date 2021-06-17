@@ -1,7 +1,5 @@
 package com.latelier.api.global.error;
 
-import com.latelier.api.global.error.exception.BusinessException;
-import com.latelier.api.global.error.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -31,8 +29,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
                        final HttpServletResponse response,
                        final AuthenticationException authException) throws IOException, ServletException {
 
-    BusinessException exception = new BusinessException("인증 안됨", ErrorCode.UNAUTHORIZED);
-    handlerExceptionResolver.resolveException(request, response, null, exception);
+    handlerExceptionResolver.resolveException(request, response, null, authException);
   }
 
 }

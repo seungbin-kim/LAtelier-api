@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -18,7 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 @RequiredArgsConstructor
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   private final TokenProvider tokenProvider;
@@ -33,6 +34,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     return new BCryptPasswordEncoder();
   }
 
+
+  @Override
+  public void configure(WebSecurity web) throws Exception {
+    web
+        .ignoring()
+        .antMatchers(
+            "/swagger-ui/**",
+            "/swagger-resources/**",
+            "/v3/api-docs");
+  }
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
@@ -55,6 +66,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .antMatchers("/auth/sign-in").permitAll()
         .antMatchers("/auth/sms").permitAll()
         .antMatchers("/auth/verification").permitAll()
+        .anyRequest().authenticated()
 
         .and()
         .apply(new JwtSecurityConfig(tokenProvider));

@@ -1,7 +1,5 @@
 package com.latelier.api.global.error;
 
-import com.latelier.api.global.error.exception.BusinessException;
-import com.latelier.api.global.error.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
@@ -31,7 +29,6 @@ public class JwtAccessDeniedHandler implements AccessDeniedHandler {
                      final HttpServletResponse response,
                      final AccessDeniedException accessDeniedException) throws IOException, ServletException {
 
-    BusinessException exception = new BusinessException("필요 권한이 없음", ErrorCode.INSUFFICIENT_SCOPE);
-    handlerExceptionResolver.resolveException(request, response, null, exception);
+    handlerExceptionResolver.resolveException(request, response, null, accessDeniedException);
   }
 }

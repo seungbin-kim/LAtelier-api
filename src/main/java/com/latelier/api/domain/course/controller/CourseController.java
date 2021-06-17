@@ -26,11 +26,11 @@ public class CourseController {
 
 
   @PostMapping("/v1/courses/{courseId}")
-  @PreAuthorize("hasAnyRole('USER', 'TEACHER', 'ADMIN')")
+  @PreAuthorize("isAuthenticated()")
   @ApiOperation(
       value = "강의 입장정보 요청",
       notes = "SDK 에서 강의에 입장하기위한 정보를 요청합니다.",
-      authorizations = {@Authorization(value = "JWT")})
+      authorizations = {@Authorization(value = "Authorization")})
   @ApiImplicitParams({
       @ApiImplicitParam(name = "courseId", value = "강의 ID", required = true, dataType = "long", paramType = "path", example = "1")})
   public ResponseEntity<Result<ResMeetingInformation>> getMeetingV1(@PathVariable final Long courseId) {
