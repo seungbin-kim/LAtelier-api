@@ -44,18 +44,6 @@ public class ReqSignUp {
       required = true)
   private String email;
 
-  @Size(
-      min = 2,
-      max = 12,
-      message = "닉네임의 길이는 2 ~ 12글자 이어야 합니다.")
-  @NotBlank(message = "닉네임은 필수입니다.")
-  @ApiModelProperty(
-      value = "닉네임",
-      name = "nickname",
-      example = "myNickname",
-      required = true)
-  private String nickname;
-
   @Pattern(
       regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[$@$!%*#?&])[A-Za-z\\d$@$!%*#?&]{8,16}$",
       message = "비밀번호는 최소 8자에서 최대 16자, 최소 하나의 문자와 숫자, 특수문자를 포함해야 합니다.")
