@@ -30,12 +30,6 @@ public class ResSignUp {
       example = "test@a.b")
   private final String email;
 
-  @ApiModelProperty(
-      value = "닉네임",
-      name = "nickname",
-      example = "myNickname")
-  private final String nickname;
-
 
   public static ResSignUp createSignUpResponse(final Member member) {
 
@@ -43,8 +37,7 @@ public class ResSignUp {
         new ResSignUp(
             member.getName(),
             member.getPhoneNumber(),
-            member.getEmail(),
-            member.getNickname());
+            member.getEmail());
   }
 
 }

@@ -41,18 +41,15 @@ class MemberServiceTest {
     String name = "홍길동";
     String phoneNumber = "01012345678";
     String email = "test@a.b";
-    String nickname = "nickname";
     String password = "myPassword";
     ReflectionTestUtils.setField(reqSignUp, "name", name);
     ReflectionTestUtils.setField(reqSignUp, "phoneNumber", phoneNumber);
     ReflectionTestUtils.setField(reqSignUp, "email", email);
-    ReflectionTestUtils.setField(reqSignUp, "nickname", nickname);
     ReflectionTestUtils.setField(reqSignUp, "password", password);
 
     Member member = Member.builder()
         .email(email)
         .name(name)
-        .nickname(nickname)
         .phoneNumber(phoneNumber)
         .password(password)
         .build();
@@ -70,7 +67,6 @@ class MemberServiceTest {
     // then
     assertEquals(email, resSignUp.getEmail());
     assertEquals(name, resSignUp.getName());
-    assertEquals(nickname, resSignUp.getNickname());
     assertEquals(phoneNumber, resSignUp.getPhoneNumber());
   }
 
@@ -83,18 +79,15 @@ class MemberServiceTest {
     String name = "홍길동";
     String phoneNumber = "01012345678";
     String email = "test@a.b";
-    String nickname = "nickname";
     String password = "myPassword";
     ReflectionTestUtils.setField(reqSignUp, "name", name);
     ReflectionTestUtils.setField(reqSignUp, "phoneNumber", phoneNumber);
     ReflectionTestUtils.setField(reqSignUp, "email", email);
-    ReflectionTestUtils.setField(reqSignUp, "nickname", nickname);
     ReflectionTestUtils.setField(reqSignUp, "password", password);
 
     Member member = Member.builder()
         .email(email)
         .name(name)
-        .nickname(nickname)
         .phoneNumber(phoneNumber)
         .password(password)
         .build();
@@ -119,18 +112,15 @@ class MemberServiceTest {
     String name = "홍길동";
     String phoneNumber = "01012345678";
     String email = "test@a.b";
-    String nickname = "nickname";
     String password = "myPassword";
     ReflectionTestUtils.setField(reqSignUp, "name", name);
     ReflectionTestUtils.setField(reqSignUp, "phoneNumber", phoneNumber);
     ReflectionTestUtils.setField(reqSignUp, "email", email);
-    ReflectionTestUtils.setField(reqSignUp, "nickname", nickname);
     ReflectionTestUtils.setField(reqSignUp, "password", password);
 
     Member member = Member.builder()
         .email(email)
         .name(name)
-        .nickname(nickname)
         .phoneNumber(phoneNumber)
         .password(password)
         .build();
@@ -155,18 +145,15 @@ class MemberServiceTest {
     String name = "홍길동";
     String phoneNumber = "01012345678";
     String email = "test@a.b";
-    String nickname = "nickname";
     String password = "myPassword";
     ReflectionTestUtils.setField(reqSignUp, "name", name);
     ReflectionTestUtils.setField(reqSignUp, "phoneNumber", phoneNumber);
     ReflectionTestUtils.setField(reqSignUp, "email", email);
-    ReflectionTestUtils.setField(reqSignUp, "nickname", nickname);
     ReflectionTestUtils.setField(reqSignUp, "password", password);
 
     Member member = Member.builder()
         .email(email)
         .name(name)
-        .nickname(nickname)
         .phoneNumber(phoneNumber)
         .password(password)
         .build();

@@ -32,7 +32,6 @@ class MemberTest {
         .email("test@test.com")
         .phoneNumber("01012345678")
         .name("test")
-        .nickname("testNickname")
         .build();
 
     //when

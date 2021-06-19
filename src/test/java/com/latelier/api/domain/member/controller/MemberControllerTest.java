@@ -46,9 +46,9 @@ class MemberControllerTest {
   @DisplayName("회원등록_성공")
   @ParameterizedTest(name = "[{index}] {displayName} name={0}")
   @CsvSource({
-      "홍길동, 01011111111, test1@a.b, myNickname1, !myPassword486@",
-      "홍길순, 01022222222, test2@a.b, myNickname2, !myPassword486@",
-      "홍길복, 01033333333, test3@a.b, myNickname3, !myPassword486@"})
+      "홍길동, 01011111111, test1@a.b, !myPassword486@",
+      "홍길순, 01022222222, test2@a.b, !myPassword486@",
+      "홍길복, 01033333333, test3@a.b, !myPassword486@"})
   void signUpSuccess(@AggregateWith(SignUpRequestAggregator.class) ReqSignUp req) throws Exception {
     // given
     String content = objectMapper.writeValueAsString(req);
@@ -65,7 +65,6 @@ class MemberControllerTest {
         .andExpect(jsonPath("$.content.name").value(req.getName()))
         .andExpect(jsonPath("$.content.phoneNumber").value(req.getPhoneNumber()))
         .andExpect(jsonPath("$.content.email").value(req.getEmail()))
-        .andExpect(jsonPath("$.content.nickname").value(req.getNickname()))
         .andDo(print());
   }
 
@@ -73,9 +72,9 @@ class MemberControllerTest {
   @DisplayName("회원등록_실패_이메일중복")
   @ParameterizedTest(name = "[{index}] {displayName} email={2}")
   @CsvSource({
-      "홍길동, 01011111111, test@a.b, myNickname1, !myPassword486@",
-      "홍길순, 01022222222, test@a.b, myNickname2, !myPassword486@",
-      "홍길복, 01033333333, test@a.b, myNickname3, !myPassword486@"})
+      "홍길동, 01011111111, test@a.b, !myPassword486@",
+      "홍길순, 01022222222, test@a.b, !myPassword486@",
+      "홍길복, 01033333333, test@a.b, !myPassword486@"})
   void signUpEmailDuplicate(@AggregateWith(SignUpRequestAggregator.class) ReqSignUp req) throws Exception {
     // given
     MemberRepository memberRepository = context.getBean(MemberRepository.class);
@@ -83,7 +82,6 @@ class MemberControllerTest {
         .name("테스터")
         .phoneNumber("01000000000")
         .email("test@a.b")
-        .nickname("nickname")
         .password("password")
         .build();
     memberRepository.save(member);
@@ -107,9 +105,9 @@ class MemberControllerTest {
   @DisplayName("회원등록_실패_휴대폰중복")
   @ParameterizedTest(name = "[{index}] {displayName} phoneNumber={1}")
   @CsvSource({
-      "홍길동, 01000000000, test1@a.b, myNickname1, !myPassword486@",
-      "홍길순, 01000000000, test2@a.b, myNickname2, !myPassword486@",
-      "홍길복, 01000000000, test3@a.b, myNickname3, !myPassword486@"})
+      "홍길동, 01000000000, test1@a.b, !myPassword486@",
+      "홍길순, 01000000000, test2@a.b, !myPassword486@",
+      "홍길복, 01000000000, test3@a.b, !myPassword486@"})
   void signUpPhoneNumberDuplicate(@AggregateWith(SignUpRequestAggregator.class) ReqSignUp req) throws Exception {
     // given
     MemberRepository memberRepository = context.getBean(MemberRepository.class);
@@ -117,7 +115,6 @@ class MemberControllerTest {
         .name("테스터")
         .phoneNumber("01000000000")
         .email("test@a.b")
-        .nickname("nickname")
         .password("password")
         .build();
     memberRepository.save(member);
@@ -141,9 +138,9 @@ class MemberControllerTest {
   @DisplayName("회원등록_실패_모두중복")
   @ParameterizedTest(name = "[{index}] {displayName} email={2}, phoneNumber={1}")
   @CsvSource({
-      "홍길동, 01000000000, test@a.b, myNickname1, !myPassword486@",
-      "홍길순, 01000000000, test@a.b, myNickname2, !myPassword486@",
-      "홍길복, 01000000000, test@a.b, myNickname3, !myPassword486@"})
+      "홍길동, 01000000000, test@a.b, !myPassword486@",
+      "홍길순, 01000000000, test@a.b, !myPassword486@",
+      "홍길복, 01000000000, test@a.b, !myPassword486@"})
   void signUpDuplicate(@AggregateWith(SignUpRequestAggregator.class) ReqSignUp req) throws Exception {
     // given
     MemberRepository memberRepository = context.getBean(MemberRepository.class);
@@ -151,7 +148,6 @@ class MemberControllerTest {
         .name("테스터")
         .phoneNumber("01000000000")
         .email("test@a.b")
-        .nickname("nickname")
         .password("password")
         .build();
     memberRepository.save(member);
@@ -181,8 +177,7 @@ class MemberControllerTest {
       ReflectionTestUtils.setField(reqSignUp, "name", accessor.getString(0));
       ReflectionTestUtils.setField(reqSignUp, "phoneNumber", accessor.getString(1));
       ReflectionTestUtils.setField(reqSignUp, "email", accessor.getString(2));
-      ReflectionTestUtils.setField(reqSignUp, "nickname", accessor.getString(3));
-      ReflectionTestUtils.setField(reqSignUp, "password", accessor.getString(4));
+      ReflectionTestUtils.setField(reqSignUp, "password", accessor.getString(3));
       return reqSignUp;
     }
   }
