@@ -11,10 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -25,7 +22,7 @@ public class CourseController {
   private final MeetingInformationService meetingInformationService;
 
 
-  @PostMapping("/v1/courses/{courseId}")
+  @GetMapping("/v1/courses/{courseId}/participation-information")
   @PreAuthorize("isAuthenticated()")
   @ApiOperation(
       value = "강의 입장정보 요청",
