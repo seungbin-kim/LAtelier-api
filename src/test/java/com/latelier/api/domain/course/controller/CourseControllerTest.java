@@ -83,6 +83,50 @@ class CourseControllerTest {
     }
 
 
+    @Test
+    @DisplayName("강의_입장정보_요청실패_비회원")
+    void getMeetingFail() throws Exception {
+        // given
+        String name = "홍길동";
+        String email = "test@a.b";
+        String phoneNumber = "01074787389";
+        String password = "pwd";
+
+        registerRole();
+        Member member = Member.builder()
+                .name(name)
+                .email(email)
+                .phoneNumber(phoneNumber)
+                .password(password)
+                .build();
+        em.persist(member);
+
+        String courseName = "테스트";
+        Course course = Course.builder()
+                .teacher(member)
+                .courseName(courseName)
+                .build();
+        em.persist(course);
+        Long courseId = course.getId();
+
+        String meetingId = "000000";
+        String meetingPw = "pwd";
+        MeetingInformation meetingInformation = new MeetingInformation(
+                course,
+                meetingId,
+                meetingPw);
+        em.persist(meetingInformation);
+
+        // when
+        ResultActions perform = mockMvc.perform(get("/api/v1/courses/{courseId}/participation-information", courseId)
+                .accept(MediaType.APPLICATION_JSON));
+
+        // then
+        perform.andExpect(status().isUnauthorized())
+                .andDo(print());
+    }
+
+
     private void registerRole() {
         em.createNativeQuery("INSERT INTO authority (authority_name) VALUES ('ROLE_USER')").executeUpdate();
         em.createNativeQuery("INSERT INTO authority (authority_name) VALUES ('ROLE_TEACHER')").executeUpdate();
