@@ -85,7 +85,7 @@ class CourseControllerTest {
 
     @Test
     @DisplayName("강의_입장정보_요청실패_비회원")
-    void getMeetingFail() throws Exception {
+    void getMeetingNonMemberFail() throws Exception {
         // given
         String name = "홍길동";
         String email = "test@a.b";
@@ -123,6 +123,49 @@ class CourseControllerTest {
 
         // then
         perform.andExpect(status().isUnauthorized())
+                .andDo(print());
+    }
+
+    @Test
+    @WithMockUser(value = "1", roles = {"USER"})
+    @DisplayName("강의_입장정보_요청실패_열려있지_않은_강의")
+    void getMeetingNotOpenFail() throws Exception {
+        // given
+        String name = "홍길동";
+        String email = "test@a.b";
+        String phoneNumber = "01074787389";
+        String password = "pwd";
+
+        registerRole();
+        Member member = Member.builder()
+                .name(name)
+                .email(email)
+                .phoneNumber(phoneNumber)
+                .password(password)
+                .build();
+        em.persist(member);
+
+        String courseName = "테스트";
+        Course course = Course.builder()
+                .teacher(member)
+                .courseName(courseName)
+                .build();
+        em.persist(course);
+
+        String meetingId = "000000";
+        String meetingPw = "pwd";
+        MeetingInformation meetingInformation = new MeetingInformation(
+                course,
+                meetingId,
+                meetingPw);
+        em.persist(meetingInformation);
+
+        // when
+        ResultActions perform = mockMvc.perform(get("/api/v1/courses/{courseId}/participation-information", 100)
+                .accept(MediaType.APPLICATION_JSON));
+
+        // then
+        perform.andExpect(status().isNotFound())
                 .andDo(print());
     }
 
