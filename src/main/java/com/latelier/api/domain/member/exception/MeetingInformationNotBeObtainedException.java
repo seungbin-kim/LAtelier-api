@@ -6,7 +6,7 @@ import com.latelier.api.global.error.exception.ErrorCode;
 public class MeetingInformationNotBeObtainedException extends BusinessException {
 
   public MeetingInformationNotBeObtainedException() {
-    super("회의 정보를 얻지 못하였습니다.", ErrorCode.NOT_OBTAIN_MEETING_INFORMATION);
+    super("회의 정보를 얻지 못하였습니다.", ErrorCode.MEETING_INFORMATION_NOT_OBTAIN);
   }
 
 }

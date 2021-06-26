@@ -13,23 +13,23 @@ public enum ErrorCode {
   INVALID_TOKEN(401, "C003", "Invalid Token"),
   UNAUTHORIZED(401, "C004", "Unauthorized"),
   INSUFFICIENT_SCOPE(403, "C005", "Insufficient Scope"),
-  NOT_FOUND(404, "C006", "Not Found"),
-  DUPLICATION(409, "C007", "Duplicate"),
+//  NOT_FOUND(404, "C006", "Not Found"),
+//  DUPLICATION(409, "C007", "Duplicate"),
   INCORRECT_FORMAT(400, "C008", "Incorrect Format"),
   INTERNAL_SERVER_ERROR(500, "C050", "Server Error"),
 
   // Member
   LOGIN_INPUT_INVALID(400, "M001", "Login input is invalid"),
   SMS_VERIFICATION_FAILED(400, "M002", "Sms Verification Failed"),
-  DUPLICATE_EMAIL(409, "M003", "Duplicate Email"),
-  DUPLICATE_PHONE_NUMBER(409, "M004", "Duplicate Phone Number"),
-  DUPLICATE_EMAIL_AND_PHONE_NUMBER(409, "M005", "Duplicate Email And Phone Number"),
-  NOT_FOUND_EMAIL(404, "M006", "Not Found Email"),
+  EMAIL_DUPLICATE(409, "M003", "Duplicate Email"),
+  PHONE_NUMBER_DUPLICATE(409, "M004", "Duplicate Phone Number"),
+  EMAIL_AND_PHONE_NUMBER_DUPLICATE(409, "M005", "Duplicate Email And Phone Number"),
+  EMAIL_NOT_FOUND(404, "M006", "Not Found Email"),
   NOT_ACTIVATED(404, "M010", "Not Activated"),
 
   // Zoom
-  NOT_OBTAIN_ACCESS_TOKEN(500, "Z001", "Not Obtain Access Token"),
-  NOT_OBTAIN_MEETING_INFORMATION(500, "Z002", "Not Obtain Meeting Information"),
+  ACCESS_TOKEN_NOT_OBTAIN(500, "Z001", "Not Obtain Access Token"),
+  MEETING_INFORMATION_NOT_OBTAIN(500, "Z002", "Not Obtain Meeting Information"),
   ACCESS_TOKEN_REQUEST_FAILED(500, "Z003", "Access Token Request Failed"),
   ZOOM_API_CALL_FAILED(500, "Z004", "Zoom API Request Failed"),
 

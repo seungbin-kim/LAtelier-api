@@ -97,7 +97,7 @@ class MemberControllerTest {
     // then
     perform
         .andExpect(status().isConflict())
-        .andExpect(jsonPath("$.message").value(ErrorCode.DUPLICATE_EMAIL.getMessage()))
+        .andExpect(jsonPath("$.message").value(ErrorCode.EMAIL_DUPLICATE.getMessage()))
         .andDo(print());
   }
 
@@ -130,7 +130,7 @@ class MemberControllerTest {
     // then
     perform
         .andExpect(status().isConflict())
-        .andExpect(jsonPath("$.message").value(ErrorCode.DUPLICATE_PHONE_NUMBER.getMessage()))
+        .andExpect(jsonPath("$.message").value(ErrorCode.PHONE_NUMBER_DUPLICATE.getMessage()))
         .andDo(print());
   }
 
@@ -163,7 +163,7 @@ class MemberControllerTest {
     // then
     perform
         .andExpect(status().isConflict())
-        .andExpect(jsonPath("$.message").value(ErrorCode.DUPLICATE_EMAIL_AND_PHONE_NUMBER.getMessage()))
+        .andExpect(jsonPath("$.message").value(ErrorCode.EMAIL_AND_PHONE_NUMBER_DUPLICATE.getMessage()))
         .andDo(print());
   }
 

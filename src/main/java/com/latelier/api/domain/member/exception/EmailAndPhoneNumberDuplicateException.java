@@ -6,7 +6,7 @@ import com.latelier.api.global.error.exception.ErrorCode;
 public class EmailAndPhoneNumberDuplicateException extends DuplicateException {
 
   public EmailAndPhoneNumberDuplicateException(final String email, final String phoneNumber) {
-    super("email: " + email + ", phoneNumber: " + phoneNumber, ErrorCode.DUPLICATE_EMAIL_AND_PHONE_NUMBER);
+    super("email: " + email + ", phoneNumber: " + phoneNumber, ErrorCode.EMAIL_AND_PHONE_NUMBER_DUPLICATE);
   }
 
 }
