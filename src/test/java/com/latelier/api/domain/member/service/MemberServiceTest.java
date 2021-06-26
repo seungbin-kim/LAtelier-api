@@ -1,9 +1,9 @@
 package com.latelier.api.domain.member.service;
 
 import com.latelier.api.domain.member.entity.Member;
-import com.latelier.api.domain.member.exception.DuplicateEmailAndPhoneNumberException;
-import com.latelier.api.domain.member.exception.DuplicateEmailException;
-import com.latelier.api.domain.member.exception.DuplicatePhoneNumberException;
+import com.latelier.api.domain.member.exception.EmailAndPhoneNumberDuplicateException;
+import com.latelier.api.domain.member.exception.EmailDuplicateException;
+import com.latelier.api.domain.member.exception.PhoneNumberDuplicateException;
 import com.latelier.api.domain.member.packet.request.ReqSignUp;
 import com.latelier.api.domain.member.packet.response.ResSignUp;
 import com.latelier.api.domain.member.repository.MemberRepository;
@@ -99,7 +99,7 @@ class MemberServiceTest {
 
     // when, then
     assertThrows(
-        DuplicateEmailException.class,
+        EmailDuplicateException.class,
         () -> memberService.addMember(reqSignUp));
   }
 
@@ -132,7 +132,7 @@ class MemberServiceTest {
 
     // when, then
     assertThrows(
-        DuplicatePhoneNumberException.class,
+        PhoneNumberDuplicateException.class,
         () -> memberService.addMember(reqSignUp));
   }
 
@@ -165,7 +165,7 @@ class MemberServiceTest {
 
     // when, then
     assertThrows(
-        DuplicateEmailAndPhoneNumberException.class,
+        EmailAndPhoneNumberDuplicateException.class,
         () -> memberService.addMember(reqSignUp));
   }
 

@@ -1,6 +1,6 @@
 package com.latelier.api.domain.member.service;
 
-import com.latelier.api.domain.member.exception.DuplicatePhoneNumberException;
+import com.latelier.api.domain.member.exception.PhoneNumberDuplicateException;
 import com.latelier.api.domain.member.exception.SmsApiRequestException;
 import com.latelier.api.domain.member.exception.SmsVerificationException;
 import com.latelier.api.domain.member.packet.request.ReqSms;
@@ -27,114 +27,114 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class SmsService {
 
-  private final MemberRepository memberRepository;
+    private final MemberRepository memberRepository;
 
-  private final SmsCertificationRepository smsCertificationRepository;
+    private final SmsCertificationRepository smsCertificationRepository;
 
-  private final NaverProperties naverProperties;
+    private final NaverProperties naverProperties;
 
-  private final SignatureGenerator signatureGenerator;
+    private final SignatureGenerator signatureGenerator;
 
-  private final RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
 
-  /**
-   * 인증번호를 만들어 사용자에게 전송후 Redis 저장
-   *
-   * @param phoneNumber 수신 휴대폰번호
-   */
-  @Transactional
-  public void sendCertificationNumber(final String phoneNumber) {
+    /**
+     * 인증번호를 만들어 사용자에게 전송후 Redis 저장
+     *
+     * @param phoneNumber 수신 휴대폰번호
+     */
+    @Transactional
+    public void sendCertificationNumber(final String phoneNumber) {
 
-    if (memberRepository.existsByPhoneNumber(phoneNumber)) {
-      throw new DuplicatePhoneNumberException(phoneNumber);
+        if (memberRepository.existsByPhoneNumber(phoneNumber)) {
+            throw new PhoneNumberDuplicateException(phoneNumber);
+        }
+
+        int randomNumber = getRandomNumber();
+        ReqSms smsRequest = makeSmsRequest(phoneNumber, randomNumber);
+        callApi(smsRequest);
+
+        smsCertificationRepository.saveSmsCertification(phoneNumber, randomNumber);
     }
 
-    int randomNumber = getRandomNumber();
-    ReqSms smsRequest = makeSmsRequest(phoneNumber, randomNumber);
-    callApi(smsRequest);
 
-    smsCertificationRepository.saveSmsCertification(phoneNumber, randomNumber);
-  }
+    /**
+     * Redis 에 저장된 인증번호와 사용자가 입력한 인증번호 일치여부 확인
+     *
+     * @param phoneNumber         휴대폰번호
+     * @param certificationNumber 인증번호
+     */
+    public void verifySMS(final String phoneNumber, final String certificationNumber) {
 
-
-  /**
-   * Redis 에 저장된 인증번호와 사용자가 입력한 인증번호 일치여부 확인
-   *
-   * @param phoneNumber         휴대폰번호
-   * @param certificationNumber 인증번호
-   */
-  public void verifySMS(final String phoneNumber, final String certificationNumber) {
-
-    if (!isVerify(phoneNumber, certificationNumber)) {
-      throw new SmsVerificationException();
+        if (!isVerify(phoneNumber, certificationNumber)) {
+            throw new SmsVerificationException();
+        }
+        smsCertificationRepository.removeSmsCertification(phoneNumber);
     }
-    smsCertificationRepository.removeSmsCertification(phoneNumber);
-  }
 
 
-  private boolean isVerify(final String phoneNumber, final String certificationNumber) {
+    private boolean isVerify(final String phoneNumber, final String certificationNumber) {
 
-    if (smsCertificationRepository.hasKey(phoneNumber)) {
-      return smsCertificationRepository.getSmsCertification(phoneNumber).equals(certificationNumber);
+        if (smsCertificationRepository.hasKey(phoneNumber)) {
+            return smsCertificationRepository.getSmsCertification(phoneNumber).equals(certificationNumber);
+        }
+        return false;
     }
-    return false;
-  }
 
 
-  /**
-   * 인증번호 전송을 위한 요청 생성
-   *
-   * @param phoneNumber  수신 휴대폰번호
-   * @param randomNumber 랜덤으로 생성된 번호
-   * @return 6자리의 랜덤 인증번호가 설정된 요청
-   */
-  private ReqSms makeSmsRequest(final String phoneNumber, final int randomNumber) {
+    /**
+     * 인증번호 전송을 위한 요청 생성
+     *
+     * @param phoneNumber  수신 휴대폰번호
+     * @param randomNumber 랜덤으로 생성된 번호
+     * @return 6자리의 랜덤 인증번호가 설정된 요청
+     */
+    private ReqSms makeSmsRequest(final String phoneNumber, final int randomNumber) {
 
-    String from = naverProperties.getCloudPlatform().getSens().getSmsFrom();
+        String from = naverProperties.getCloudPlatform().getSens().getSmsFrom();
 
-    List<ReqSms.Message> messages = new ArrayList<>();
-    messages.add(ReqSms.Message.createMessage(phoneNumber));
+        List<ReqSms.Message> messages = new ArrayList<>();
+        messages.add(ReqSms.Message.createMessage(phoneNumber));
 
-    String content = "[Latelier] 인증번호는 [" + randomNumber + "] 입니다.";
-    return ReqSms.createSmsRequest(from, content, messages);
-  }
-
-
-  /**
-   * 네이버 SENS API 호출
-   *
-   * @param smsRequest SMS 요청 객체
-   */
-  private void callApi(final ReqSms smsRequest) {
-
-    final String time = Long.toString(System.currentTimeMillis());
-    final String serviceId = naverProperties.getCloudPlatform().getSens().getServiceId();
-    final String signature = signatureGenerator.generateSignatureForSms(time);
-    final String url = naverProperties.getCloudPlatform().getSens().getUrl() + serviceId + "/messages";
-
-    HttpHeaders httpHeaders = new HttpHeaders();
-    httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-    httpHeaders.set("x-ncp-apigw-timestamp", time);
-    httpHeaders.set("x-ncp-iam-access-key", naverProperties.getCloudPlatform().getKey());
-    httpHeaders.set("x-ncp-apigw-signature-v2", signature);
-
-    HttpEntity<ReqSms> body = new HttpEntity<>(smsRequest, httpHeaders);
-
-    try {
-      restTemplate.postForObject(
-          url,
-          body,
-          ResSms.class);
-    } catch (Exception e) {
-      throw new SmsApiRequestException();
+        String content = "[Latelier] 인증번호는 [" + randomNumber + "] 입니다.";
+        return ReqSms.createSmsRequest(from, content, messages);
     }
-  }
 
 
-  private int getRandomNumber() {
+    /**
+     * 네이버 SENS API 호출
+     *
+     * @param smsRequest SMS 요청 객체
+     */
+    private void callApi(final ReqSms smsRequest) {
 
-    return (int) (Math.random() * 900000) + 100000;
-  }
+        final String time = Long.toString(System.currentTimeMillis());
+        final String serviceId = naverProperties.getCloudPlatform().getSens().getServiceId();
+        final String signature = signatureGenerator.generateSignatureForSms(time);
+        final String url = naverProperties.getCloudPlatform().getSens().getUrl() + serviceId + "/messages";
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+        httpHeaders.set("x-ncp-apigw-timestamp", time);
+        httpHeaders.set("x-ncp-iam-access-key", naverProperties.getCloudPlatform().getKey());
+        httpHeaders.set("x-ncp-apigw-signature-v2", signature);
+
+        HttpEntity<ReqSms> body = new HttpEntity<>(smsRequest, httpHeaders);
+
+        try {
+            restTemplate.postForObject(
+                    url,
+                    body,
+                    ResSms.class);
+        } catch (Exception e) {
+            throw new SmsApiRequestException();
+        }
+    }
+
+
+    private int getRandomNumber() {
+
+        return (int) (Math.random() * 900000) + 100000;
+    }
 
 }
