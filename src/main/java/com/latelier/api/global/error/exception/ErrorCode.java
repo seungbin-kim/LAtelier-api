@@ -19,12 +19,13 @@ public enum ErrorCode {
   INTERNAL_SERVER_ERROR(500, "C050", "Server Error"),
 
   // Member
-  LOGIN_INPUT_INVALID(400, "M001", "Login input is invalid"),
-  SMS_VERIFICATION_FAILED(400, "M002", "Sms Verification Failed"),
-  EMAIL_DUPLICATE(409, "M003", "Duplicate Email"),
-  PHONE_NUMBER_DUPLICATE(409, "M004", "Duplicate Phone Number"),
-  EMAIL_AND_PHONE_NUMBER_DUPLICATE(409, "M005", "Duplicate Email And Phone Number"),
-  EMAIL_NOT_FOUND(404, "M006", "Not Found Email"),
+  MEMBER_NOT_FOUND(404, "M001", "Not Found Member"),
+  LOGIN_INPUT_INVALID(400, "M002", "Login input is invalid"),
+  SMS_VERIFICATION_FAILED(400, "M003", "Sms Verification Failed"),
+  EMAIL_DUPLICATE(409, "M004", "Duplicate Email"),
+  PHONE_NUMBER_DUPLICATE(409, "M005", "Duplicate Phone Number"),
+  EMAIL_AND_PHONE_NUMBER_DUPLICATE(409, "M006", "Duplicate Email And Phone Number"),
+  EMAIL_NOT_FOUND(404, "M007", "Not Found Email"),
   NOT_ACTIVATED(404, "M010", "Not Activated"),
 
   // Zoom
