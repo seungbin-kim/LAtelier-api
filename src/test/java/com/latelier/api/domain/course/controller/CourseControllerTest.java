@@ -69,7 +69,7 @@ class CourseControllerTest {
         em.persist(meetingInformation);
 
         // when
-        ResultActions perform = mockMvc.perform(get("/api/v1/courses/{courseId}/participation-information", courseId)
+        ResultActions perform = mockMvc.perform(get("/api/courses/{courseId}/participation-information", courseId)
                 .accept(MediaType.APPLICATION_JSON));
 
         // then
@@ -118,7 +118,7 @@ class CourseControllerTest {
         em.persist(meetingInformation);
 
         // when
-        ResultActions perform = mockMvc.perform(get("/api/v1/courses/{courseId}/participation-information", courseId)
+        ResultActions perform = mockMvc.perform(get("/api/courses/{courseId}/participation-information", courseId)
                 .accept(MediaType.APPLICATION_JSON));
 
         // then
@@ -161,7 +161,7 @@ class CourseControllerTest {
         em.persist(meetingInformation);
 
         // when
-        ResultActions perform = mockMvc.perform(get("/api/v1/courses/{courseId}/participation-information", 100)
+        ResultActions perform = mockMvc.perform(get("/api/courses/{courseId}/participation-information", 100)
                 .accept(MediaType.APPLICATION_JSON));
 
         // then

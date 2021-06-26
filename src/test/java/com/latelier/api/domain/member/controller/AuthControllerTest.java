@@ -53,7 +53,7 @@ class AuthControllerTest {
         String content = objectMapper.writeValueAsString(req);
 
         // when
-        ResultActions perform = mockMvc.perform(post("/auth/sms")
+        ResultActions perform = mockMvc.perform(post("/api/auth/sms")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content));
 
@@ -78,7 +78,7 @@ class AuthControllerTest {
         String content = objectMapper.writeValueAsString(req);
 
         // when
-        ResultActions perform = mockMvc.perform(post("/auth/sms/verification")
+        ResultActions perform = mockMvc.perform(post("/api/auth/sms/verification")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content));
 
@@ -113,7 +113,7 @@ class AuthControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(signUpRequest));
 
-        ResultActions perform = mockMvc.perform(post("/auth/sign-in")
+        ResultActions perform = mockMvc.perform(post("/api/auth/sign-in")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content));
 
@@ -154,7 +154,7 @@ class AuthControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(signUpRequest));
 
-        ResultActions perform = mockMvc.perform(post("/auth/sign-in")
+        ResultActions perform = mockMvc.perform(post("/api/auth/sign-in")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content));
 
@@ -194,7 +194,7 @@ class AuthControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(signUpRequest));
 
-        ResultActions perform = mockMvc.perform(post("/auth/sign-in")
+        ResultActions perform = mockMvc.perform(post("/api/auth/sign-in")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content));
 

@@ -28,7 +28,7 @@ import java.net.URISyntaxException;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 public class AuthController {
 
     private final ZoomService zoomService;

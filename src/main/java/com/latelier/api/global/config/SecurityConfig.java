@@ -63,9 +63,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .and()
         .authorizeRequests()
         .antMatchers(HttpMethod.POST, "/api/members").permitAll()
-        .antMatchers("/auth/sign-in").permitAll()
-        .antMatchers("/auth/sms").permitAll()
-        .antMatchers("/auth/sms/verification").permitAll()
+        .antMatchers("/api/auth/sign-in").permitAll()
+        .antMatchers("/api//auth/sms").permitAll()
+        .antMatchers("/api/auth/sms/verification").permitAll()
         .anyRequest().authenticated()
 
         .and()

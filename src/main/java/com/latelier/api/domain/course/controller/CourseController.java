@@ -22,7 +22,7 @@ public class CourseController {
   private final MeetingInformationService meetingInformationService;
 
 
-  @GetMapping("/v1/courses/{courseId}/participation-information")
+  @GetMapping("/courses/{courseId}/participation-information")
   @PreAuthorize("isAuthenticated()")
   @ApiOperation(
       value = "강의 입장정보 요청",
@@ -30,7 +30,7 @@ public class CourseController {
       authorizations = {@Authorization(value = "Authorization")})
   @ApiImplicitParams({
       @ApiImplicitParam(name = "courseId", value = "강의 ID", required = true, dataType = "long", paramType = "path", example = "1")})
-  public ResponseEntity<Result<ResMeetingInformation>> getMeetingV1(@PathVariable final Long courseId) {
+  public ResponseEntity<Result<ResMeetingInformation>> getMeeting(@PathVariable final Long courseId) {
 
     return
         ResponseEntity.ok(

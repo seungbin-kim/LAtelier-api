@@ -31,7 +31,7 @@ public class MemberController {
   @ApiResponses({
       @ApiResponse(responseCode = "200", description = "회원등록 성공"),
       @ApiResponse(responseCode = "409", description = "이메일 또는 휴대폰번호 중복")})
-  public ResponseEntity<Result<ResSignUp>> signUpV1(@RequestBody @Valid final ReqSignUp reqSignUp) {
+  public ResponseEntity<Result<ResSignUp>> signUp(@RequestBody @Valid final ReqSignUp reqSignUp) {
 
     ResSignUp response = memberService.addMember(reqSignUp);
     return
