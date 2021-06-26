@@ -6,6 +6,7 @@ import com.latelier.api.domain.member.entity.Member;
 import com.latelier.api.domain.member.enumeration.Role;
 import com.latelier.api.domain.member.exception.EmailAndPhoneNumberDuplicateException;
 import com.latelier.api.domain.member.exception.EmailDuplicateException;
+import com.latelier.api.domain.member.exception.MemberNotFoundException;
 import com.latelier.api.domain.member.exception.PhoneNumberDuplicateException;
 import com.latelier.api.domain.member.packet.request.ReqSignUp;
 import com.latelier.api.domain.member.packet.response.ResSignUp;
@@ -72,7 +73,22 @@ public class MemberService {
 
 
     /**
+     * 회원 ID로 회원찾기
+     * 찾지 못할시 예외발생
+     *
+     * @param memberId 회원 ID
+     * @return ID 에 해당하는 회원
+     */
+    public Member getMemberById(final Long memberId) {
+
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberNotFoundException(String.valueOf(memberId)));
+    }
+
+
+    /**
      * 이메일과 휴대폰번호 중복체크
+     * 중복시 예외발생
      *
      * @param email       이메일
      * @param phoneNumber 휴대폰번호
