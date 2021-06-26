@@ -111,9 +111,9 @@ public class AuthController {
   @ApiResponses({
       @ApiResponse(responseCode = "200", description = "인증번호 확인 성공"),
       @ApiResponse(responseCode = "400", description = "인증번호 확인 실패")})
-  public ResponseEntity<Void> smsVerification(@RequestBody @Valid ReqSmsVerification request) {
+  public ResponseEntity<Void> checkSMS(@RequestBody @Valid ReqSmsVerification request) {
 
-    smsService.verifySms(request.getPhoneNumber(), request.getCertificationNumber());
+    smsService.verifySMS(request.getPhoneNumber(), request.getCertificationNumber());
     return ResponseEntity
         .status(HttpStatus.OK)
         .build();

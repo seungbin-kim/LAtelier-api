@@ -64,7 +64,7 @@ public class SmsService {
    * @param phoneNumber         휴대폰번호
    * @param certificationNumber 인증번호
    */
-  public void verifySms(final String phoneNumber, final String certificationNumber) {
+  public void verifySMS(final String phoneNumber, final String certificationNumber) {
 
     if (!isVerify(phoneNumber, certificationNumber)) {
       throw new SmsVerificationException();
