@@ -3,9 +3,9 @@ package com.latelier.api.domain.member.exception;
 import com.latelier.api.global.error.exception.DuplicateException;
 import com.latelier.api.global.error.exception.ErrorCode;
 
-public class DuplicateEmailException extends DuplicateException {
+public class EmailDuplicateException extends DuplicateException {
 
-  public DuplicateEmailException(final String value) {
+  public EmailDuplicateException(final String value) {
     super(value, ErrorCode.DUPLICATE_EMAIL);
   }
 
