@@ -39,8 +39,10 @@ public enum ErrorCode {
 
   // Course
   COURSE_NOT_FOUND(404, "CS001", "Course Not Found"),
-  COURSE_MEETING_NOT_FOUND(404, "CS002", "Course Meeting Not Found");
+  COURSE_MEETING_NOT_FOUND(404, "CS002", "Course Meeting Not Found"),
 
+  // CHAT
+  CHAT_ROOM_NOT_FOUND(404, "CH001", "Chat Room Not Found");
 
   private final int status;
 

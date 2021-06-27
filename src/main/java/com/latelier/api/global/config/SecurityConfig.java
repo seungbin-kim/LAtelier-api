@@ -22,55 +22,57 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-  private final TokenProvider tokenProvider;
+    private final TokenProvider tokenProvider;
 
-  private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
-  private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
-
-
-  @Bean
-  public PasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder();
-  }
+    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
 
-  @Override
-  public void configure(WebSecurity web) throws Exception {
-    web
-        .ignoring()
-        .antMatchers(
-            "/swagger-ui/**",
-            "/swagger-resources/**",
-            "/v3/api-docs");
-  }
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
-  @Override
-  protected void configure(HttpSecurity http) throws Exception {
-    http
-        .csrf().disable()
-        .formLogin().disable()
-        .httpBasic().disable()
 
-        .exceptionHandling()
-        .authenticationEntryPoint(jwtAuthenticationEntryPoint)
-        .accessDeniedHandler(jwtAccessDeniedHandler)
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web
+                .ignoring()
+                .antMatchers(
+                        "/favicon.ico",
+                        "/swagger-ui/**",
+                        "/swagger-resources/**",
+                        "/v3/api-docs");
+    }
 
-        .and()
-        .sessionManagement()
-        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http
+                .csrf().disable()
+                .formLogin().disable()
+                .httpBasic().disable()
 
-        .and()
-        .authorizeRequests()
-        .antMatchers(HttpMethod.POST, "/api/members").permitAll()
-        .antMatchers("/api/auth/sign-in").permitAll()
-        .antMatchers("/api//auth/sms").permitAll()
-        .antMatchers("/api/auth/sms/verification").permitAll()
-        .anyRequest().authenticated()
+                .exceptionHandling()
+                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                .accessDeniedHandler(jwtAccessDeniedHandler)
 
-        .and()
-        .apply(new JwtSecurityConfig(tokenProvider));
-  }
+                .and()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+
+                .and()
+                .authorizeRequests()
+                .antMatchers(HttpMethod.POST, "/api/members").permitAll()
+                .antMatchers("/api/auth/sign-in").permitAll()
+                .antMatchers("/api//auth/sms").permitAll()
+                .antMatchers("/api/auth/sms/verification").permitAll()
+                .antMatchers("/api/chat/**").permitAll() // 임시허용
+                .anyRequest().authenticated()
+
+                .and()
+                .apply(new JwtSecurityConfig(tokenProvider));
+    }
 
 }
 
