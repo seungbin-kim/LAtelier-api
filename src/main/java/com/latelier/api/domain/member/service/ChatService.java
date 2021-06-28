@@ -39,28 +39,26 @@ public class ChatService {
         Member receiver = memberService.getMemberById(receiverId);
 
         return chatRoomJoinRepository.findAlreadyOpenChat(senderId, receiverId)
-                .map(chatRoomJoin -> new ResChatRoom(chatRoomJoin.getId(), sender.getName(), receiver.getName()))
+                .map(chatRoomJoin ->
+                        ResChatRoom.createResponse(chatRoomJoin, sender.getName(), receiver.getName()))
                 .orElseGet(() -> createRoomAndJoin(sender, receiver));
     }
 
 
-//    @Transactional
+    //    @Transactional
     public List<ResChatMessage> getChatMessages(final Long roomId) {
 
         // TODO 사용자 확인
 
         return chatMessageRepository.findByChatRoomId(roomId)
                 .stream()
-                .map(chatMessage -> new ResChatMessage(
-                        chatMessage.getId(),
-                        chatMessage.getMember().getId(),
-                        chatMessage.getMessage()))
+                .map(ResChatMessage::createResponse)
                 .collect(Collectors.toList());
     }
 
 
     @Transactional
-    public void saveChatMessage(final SocketController.ChatMessage chatMessage) {
+    public ResChatMessage saveChatMessage(final SocketController.ChatMessage chatMessage) {
 
         Member sender = memberService.getMemberById(chatMessage.getSenderId());
         Long chatRoomId = chatMessage.getChatRoomId();
@@ -68,7 +66,8 @@ public class ChatService {
                 .orElseThrow(() -> new ChatRoomNotFound(String.valueOf(chatRoomId)));
 
         ChatMessage newMessage = new ChatMessage(chatMessage.getMessage(), sender, chatRoom);
-        chatMessageRepository.save(newMessage);
+        ChatMessage savedMessage = chatMessageRepository.save(newMessage);
+        return ResChatMessage.createResponse(savedMessage);
     }
 
 
@@ -79,7 +78,7 @@ public class ChatService {
         chatRoomJoinRepository.save(new ChatRoomJoin(sender, newChatRoom));
         chatRoomJoinRepository.save(new ChatRoomJoin(receiver, newChatRoom));
 
-        return new ResChatRoom(newChatRoom.getId(), sender.getName(), receiver.getName());
+        return ResChatRoom.createResponse(newChatRoom, sender.getName(), receiver.getName());
     }
 
 }

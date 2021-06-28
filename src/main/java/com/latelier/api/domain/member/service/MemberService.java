@@ -37,7 +37,7 @@ public class MemberService {
 
         Member member = createMember(reqSignUp);
         Member savedMember = memberRepository.save(member);
-        return ResSignUp.createSignUpResponse(savedMember);
+        return ResSignUp.createResponse(savedMember);
     }
 
 
