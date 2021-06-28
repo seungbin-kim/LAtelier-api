@@ -68,6 +68,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api//auth/sms").permitAll()
                 .antMatchers("/api/auth/sms/verification").permitAll()
                 .antMatchers("/api/chat/**").permitAll() // 임시허용
+                .antMatchers("/chat/app").permitAll() // 임시허용
+                .antMatchers("/websocket/**").permitAll() // 임시허용
                 .anyRequest().authenticated()
 
                 .and()
