@@ -1,5 +1,6 @@
 package com.latelier.api.domain.member.entity;
 
+import com.latelier.api.domain.model.BaseTimeEntity;
 import lombok.Getter;
 
 import javax.persistence.*;
@@ -10,7 +11,7 @@ import javax.persistence.*;
         name = "CHAT_ROOM_SEQ_GENERATOR",
         sequenceName = "CHAT_ROOM_SEQ",
         allocationSize = 50)
-public class ChatRoom {
+public class ChatRoom extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(
