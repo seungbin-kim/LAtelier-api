@@ -69,7 +69,7 @@ public class MeetingInformationService {
     return
         meetingInformationRepository.findByCourseId(courseId)
             .map(m -> ResMeetingInformation
-                .createMeetingInformationForSDK(
+                .createResponse(
                     zoomProperties.getApi().getKey(),
                     m,
                     "테스트",

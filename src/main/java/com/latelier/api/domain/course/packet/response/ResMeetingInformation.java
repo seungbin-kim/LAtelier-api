@@ -14,45 +14,45 @@ import lombok.RequiredArgsConstructor;
 @ApiModel("강의 미팅정보")
 public class ResMeetingInformation {
 
-  @ApiModelProperty(
-      value = "API KEY",
-      name = "apiKey")
-  private final String apiKey;
+    @ApiModelProperty(
+            value = "API KEY",
+            name = "apiKey")
+    private final String apiKey;
 
-  @ApiModelProperty(
-      value = "미팅 번호",
-      name = "meetingNumber",
-      notes = "미팅 입장에 필요한 ID")
-  private final Long meetingNumber;
+    @ApiModelProperty(
+            value = "미팅 번호",
+            name = "meetingNumber",
+            notes = "미팅 입장에 필요한 ID")
+    private final Long meetingNumber;
 
-  @ApiModelProperty(
-      value = "미팅 비밀번호",
-      name = "meetingPassword")
-  private final String meetingPassword;
+    @ApiModelProperty(
+            value = "미팅 비밀번호",
+            name = "meetingPassword")
+    private final String meetingPassword;
 
-  @ApiModelProperty(
-      value = "이름",
-      name = "userName")
-  private final String userName;
+    @ApiModelProperty(
+            value = "이름",
+            name = "userName")
+    private final String userName;
 
-  @ApiModelProperty(
-      value = "Signature",
-      name = "signature")
-  private final String signature;
+    @ApiModelProperty(
+            value = "Signature",
+            name = "signature")
+    private final String signature;
 
 
-  public static ResMeetingInformation createMeetingInformationForSDK(final String apiKey,
-                                                                     final MeetingInformation meetingInformation,
-                                                                     final String userName,
-                                                                     final String signature) {
+    public static ResMeetingInformation createResponse(final String apiKey,
+                                                       final MeetingInformation meetingInformation,
+                                                       final String userName,
+                                                       final String signature) {
 
-    return
-        new ResMeetingInformation(
-            apiKey,
-            Long.parseLong(meetingInformation.getMeetingId()),
-            meetingInformation.getMeetingPw(),
-            userName,
-            signature);
-  }
+        return
+                new ResMeetingInformation(
+                        apiKey,
+                        Long.parseLong(meetingInformation.getMeetingId()),
+                        meetingInformation.getMeetingPw(),
+                        userName,
+                        signature);
+    }
 
 }
