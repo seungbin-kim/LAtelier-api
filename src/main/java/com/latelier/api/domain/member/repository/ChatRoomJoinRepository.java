@@ -9,11 +9,11 @@ import java.util.Optional;
 
 public interface ChatRoomJoinRepository extends JpaRepository<ChatRoomJoin, Long> {
 
-    @Query("SELECT chj " +
-            "FROM ChatRoomJoin chj " +
-            "JOIN FETCH chj.member " +
-            "WHERE EXISTS (SELECT chj FROM ChatRoomJoin chj WHERE chj.member = :memberIdOne) " +
-            "AND EXISTS (SELECT chj FROM ChatRoomJoin chj WHERE chj.member = :memberIdTwo)")
+    @Query("SELECT chj1 " +
+            "FROM ChatRoomJoin chj1, ChatRoomJoin chj2 " +
+            "JOIN FETCH chj1.member " +
+            "WHERE chj1.member.id = :memberIdOne " +
+            "AND chj2.member.id = :memberIdTwo")
     Optional<ChatRoomJoin> findAlreadyOpenChat(@Param("memberIdOne") Long memberIdOne, @Param("memberIdTwo") Long memberIdTwo);
 
 }
