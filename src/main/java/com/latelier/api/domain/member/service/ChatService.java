@@ -50,7 +50,7 @@ public class ChatService {
 
         // TODO 사용자 확인
 
-        return chatMessageRepository.findByChatRoomId(roomId)
+        return chatMessageRepository.findByChatRoomIdOrderByCreatedAtAsc(roomId)
                 .stream()
                 .map(ResChatMessage::createResponse)
                 .collect(Collectors.toList());

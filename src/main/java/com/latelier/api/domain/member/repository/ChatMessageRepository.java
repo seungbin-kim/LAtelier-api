@@ -9,6 +9,6 @@ import java.util.List;
 public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> {
 
     @EntityGraph(attributePaths = {"member", "chatRoom"})
-    List<ChatMessage> findByChatRoomId(Long roomId);
+    List<ChatMessage> findByChatRoomIdOrderByCreatedAtAsc(Long roomId);
 
 }
