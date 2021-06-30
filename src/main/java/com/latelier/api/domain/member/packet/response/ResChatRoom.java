@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-@ApiModel("채팅방")
+@ApiModel("채팅방 정보")
 public class ResChatRoom {
 
     @ApiModelProperty(
