@@ -16,29 +16,31 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
+import static org.springframework.http.HttpStatus.CREATED;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
 public class MemberController {
 
-  private final MemberService memberService;
+    private final MemberService memberService;
 
 
-  @PostMapping("/members")
-  @ApiOperation(
-      value = "사용자 등록",
-      notes = "사용자 정보를 등록합니다.")
-  @ApiResponses({
-      @ApiResponse(responseCode = "200", description = "회원등록 성공"),
-      @ApiResponse(responseCode = "409", description = "이메일 또는 휴대폰번호 중복")})
-  public ResponseEntity<Result<ResSignUp>> signUp(@RequestBody @Valid final ReqSignUp reqSignUp) {
+    @PostMapping("/members")
+    @ApiOperation(
+            value = "사용자 등록",
+            notes = "사용자 정보를 등록합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "회원등록 성공"),
+            @ApiResponse(responseCode = "409", description = "이메일 또는 휴대폰번호 중복")})
+    public ResponseEntity<Result<ResSignUp>> signUp(@RequestBody @Valid final ReqSignUp reqSignUp) {
 
-    ResSignUp response = memberService.addMember(reqSignUp);
-    return
-        ResponseEntity
-            .ok(Result.<ResSignUp>builder()
-                .content(response)
-                .build());
-  }
+        ResSignUp response = memberService.addMember(reqSignUp);
+        return ResponseEntity
+                .status(CREATED)
+                .body(Result.<ResSignUp>builder()
+                        .content(response)
+                        .build());
+    }
 
 }
