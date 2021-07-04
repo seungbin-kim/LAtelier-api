@@ -61,7 +61,7 @@ class MemberControllerTest {
 
     // then
     perform
-        .andExpect(status().isOk())
+        .andExpect(status().isCreated())
         .andExpect(jsonPath("$.content.name").value(req.getName()))
         .andExpect(jsonPath("$.content.phoneNumber").value(req.getPhoneNumber()))
         .andExpect(jsonPath("$.content.email").value(req.getEmail()))

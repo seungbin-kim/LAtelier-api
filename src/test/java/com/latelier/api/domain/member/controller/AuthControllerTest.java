@@ -119,7 +119,7 @@ class AuthControllerTest {
 
         // then
         signUp
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andDo(print());
 
         perform
@@ -160,7 +160,7 @@ class AuthControllerTest {
 
         // then
         signUp
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andDo(print());
 
         perform
@@ -200,7 +200,7 @@ class AuthControllerTest {
 
         // then
         signUp
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andDo(print());
 
         perform
