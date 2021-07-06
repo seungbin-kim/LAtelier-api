@@ -14,6 +14,6 @@ public interface ChatRoomJoinRepository extends JpaRepository<ChatRoomJoin, Long
             "JOIN FETCH chj1.member " +
             "WHERE chj1.member.id = :memberIdOne " +
             "AND chj2.member.id = :memberIdTwo")
-    Optional<ChatRoomJoin> findAlreadyOpenChat(@Param("memberIdOne") Long memberIdOne, @Param("memberIdTwo") Long memberIdTwo);
+    Optional<ChatRoomJoin> findAlreadyOpenedChat(@Param("memberIdOne") Long memberIdOne, @Param("memberIdTwo") Long memberIdTwo);
 
 }

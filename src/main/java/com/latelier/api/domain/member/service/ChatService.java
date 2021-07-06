@@ -38,7 +38,7 @@ public class ChatService {
         Member sender = memberService.getMemberById(senderId);
         Member receiver = memberService.getMemberById(receiverId);
 
-        return chatRoomJoinRepository.findAlreadyOpenChat(senderId, receiverId)
+        return chatRoomJoinRepository.findAlreadyOpenedChat(senderId, receiverId)
                 .map(chatRoomJoin ->
                         ResChatRoom.createResponse(chatRoomJoin, sender.getName(), receiver.getName()))
                 .orElseGet(() -> createRoomAndJoin(sender, receiver));
