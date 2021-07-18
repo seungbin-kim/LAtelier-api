@@ -8,6 +8,13 @@ import com.latelier.api.domain.member.packet.request.ReqSmsVerification;
 import com.latelier.api.domain.member.repository.SmsCertificationRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ParameterContext;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.aggregator.AggregateWith;
+import org.junit.jupiter.params.aggregator.ArgumentsAccessor;
+import org.junit.jupiter.params.aggregator.ArgumentsAggregationException;
+import org.junit.jupiter.params.aggregator.ArgumentsAggregator;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -89,23 +96,20 @@ class AuthControllerTest {
     }
 
 
-    @Test
     @DisplayName("회원등록후_로그인_성공")
-    void signIn() throws Exception {
+    @ParameterizedTest(name = "[{index}] name={0}, phoneNumber={1}, email={2}, isTeacher={4}")
+    @CsvSource({
+            "홍길동, 01011111111, test1@a.b, !myPassword486@, true",
+            "홍길순, 01022222222, test2@a.b, !myPassword486@, false"})
+    void signIn(@AggregateWith(SignUpRequestAggregator.class) ReqSignUp req) throws Exception {
         // given
         registerRole();
 
-        String email = "test@a.b";
-        String password = "!mypassword486@";
-        String phoneNumber = "01000000000";
-        String name = "홍길동";
-
-        ReqSignUp reqSignUp = getReqSignUp(email, password, phoneNumber, name);
-        String signUpRequest = objectMapper.writeValueAsString(reqSignUp);
+        String signUpRequest = objectMapper.writeValueAsString(req);
 
         ReqSignIn reqSignIn = new ReqSignIn();
-        ReflectionTestUtils.setField(reqSignIn, "email", email);
-        ReflectionTestUtils.setField(reqSignIn, "password", password);
+        ReflectionTestUtils.setField(reqSignIn, "email", req.getEmail());
+        ReflectionTestUtils.setField(reqSignIn, "password", req.getPassword());
         String content = objectMapper.writeValueAsString(reqSignIn);
 
         // when
@@ -129,24 +133,20 @@ class AuthControllerTest {
     }
 
 
-    @Test
     @DisplayName("회원등록후_로그인_실패(이메일)")
-    void signInFailEmail() throws Exception {
+    @ParameterizedTest(name = "[{index}] name={0}, phoneNumber={1}, email={2}, isTeacher={4}")
+    @CsvSource({
+            "홍길동, 01011111111, test1@a.b, !myPassword486@, true",
+            "홍길순, 01022222222, test2@a.b, !myPassword486@, false"})
+    void signInFailEmail(@AggregateWith(SignUpRequestAggregator.class) ReqSignUp req) throws Exception {
         // given
         registerRole();
 
-        String email = "test@a.b";
-        String wrongEmail = "test1@a.b";
-        String password = "!mypassword486@";
-        String phoneNumber = "01000000000";
-        String name = "홍길동";
-
-        ReqSignUp reqSignUp = getReqSignUp(email, password, phoneNumber, name);
-        String signUpRequest = objectMapper.writeValueAsString(reqSignUp);
+        String signUpRequest = objectMapper.writeValueAsString(req);
 
         ReqSignIn reqSignIn = new ReqSignIn();
-        ReflectionTestUtils.setField(reqSignIn, "email", wrongEmail);
-        ReflectionTestUtils.setField(reqSignIn, "password", password);
+        ReflectionTestUtils.setField(reqSignIn, "email", "wrongPassword");
+        ReflectionTestUtils.setField(reqSignIn, "password", req.getPassword());
         String content = objectMapper.writeValueAsString(reqSignIn);
 
         // when
@@ -169,24 +169,20 @@ class AuthControllerTest {
     }
 
 
-    @Test
     @DisplayName("회원등록후_로그인_실패(비밀번호)")
-    void signInPasswordFail() throws Exception {
+    @ParameterizedTest(name = "[{index}] name={0}, phoneNumber={1}, email={2}, isTeacher={4}")
+    @CsvSource({
+            "홍길동, 01011111111, test1@a.b, !myPassword486@, true",
+            "홍길순, 01022222222, test2@a.b, !myPassword486@, false"})
+    void signInPasswordFail(@AggregateWith(SignUpRequestAggregator.class) ReqSignUp req) throws Exception {
         // given
         registerRole();
 
-        String email = "test@a.b";
-        String wrongPassword = "wrong";
-        String password = "!mypassword486@";
-        String phoneNumber = "01000000000";
-        String name = "홍길동";
-
-        ReqSignUp reqSignUp = getReqSignUp(email, password, phoneNumber, name);
-        String signUpRequest = objectMapper.writeValueAsString(reqSignUp);
+        String signUpRequest = objectMapper.writeValueAsString(req);
 
         ReqSignIn reqSignIn = new ReqSignIn();
-        ReflectionTestUtils.setField(reqSignIn, "email", email);
-        ReflectionTestUtils.setField(reqSignIn, "password", wrongPassword);
+        ReflectionTestUtils.setField(reqSignIn, "email", req.getEmail());
+        ReflectionTestUtils.setField(reqSignIn, "password", "wrongPassword");
         String content = objectMapper.writeValueAsString(reqSignIn);
 
         // when
@@ -209,13 +205,20 @@ class AuthControllerTest {
     }
 
 
-    private ReqSignUp getReqSignUp(String email, String password, String phoneNumber, String name) {
-        ReqSignUp reqSignUp = new ReqSignUp();
-        ReflectionTestUtils.setField(reqSignUp, "name", name);
-        ReflectionTestUtils.setField(reqSignUp, "email", email);
-        ReflectionTestUtils.setField(reqSignUp, "phoneNumber", phoneNumber);
-        ReflectionTestUtils.setField(reqSignUp, "password", password);
-        return reqSignUp;
+    static class SignUpRequestAggregator implements ArgumentsAggregator {
+
+        @Override
+        public Object aggregateArguments(ArgumentsAccessor accessor, ParameterContext context) throws ArgumentsAggregationException {
+
+            ReqSignUp reqSignUp = new ReqSignUp();
+            ReflectionTestUtils.setField(reqSignUp, "name", accessor.getString(0));
+            ReflectionTestUtils.setField(reqSignUp, "phoneNumber", accessor.getString(1));
+            ReflectionTestUtils.setField(reqSignUp, "email", accessor.getString(2));
+            ReflectionTestUtils.setField(reqSignUp, "password", accessor.getString(3));
+            ReflectionTestUtils.setField(reqSignUp, "isTeacher", accessor.getString(4));
+            return reqSignUp;
+        }
+
     }
 
 

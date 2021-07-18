@@ -44,11 +44,11 @@ class MemberControllerTest {
 
 
   @DisplayName("회원등록_성공")
-  @ParameterizedTest(name = "[{index}] {displayName} name={0}")
+  @ParameterizedTest(name = "[{index}] name={0}, phoneNumber={1}, email={2}, isTeacher={4}")
   @CsvSource({
-      "홍길동, 01011111111, test1@a.b, !myPassword486@",
-      "홍길순, 01022222222, test2@a.b, !myPassword486@",
-      "홍길복, 01033333333, test3@a.b, !myPassword486@"})
+      "홍길동, 01011111111, test1@a.b, !myPassword486@, true",
+      "홍길순, 01022222222, test2@a.b, !myPassword486@, false",
+      "홍길복, 01033333333, test3@a.b, !myPassword486@, false"})
   void signUpSuccess(@AggregateWith(SignUpRequestAggregator.class) ReqSignUp req) throws Exception {
     // given
     String content = objectMapper.writeValueAsString(req);
@@ -65,16 +65,17 @@ class MemberControllerTest {
         .andExpect(jsonPath("$.content.name").value(req.getName()))
         .andExpect(jsonPath("$.content.phoneNumber").value(req.getPhoneNumber()))
         .andExpect(jsonPath("$.content.email").value(req.getEmail()))
+        .andExpect(jsonPath("$.content.isTeacher").value(req.getIsTeacher()))
         .andDo(print());
   }
 
 
   @DisplayName("회원등록_실패_이메일중복")
-  @ParameterizedTest(name = "[{index}] {displayName} email={2}")
+  @ParameterizedTest(name = "[{index}] email={2}")
   @CsvSource({
-      "홍길동, 01011111111, test@a.b, !myPassword486@",
-      "홍길순, 01022222222, test@a.b, !myPassword486@",
-      "홍길복, 01033333333, test@a.b, !myPassword486@"})
+      "홍길동, 01011111111, test@a.b, !myPassword486@, true",
+      "홍길순, 01022222222, test@a.b, !myPassword486@, false",
+      "홍길복, 01033333333, test@a.b, !myPassword486@, false"})
   void signUpEmailDuplicate(@AggregateWith(SignUpRequestAggregator.class) ReqSignUp req) throws Exception {
     // given
     MemberRepository memberRepository = context.getBean(MemberRepository.class);
@@ -103,11 +104,11 @@ class MemberControllerTest {
 
 
   @DisplayName("회원등록_실패_휴대폰중복")
-  @ParameterizedTest(name = "[{index}] {displayName} phoneNumber={1}")
+  @ParameterizedTest(name = "[{index}] phoneNumber={1}")
   @CsvSource({
-      "홍길동, 01000000000, test1@a.b, !myPassword486@",
-      "홍길순, 01000000000, test2@a.b, !myPassword486@",
-      "홍길복, 01000000000, test3@a.b, !myPassword486@"})
+      "홍길동, 01000000000, test1@a.b, !myPassword486@, true",
+      "홍길순, 01000000000, test2@a.b, !myPassword486@, false",
+      "홍길복, 01000000000, test3@a.b, !myPassword486@, false"})
   void signUpPhoneNumberDuplicate(@AggregateWith(SignUpRequestAggregator.class) ReqSignUp req) throws Exception {
     // given
     MemberRepository memberRepository = context.getBean(MemberRepository.class);
@@ -136,11 +137,11 @@ class MemberControllerTest {
 
 
   @DisplayName("회원등록_실패_모두중복")
-  @ParameterizedTest(name = "[{index}] {displayName} email={2}, phoneNumber={1}")
+  @ParameterizedTest(name = "[{index}] phoneNumber={1} email={2}")
   @CsvSource({
-      "홍길동, 01000000000, test@a.b, !myPassword486@",
-      "홍길순, 01000000000, test@a.b, !myPassword486@",
-      "홍길복, 01000000000, test@a.b, !myPassword486@"})
+      "홍길동, 01000000000, test@a.b, !myPassword486@, true",
+      "홍길순, 01000000000, test@a.b, !myPassword486@, false",
+      "홍길복, 01000000000, test@a.b, !myPassword486@, false"})
   void signUpDuplicate(@AggregateWith(SignUpRequestAggregator.class) ReqSignUp req) throws Exception {
     // given
     MemberRepository memberRepository = context.getBean(MemberRepository.class);
@@ -178,8 +179,10 @@ class MemberControllerTest {
       ReflectionTestUtils.setField(reqSignUp, "phoneNumber", accessor.getString(1));
       ReflectionTestUtils.setField(reqSignUp, "email", accessor.getString(2));
       ReflectionTestUtils.setField(reqSignUp, "password", accessor.getString(3));
+      ReflectionTestUtils.setField(reqSignUp, "isTeacher", accessor.getString(4));
       return reqSignUp;
     }
+
   }
 
 }

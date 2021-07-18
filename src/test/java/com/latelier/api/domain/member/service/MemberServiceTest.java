@@ -1,6 +1,5 @@
 package com.latelier.api.domain.member.service;
 
-import com.latelier.api.domain.member.entity.Member;
 import com.latelier.api.domain.member.exception.EmailAndPhoneNumberDuplicateException;
 import com.latelier.api.domain.member.exception.EmailDuplicateException;
 import com.latelier.api.domain.member.exception.PhoneNumberDuplicateException;
@@ -8,17 +7,23 @@ import com.latelier.api.domain.member.packet.request.ReqSignUp;
 import com.latelier.api.domain.member.packet.response.ResSignUp;
 import com.latelier.api.domain.member.repository.MemberRepository;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.extension.ParameterContext;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.aggregator.AggregateWith;
+import org.junit.jupiter.params.aggregator.ArgumentsAccessor;
+import org.junit.jupiter.params.aggregator.ArgumentsAggregationException;
+import org.junit.jupiter.params.aggregator.ArgumentsAggregator;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class MemberServiceTest {
@@ -33,140 +38,104 @@ class MemberServiceTest {
   PasswordEncoder passwordEncoder;
 
 
-  @Test
   @DisplayName("회원등록_성공")
-  void addMemberSuccess() {
+  @ParameterizedTest(name = "[{index}] name={0}, phoneNumber={1}, email={2}, isTeacher={4}")
+  @CsvSource({
+          "홍길동, 01011111111, test1@a.b, !myPassword486@, true",
+          "홍길순, 01022222222, test2@a.b, !myPassword486@, false",
+          "홍길복, 01033333333, test3@a.b, !myPassword486@, false"})
+  void addMemberSuccess(@AggregateWith(SignUpRequestAggregator.class) ReqSignUp req) {
     // given
-    ReqSignUp reqSignUp = new ReqSignUp();
-    String name = "홍길동";
-    String phoneNumber = "01012345678";
-    String email = "test@a.b";
-    String password = "myPassword";
-    ReflectionTestUtils.setField(reqSignUp, "name", name);
-    ReflectionTestUtils.setField(reqSignUp, "phoneNumber", phoneNumber);
-    ReflectionTestUtils.setField(reqSignUp, "email", email);
-    ReflectionTestUtils.setField(reqSignUp, "password", password);
-
-    Member member = Member.builder()
-        .email(email)
-        .name(name)
-        .phoneNumber(phoneNumber)
-        .password(password)
-        .build();
-
-    given(memberRepository.save(any()))
-        .willReturn(member);
-    given(memberRepository.existsByEmail(email))
+    given(memberRepository.existsByEmail(req.getEmail()))
         .willReturn(false);
-    given(memberRepository.existsByPhoneNumber(phoneNumber))
+    given(memberRepository.existsByPhoneNumber(req.getPhoneNumber()))
         .willReturn(false);
 
     // when
-    ResSignUp resSignUp = memberService.addMember(reqSignUp);
+    ResSignUp resSignUp = memberService.addMember(req);
 
     // then
-    assertEquals(email, resSignUp.getEmail());
-    assertEquals(name, resSignUp.getName());
-    assertEquals(phoneNumber, resSignUp.getPhoneNumber());
+    assertEquals(req.getEmail(), resSignUp.getEmail());
+    assertEquals(req.getName(), resSignUp.getName());
+    assertEquals(req.getPhoneNumber(), resSignUp.getPhoneNumber());
+    assertEquals(req.getIsTeacher(), resSignUp.getIsTeacher());
   }
 
 
-  @Test
   @DisplayName("회원등록_실패_이메일중복")
-  void addMemberFailEmail() {
+  @ParameterizedTest(name = "[{index}] name={0}, phoneNumber={1}, email={2}, isTeacher={4}")
+  @CsvSource({
+          "홍길동, 01011111111, test1@a.b, !myPassword486@, true",
+          "홍길순, 01022222222, test2@a.b, !myPassword486@, false",
+          "홍길복, 01033333333, test3@a.b, !myPassword486@, false"})
+  void addMemberFailEmail(@AggregateWith(SignUpRequestAggregator.class) ReqSignUp req) {
     // given
-    ReqSignUp reqSignUp = new ReqSignUp();
-    String name = "홍길동";
-    String phoneNumber = "01012345678";
-    String email = "test@a.b";
-    String password = "myPassword";
-    ReflectionTestUtils.setField(reqSignUp, "name", name);
-    ReflectionTestUtils.setField(reqSignUp, "phoneNumber", phoneNumber);
-    ReflectionTestUtils.setField(reqSignUp, "email", email);
-    ReflectionTestUtils.setField(reqSignUp, "password", password);
-
-    Member member = Member.builder()
-        .email(email)
-        .name(name)
-        .phoneNumber(phoneNumber)
-        .password(password)
-        .build();
-
-    given(memberRepository.existsByEmail(email))
+    given(memberRepository.existsByEmail(req.getEmail()))
         .willReturn(true);
-    given(memberRepository.existsByPhoneNumber(phoneNumber))
+    given(memberRepository.existsByPhoneNumber(req.getPhoneNumber()))
         .willReturn(false);
 
     // when, then
     assertThrows(
         EmailDuplicateException.class,
-        () -> memberService.addMember(reqSignUp));
+        () -> memberService.addMember(req));
   }
 
 
-  @Test
   @DisplayName("회원등록_실패_휴대폰중복")
-  void addMemberFailPhoneNumber() {
+  @ParameterizedTest(name = "[{index}] name={0}, phoneNumber={1}, email={2}, isTeacher={4}")
+  @CsvSource({
+          "홍길동, 01011111111, test1@a.b, !myPassword486@, true",
+          "홍길순, 01022222222, test2@a.b, !myPassword486@, false",
+          "홍길복, 01033333333, test3@a.b, !myPassword486@, false"})
+  void addMemberFailPhoneNumber(@AggregateWith(SignUpRequestAggregator.class) ReqSignUp req) {
     // given
-    ReqSignUp reqSignUp = new ReqSignUp();
-    String name = "홍길동";
-    String phoneNumber = "01012345678";
-    String email = "test@a.b";
-    String password = "myPassword";
-    ReflectionTestUtils.setField(reqSignUp, "name", name);
-    ReflectionTestUtils.setField(reqSignUp, "phoneNumber", phoneNumber);
-    ReflectionTestUtils.setField(reqSignUp, "email", email);
-    ReflectionTestUtils.setField(reqSignUp, "password", password);
-
-    Member member = Member.builder()
-        .email(email)
-        .name(name)
-        .phoneNumber(phoneNumber)
-        .password(password)
-        .build();
-
-    given(memberRepository.existsByEmail(email))
+    given(memberRepository.existsByEmail(req.getEmail()))
         .willReturn(false);
-    given(memberRepository.existsByPhoneNumber(phoneNumber))
+    given(memberRepository.existsByPhoneNumber(req.getPhoneNumber()))
         .willReturn(true);
 
     // when, then
     assertThrows(
         PhoneNumberDuplicateException.class,
-        () -> memberService.addMember(reqSignUp));
+        () -> memberService.addMember(req));
   }
 
 
-  @Test
   @DisplayName("회원등록_실패_모두중복")
-  void addMemberFail() {
+  @ParameterizedTest(name = "[{index}] name={0}, phoneNumber={1}, email={2}, isTeacher={4}")
+  @CsvSource({
+          "홍길동, 01011111111, test1@a.b, !myPassword486@, true",
+          "홍길순, 01022222222, test2@a.b, !myPassword486@, false",
+          "홍길복, 01033333333, test3@a.b, !myPassword486@, false"})
+  void addMemberFail(@AggregateWith(SignUpRequestAggregator.class) ReqSignUp req) {
     // given
-    ReqSignUp reqSignUp = new ReqSignUp();
-    String name = "홍길동";
-    String phoneNumber = "01012345678";
-    String email = "test@a.b";
-    String password = "myPassword";
-    ReflectionTestUtils.setField(reqSignUp, "name", name);
-    ReflectionTestUtils.setField(reqSignUp, "phoneNumber", phoneNumber);
-    ReflectionTestUtils.setField(reqSignUp, "email", email);
-    ReflectionTestUtils.setField(reqSignUp, "password", password);
-
-    Member member = Member.builder()
-        .email(email)
-        .name(name)
-        .phoneNumber(phoneNumber)
-        .password(password)
-        .build();
-
-    given(memberRepository.existsByEmail(email))
+    given(memberRepository.existsByEmail(req.getEmail()))
         .willReturn(true);
-    given(memberRepository.existsByPhoneNumber(phoneNumber))
+    given(memberRepository.existsByPhoneNumber(req.getPhoneNumber()))
         .willReturn(true);
 
     // when, then
     assertThrows(
         EmailAndPhoneNumberDuplicateException.class,
-        () -> memberService.addMember(reqSignUp));
+        () -> memberService.addMember(req));
+  }
+
+
+  static class SignUpRequestAggregator implements ArgumentsAggregator {
+
+    @Override
+    public Object aggregateArguments(ArgumentsAccessor accessor, ParameterContext context) throws ArgumentsAggregationException {
+
+      ReqSignUp reqSignUp = new ReqSignUp();
+      ReflectionTestUtils.setField(reqSignUp, "name", accessor.getString(0));
+      ReflectionTestUtils.setField(reqSignUp, "phoneNumber", accessor.getString(1));
+      ReflectionTestUtils.setField(reqSignUp, "email", accessor.getString(2));
+      ReflectionTestUtils.setField(reqSignUp, "password", accessor.getString(3));
+      ReflectionTestUtils.setField(reqSignUp, "isTeacher", accessor.getString(4));
+      return reqSignUp;
+    }
+
   }
 
 }
