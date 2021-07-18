@@ -16,6 +16,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Set;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -36,8 +38,8 @@ public class MemberService {
     public ResSignUp addMember(final ReqSignUp reqSignUp) {
 
         Member member = createMember(reqSignUp);
-        Member savedMember = memberRepository.save(member);
-        return ResSignUp.createResponse(savedMember);
+        memberRepository.save(member);
+        return ResSignUp.createResponse(member);
     }
 
 
@@ -65,9 +67,10 @@ public class MemberService {
                 .address(address)
                 .build();
 
-        member
-                .getAuthorities()
-                .add(new Authority(Role.ROLE_USER));
+        Set<Authority> authorities = member.getAuthorities();
+        boolean isTeacher = Boolean.parseBoolean(reqSignUp.getIsTeacher());
+        if (isTeacher) authorities.add(new Authority(Role.ROLE_TEACHER));
+        authorities.add(new Authority(Role.ROLE_USER));
         return member;
     }
 
