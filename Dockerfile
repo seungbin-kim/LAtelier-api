@@ -1,6 +1,6 @@
 FROM openjdk:11
 
-COPY ./ /server
+COPY . /server
 WORKDIR /server
 
-CMD ["./gradlew", "bootRun"]
+CMD ["./gradlew", "bootRun", "-Dspring.profiles.active=dev"]
