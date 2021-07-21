@@ -92,14 +92,14 @@ public class AuthController {
             value = "SMS 인증 문자보내기",
             notes = "인증번호를 생성하여 사용자에게 문자를 전송합니다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "202", description = "인증번호 전송 성공"),
+            @ApiResponse(responseCode = "200", description = "인증번호 전송 성공"),
             @ApiResponse(responseCode = "409", description = "휴대폰 번호 중복"),
             @ApiResponse(responseCode = "500", description = "메세지 전송 실패")})
     public ResponseEntity<Void> sendSms(@RequestBody @Valid final ReqSmsAuthentication request) {
 
         smsService.sendCertificationNumber(request.getPhoneNumber());
         return ResponseEntity
-                .status(HttpStatus.ACCEPTED)
+                .ok()
                 .build();
     }
 
