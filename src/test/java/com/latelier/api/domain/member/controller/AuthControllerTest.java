@@ -66,7 +66,7 @@ class AuthControllerTest {
 
         // then
         perform
-                .andExpect(status().isAccepted())
+                .andExpect(status().isOk())
                 .andDo(print());
     }
 
