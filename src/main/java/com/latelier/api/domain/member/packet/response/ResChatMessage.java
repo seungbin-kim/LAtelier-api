@@ -38,14 +38,13 @@ public class ResChatMessage {
     private final LocalDateTime createdAt;
 
 
-    static public ResChatMessage createResponse(final ChatMessage chatMessage) {
+    static public ResChatMessage of(final ChatMessage chatMessage) {
 
-        return
-                new ResChatMessage(
-                        chatMessage.getChatRoom().getId(),
-                        chatMessage.getMember().getId(),
-                        chatMessage.getMessage(),
-                        chatMessage.getCreatedAt());
+        return new ResChatMessage(
+                chatMessage.getChatRoom().getId(),
+                chatMessage.getMember().getId(),
+                chatMessage.getMessage(),
+                chatMessage.getCreatedAt());
     }
 
 }

@@ -1,8 +1,6 @@
 package com.latelier.api.domain.member.repository;
 
-import com.latelier.api.domain.member.entity.Authority;
 import com.latelier.api.domain.member.entity.Member;
-import com.latelier.api.domain.member.enumeration.Role;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import javax.persistence.EntityManager;
-
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,25 +18,20 @@ class MemberRepositoryTest {
     @Autowired
     MemberRepository memberRepository;
 
-    @Autowired
-    EntityManager em;
-
 
     @BeforeEach
-    void init() {
-        Authority admin = new Authority(Role.ROLE_ADMIN);
-        Authority user = new Authority(Role.ROLE_USER);
-        em.persist(admin);
-        em.persist(user);
+    void init(@Autowired EntityManager em) {
+        em.createNativeQuery("INSERT INTO authority (authority_name) VALUES ('ROLE_USER')").executeUpdate();
+        em.createNativeQuery("INSERT INTO authority (authority_name) VALUES ('ROLE_INSTRUCTOR')").executeUpdate();
+        em.createNativeQuery("INSERT INTO authority (authority_name) VALUES ('ROLE_ADMIN')").executeUpdate();
 
-        Member member = Member.builder()
-                .name("홍길동")
-                .phoneNumber("01012341234")
-                .password("test")
-                .email("test1@test.com")
-                .build();
-        member.getAuthorities().add(admin);
-        member.getAuthorities().add(user);
+        Member member = Member.of(
+                "test1@test.com",
+                "01012341234",
+                "홍길동",
+                "test",
+                "admin");
+
         em.persist(member);
     }
 
@@ -111,7 +103,7 @@ class MemberRepositoryTest {
 
         // then
         assertTrue(optionalMember.isPresent());
-        assertEquals(2, optionalMember.get().getAuthorities().size());
+        assertEquals(3, optionalMember.get().getAuthorities().size());
     }
 
 }

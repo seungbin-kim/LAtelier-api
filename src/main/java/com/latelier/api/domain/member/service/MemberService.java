@@ -1,9 +1,6 @@
 package com.latelier.api.domain.member.service;
 
-import com.latelier.api.domain.member.entity.Address;
-import com.latelier.api.domain.member.entity.Authority;
 import com.latelier.api.domain.member.entity.Member;
-import com.latelier.api.domain.member.enumeration.Role;
 import com.latelier.api.domain.member.exception.EmailAndPhoneNumberDuplicateException;
 import com.latelier.api.domain.member.exception.EmailDuplicateException;
 import com.latelier.api.domain.member.exception.MemberNotFoundException;
@@ -15,8 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -37,41 +32,11 @@ public class MemberService {
     @Transactional
     public ResSignUp addMember(final ReqSignUp reqSignUp) {
 
-        Member member = createMember(reqSignUp);
-        memberRepository.save(member);
-        return ResSignUp.createResponse(member);
-    }
-
-
-    /**
-     * Member Entity 생성하기
-     *
-     * @param reqSignUp 회원가입 요청정보
-     * @return 생성된 Member Entity
-     */
-    private Member createMember(final ReqSignUp reqSignUp) {
-
         checkDuplicateEmailAndPhoneNumber(reqSignUp.getEmail(), reqSignUp.getPhoneNumber());
 
-        Address address = Address.builder()
-                .address(reqSignUp.getAddress())
-                .zipCode(reqSignUp.getZipCode())
-                .build();
-
-        Member member = Member.builder()
-                .password(passwordEncoder.encode(reqSignUp.getPassword()))
-                .name(reqSignUp.getName())
-                .phoneNumber(reqSignUp.getPhoneNumber())
-                .email(reqSignUp.getEmail())
-                .introduction(reqSignUp.getIntroduction())
-                .address(address)
-                .build();
-
-        Set<Authority> authorities = member.getAuthorities();
-        boolean isTeacher = Boolean.parseBoolean(reqSignUp.getIsTeacher());
-        if (isTeacher) authorities.add(new Authority(Role.ROLE_TEACHER));
-        authorities.add(new Authority(Role.ROLE_USER));
-        return member;
+        Member member = createMember(reqSignUp);
+        memberRepository.save(member);
+        return ResSignUp.of(member);
     }
 
 
@@ -90,13 +55,31 @@ public class MemberService {
 
 
     /**
+     * Member Entity 생성하기
+     *
+     * @param reqSignUp 회원가입 요청정보
+     * @return 생성된 Member Entity
+     */
+    private Member createMember(final ReqSignUp reqSignUp) {
+
+        return Member.of(
+                reqSignUp.getEmail(),
+                reqSignUp.getPhoneNumber(),
+                reqSignUp.getUsername(),
+                passwordEncoder.encode(reqSignUp.getPassword()),
+                reqSignUp.getRole());
+    }
+
+
+    /**
      * 이메일과 휴대폰번호 중복체크
      * 중복시 예외발생
      *
      * @param email       이메일
      * @param phoneNumber 휴대폰번호
      */
-    private void checkDuplicateEmailAndPhoneNumber(final String email, final String phoneNumber) {
+    private void checkDuplicateEmailAndPhoneNumber(final String email,
+                                                   final String phoneNumber) {
 
         boolean existsEmail = memberRepository.existsByEmail(email);
         boolean existsPhoneNumber = memberRepository.existsByPhoneNumber(phoneNumber);

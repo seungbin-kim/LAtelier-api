@@ -39,11 +39,11 @@ class MemberServiceTest {
 
 
   @DisplayName("회원등록_성공")
-  @ParameterizedTest(name = "[{index}] name={0}, phoneNumber={1}, email={2}, isTeacher={4}")
+  @ParameterizedTest(name = "[{index}] username={0}, phoneNumber={1}, email={2}, role={4}")
   @CsvSource({
-          "홍길동, 01011111111, test1@a.b, !myPassword486@, true",
-          "홍길순, 01022222222, test2@a.b, !myPassword486@, false",
-          "홍길복, 01033333333, test3@a.b, !myPassword486@, false"})
+          "홍길동, 01011111111, test1@a.b, !myPassword486@, user",
+          "홍길순, 01022222222, test2@a.b, !myPassword486@, instructor",
+          "홍길복, 01033333333, test3@a.b, !myPassword486@, admin"})
   void addMemberSuccess(@AggregateWith(SignUpRequestAggregator.class) ReqSignUp req) {
     // given
     given(memberRepository.existsByEmail(req.getEmail()))
@@ -56,18 +56,18 @@ class MemberServiceTest {
 
     // then
     assertEquals(req.getEmail(), resSignUp.getEmail());
-    assertEquals(req.getName(), resSignUp.getName());
+    assertEquals(req.getUsername(), resSignUp.getUsername());
     assertEquals(req.getPhoneNumber(), resSignUp.getPhoneNumber());
-    assertEquals(req.getIsTeacher(), resSignUp.getIsTeacher());
+    assertEquals(req.getRole(), resSignUp.getRole());
   }
 
 
   @DisplayName("회원등록_실패_이메일중복")
-  @ParameterizedTest(name = "[{index}] name={0}, phoneNumber={1}, email={2}, isTeacher={4}")
+  @ParameterizedTest(name = "[{index}] username={0}, phoneNumber={1}, email={2}, role={4}")
   @CsvSource({
-          "홍길동, 01011111111, test1@a.b, !myPassword486@, true",
-          "홍길순, 01022222222, test2@a.b, !myPassword486@, false",
-          "홍길복, 01033333333, test3@a.b, !myPassword486@, false"})
+          "홍길동, 01011111111, test1@a.b, !myPassword486@, user",
+          "홍길순, 01022222222, test2@a.b, !myPassword486@, instructor",
+          "홍길복, 01033333333, test3@a.b, !myPassword486@, admin"})
   void addMemberFailEmail(@AggregateWith(SignUpRequestAggregator.class) ReqSignUp req) {
     // given
     given(memberRepository.existsByEmail(req.getEmail()))
@@ -83,11 +83,11 @@ class MemberServiceTest {
 
 
   @DisplayName("회원등록_실패_휴대폰중복")
-  @ParameterizedTest(name = "[{index}] name={0}, phoneNumber={1}, email={2}, isTeacher={4}")
+  @ParameterizedTest(name = "[{index}] username={0}, phoneNumber={1}, email={2}, role={4}")
   @CsvSource({
-          "홍길동, 01011111111, test1@a.b, !myPassword486@, true",
-          "홍길순, 01022222222, test2@a.b, !myPassword486@, false",
-          "홍길복, 01033333333, test3@a.b, !myPassword486@, false"})
+          "홍길동, 01011111111, test1@a.b, !myPassword486@, user",
+          "홍길순, 01022222222, test2@a.b, !myPassword486@, instructor",
+          "홍길복, 01033333333, test3@a.b, !myPassword486@, admin"})
   void addMemberFailPhoneNumber(@AggregateWith(SignUpRequestAggregator.class) ReqSignUp req) {
     // given
     given(memberRepository.existsByEmail(req.getEmail()))
@@ -103,11 +103,11 @@ class MemberServiceTest {
 
 
   @DisplayName("회원등록_실패_모두중복")
-  @ParameterizedTest(name = "[{index}] name={0}, phoneNumber={1}, email={2}, isTeacher={4}")
+  @ParameterizedTest(name = "[{index}] username={0}, phoneNumber={1}, email={2}, role={4}")
   @CsvSource({
-          "홍길동, 01011111111, test1@a.b, !myPassword486@, true",
-          "홍길순, 01022222222, test2@a.b, !myPassword486@, false",
-          "홍길복, 01033333333, test3@a.b, !myPassword486@, false"})
+          "홍길동, 01011111111, test1@a.b, !myPassword486@, user",
+          "홍길순, 01022222222, test2@a.b, !myPassword486@, instructor",
+          "홍길복, 01033333333, test3@a.b, !myPassword486@, admin"})
   void addMemberFail(@AggregateWith(SignUpRequestAggregator.class) ReqSignUp req) {
     // given
     given(memberRepository.existsByEmail(req.getEmail()))
@@ -128,11 +128,11 @@ class MemberServiceTest {
     public Object aggregateArguments(ArgumentsAccessor accessor, ParameterContext context) throws ArgumentsAggregationException {
 
       ReqSignUp reqSignUp = new ReqSignUp();
-      ReflectionTestUtils.setField(reqSignUp, "name", accessor.getString(0));
+      ReflectionTestUtils.setField(reqSignUp, "username", accessor.getString(0));
       ReflectionTestUtils.setField(reqSignUp, "phoneNumber", accessor.getString(1));
       ReflectionTestUtils.setField(reqSignUp, "email", accessor.getString(2));
       ReflectionTestUtils.setField(reqSignUp, "password", accessor.getString(3));
-      ReflectionTestUtils.setField(reqSignUp, "isTeacher", accessor.getString(4));
+      ReflectionTestUtils.setField(reqSignUp, "role", accessor.getString(4));
       return reqSignUp;
     }
 

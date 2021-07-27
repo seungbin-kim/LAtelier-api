@@ -18,10 +18,10 @@ public class ReqSignUp {
     @NotBlank(message = "이름은 필수입니다.")
     @ApiModelProperty(
             value = "이름",
-            name = "name",
+            name = "username",
             example = "홍길동",
             required = true)
-    private String name;
+    private String username;
 
     @Pattern(regexp = "^01[0-9]{8,9}$",
             message = "올바른 형식이 아닙니다.")
@@ -52,37 +52,13 @@ public class ReqSignUp {
             required = true)
     private String password;
 
-    @Size(max = 500,
-            message = "최대 500자 입니다.")
+    @NotBlank(message = "회원구분은 필수입니다.")
+    @Pattern(regexp = "^(user|instructor|admin)$", message = "입력값은 user, instructor, admin 중 하나입니다.")
     @ApiModelProperty(
-            value = "자기소개",
-            name = "introduction",
-            example = "안녕하세요.")
-    private String introduction;
-
-    @Size(max = 100,
-            message = "주소는 최대 100자 입니다.")
-    @ApiModelProperty(
-            value = "주소",
-            name = "address",
-            example = "지구 광역시 나맞구 일로 53")
-    private String address;
-
-    @Size(max = 10,
-            message = "우편번호는 최대 10자 입니다.")
-    @ApiModelProperty(
-            value = "우편번호",
-            name = "zipCode",
-            example = "65536")
-    private String zipCode;
-
-    @NotBlank(message = "강사여부는 필수입니다.")
-    @Pattern(regexp = "^(true|false)$", message = "입력값은 true 혹은 false 중 하나입니다.")
-    @ApiModelProperty(
-            value = "강사여부",
-            name = "isTeacher",
-            example = "false",
+            value = "회원구분",
+            name = "role",
+            example = "user",
             required = true)
-    private String isTeacher;
+    private String role;
 
 }

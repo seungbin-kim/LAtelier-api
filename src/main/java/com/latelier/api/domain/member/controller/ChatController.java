@@ -34,10 +34,7 @@ public class ChatController {
     public ResponseEntity<Result<ResChatRoom>> createChatRoom(@RequestBody final ReqChatRoom reqChatRoom) {
 
         ResChatRoom room = chatService.addChatRoom(reqChatRoom.getSenderId(), reqChatRoom.getReceiverId());
-        return ResponseEntity
-                .ok(Result.<ResChatRoom>builder()
-                        .content(room)
-                        .build());
+        return ResponseEntity.ok(Result.of(room));
     }
 
 
@@ -52,10 +49,7 @@ public class ChatController {
     public ResponseEntity<Result<List<ResChatMessage>>> getChatMessages(@PathVariable("roomId") final Long roomId) {
 
         List<ResChatMessage> chatMessages = chatService.getChatMessages(roomId);
-        return ResponseEntity
-                .ok(Result.<List<ResChatMessage>>builder()
-                        .content(chatMessages)
-                        .build());
+        return ResponseEntity.ok(Result.of(chatMessages));
     }
 
 }

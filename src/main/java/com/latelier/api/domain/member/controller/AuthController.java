@@ -49,10 +49,7 @@ public class AuthController {
 
         String token = signInService.signIn(reqSignIn);
         ResToken resToken = new ResToken(token);
-        return ResponseEntity
-                .ok(Result.<ResToken>builder()
-                        .content(resToken)
-                        .build());
+        return ResponseEntity.ok(Result.of(resToken));
     }
 
 
@@ -80,10 +77,8 @@ public class AuthController {
         String startUrl = zoomService.createCourseMeeting(code, courseId);
 
         URI uri = new URI(startUrl);
-        return ResponseEntity
-                .status(HttpStatus.SEE_OTHER)
-                .location(uri)
-                .build();
+        return ResponseEntity.status(HttpStatus.SEE_OTHER)
+                .location(uri).build();
     }
 
 
@@ -98,9 +93,7 @@ public class AuthController {
     public ResponseEntity<Void> sendSms(@RequestBody @Valid final ReqSmsAuthentication request) {
 
         smsService.sendCertificationNumber(request.getPhoneNumber());
-        return ResponseEntity
-                .ok()
-                .build();
+        return ResponseEntity.ok().build();
     }
 
 
@@ -111,12 +104,10 @@ public class AuthController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "인증번호 확인 성공"),
             @ApiResponse(responseCode = "400", description = "인증번호 확인 실패")})
-    public ResponseEntity<Void> checkSMS(@RequestBody @Valid ReqSmsVerification request) {
+    public ResponseEntity<Void> checkSMS(@RequestBody @Valid final ReqSmsVerification request) {
 
         smsService.verifySMS(request.getPhoneNumber(), request.getCertificationNumber());
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .build();
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
 

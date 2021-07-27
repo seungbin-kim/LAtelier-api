@@ -32,25 +32,25 @@ public class ResChatRoom {
     private final String receiverName;
 
 
-    static public ResChatRoom createResponse(final ChatRoomJoin chatRoomJoin,
-                                             final String senderName,
-                                             final String receiverName) {
+    static public ResChatRoom of(final ChatRoomJoin chatRoomJoin,
+                                 final String senderName,
+                                 final String receiverName) {
 
-        return
-                new ResChatRoom(chatRoomJoin.getChatRoom().getId(),
-                        senderName,
-                        receiverName);
+        return new ResChatRoom(
+                chatRoomJoin.getChatRoom().getId(),
+                senderName,
+                receiverName);
     }
 
 
-    static public ResChatRoom createResponse(final ChatRoom chatRoom,
-                                             final String senderName,
-                                             final String receiverName) {
+    static public ResChatRoom of(final ChatRoom chatRoom,
+                                 final String senderName,
+                                 final String receiverName) {
 
-        return
-                new ResChatRoom(chatRoom.getId(),
-                        senderName,
-                        receiverName);
+        return new ResChatRoom(
+                chatRoom.getId(),
+                senderName,
+                receiverName);
     }
 
 }

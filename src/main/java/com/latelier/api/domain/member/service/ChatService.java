@@ -32,31 +32,50 @@ public class ChatService {
     private final ChatRoomJoinRepository chatRoomJoinRepository;
 
 
+    /**
+     * 채팅방 추가
+     *
+     * @param senderId   보내는 사람 ID
+     * @param receiverId 받는 사람 ID
+     * @return 생성된 채팅방
+     */
     @Transactional
-    public ResChatRoom addChatRoom(final Long senderId, final Long receiverId) {
+    public ResChatRoom addChatRoom(final Long senderId,
+                                   final Long receiverId) {
 
         Member sender = memberService.getMemberById(senderId);
         Member receiver = memberService.getMemberById(receiverId);
 
         return chatRoomJoinRepository.findAlreadyOpenedChat(senderId, receiverId)
                 .map(chatRoomJoin ->
-                        ResChatRoom.createResponse(chatRoomJoin, sender.getName(), receiver.getName()))
+                        ResChatRoom.of(chatRoomJoin, sender.getUsername(), receiver.getUsername()))
                 .orElseGet(() -> createRoomAndJoin(sender, receiver));
     }
 
 
-    //    @Transactional
+    /**
+     * 채팅기록 얻기
+     *
+     * @param roomId 채팅방 ID
+     * @return 채팅방 ID 에 해당하는 채팅기록
+     */
     public List<ResChatMessage> getChatMessages(final Long roomId) {
 
         // TODO 사용자 확인
 
         return chatMessageRepository.findByChatRoomIdOrderByCreatedAtAsc(roomId)
                 .stream()
-                .map(ResChatMessage::createResponse)
+                .map(ResChatMessage::of)
                 .collect(Collectors.toList());
     }
 
 
+    /**
+     * 채팅기록 저장
+     *
+     * @param chatMessage 채팅 메세지
+     * @return 저장된 채팅 메세지
+     */
     @Transactional
     public ResChatMessage saveChatMessage(final SocketController.ChatMessage chatMessage) {
 
@@ -65,20 +84,28 @@ public class ChatService {
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new ChatRoomNotFound(String.valueOf(chatRoomId)));
 
-        ChatMessage newMessage = new ChatMessage(chatMessage.getMessage(), sender, chatRoom);
+        ChatMessage newMessage = ChatMessage.of(chatMessage.getMessage(), sender, chatRoom);
         ChatMessage savedMessage = chatMessageRepository.save(newMessage);
-        return ResChatMessage.createResponse(savedMessage);
+        return ResChatMessage.of(savedMessage);
     }
 
 
-    private ResChatRoom createRoomAndJoin(final Member sender, final Member receiver) {
+    /**
+     * 방 생성하고 입장하기
+     *
+     * @param sender   보내는 사람
+     * @param receiver 받는 사람
+     * @return 생성된 채팅방 정보
+     */
+    private ResChatRoom createRoomAndJoin(final Member sender,
+                                          final Member receiver) {
 
         ChatRoom newChatRoom = chatRoomRepository.save(new ChatRoom());
 
         chatRoomJoinRepository.save(new ChatRoomJoin(sender, newChatRoom));
         chatRoomJoinRepository.save(new ChatRoomJoin(receiver, newChatRoom));
 
-        return ResChatRoom.createResponse(newChatRoom, sender.getName(), receiver.getName());
+        return ResChatRoom.of(newChatRoom, sender.getUsername(), receiver.getUsername());
     }
 
 }

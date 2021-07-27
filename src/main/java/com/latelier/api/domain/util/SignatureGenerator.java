@@ -58,6 +58,11 @@ public class SignatureGenerator {
   }
 
 
+  /**
+   * SMS 전송을 위한 시그니처 생성
+   * @param time 요청시간
+   * @return 생성된 시그니처
+   */
   public String generateSignatureForSms(final String time) {
     try {
       String space = " ";

@@ -1,7 +1,6 @@
 package com.latelier.api.domain.member.packet.response;
 
 import com.latelier.api.domain.member.entity.Member;
-import com.latelier.api.domain.member.enumeration.Role;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AccessLevel;
@@ -17,7 +16,7 @@ public class ResSignUp {
             value = "이름",
             name = "name",
             example = "홍길동")
-    private final String name;
+    private final String username;
 
     @ApiModelProperty(
             value = "전화번호",
@@ -32,22 +31,19 @@ public class ResSignUp {
     private final String email;
 
     @ApiModelProperty(
-            value = "강사 여부",
-            name = "isTeacher",
-            example = "false")
-    private final String isTeacher;
+            value = "회원구분",
+            name = "role",
+            example = "user")
+    private final String role;
 
 
-    public static ResSignUp createResponse(final Member member) {
-
-        boolean isTeacher = member.getAuthorities().stream()
-                .anyMatch(A -> A.getAuthorityName().equals(Role.ROLE_TEACHER));
+    public static ResSignUp of(final Member member) {
 
         return new ResSignUp(
-                member.getName(),
+                member.getUsername(),
                 member.getPhoneNumber(),
                 member.getEmail(),
-                Boolean.toString(isTeacher));
+                member.getRole());
     }
 
 }

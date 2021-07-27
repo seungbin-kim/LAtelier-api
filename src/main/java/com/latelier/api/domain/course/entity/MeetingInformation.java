@@ -10,36 +10,44 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SequenceGenerator(
-    name = "MEETING_INFORMATION_SEQ_GENERATOR",
-    sequenceName = "MEETING_INFORMATION_SEQ",
-    allocationSize = 1)
+        name = "MEETING_INFORMATION_SEQ_GENERATOR",
+        sequenceName = "MEETING_INFORMATION_SEQ",
+        allocationSize = 1)
 public class MeetingInformation {
 
-  @Id
-  @GeneratedValue(
-      strategy = GenerationType.SEQUENCE,
-      generator = "MEETING_INFORMATION_SEQ_GENERATOR")
-  @Column(columnDefinition = "bigint")
-  private Long id;
+    @Id
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "MEETING_INFORMATION_SEQ_GENERATOR")
+    @Column(columnDefinition = "bigint")
+    private Long id;
 
-  @OneToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "course_id", columnDefinition = "bigint")
-  private Course course;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "course_id", columnDefinition = "bigint")
+    private Course course;
 
-  @Column(length = 50)
-  private String meetingId;
+    @Column(length = 50)
+    private String meetingId;
 
-  @Column(length = 50)
-  private String meetingPw;
+    @Column(length = 50)
+    private String meetingPw;
 
 
-  public MeetingInformation(final Course course,
-                            final String meetingId,
-                            final String meetingPw) {
+    private MeetingInformation(final Course course,
+                               final String meetingId,
+                               final String meetingPw) {
 
-    this.course = course;
-    this.meetingId = meetingId;
-    this.meetingPw = meetingPw;
-  }
+        this.course = course;
+        this.meetingId = meetingId;
+        this.meetingPw = meetingPw;
+    }
+
+
+    public static MeetingInformation of(final Course course,
+                                        final String meetingId,
+                                        final String meetingPw) {
+
+        return new MeetingInformation(course, meetingId, meetingPw);
+    }
 
 }

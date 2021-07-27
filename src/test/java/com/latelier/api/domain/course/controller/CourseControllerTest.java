@@ -3,6 +3,7 @@ package com.latelier.api.domain.course.controller;
 import com.latelier.api.domain.course.entity.Course;
 import com.latelier.api.domain.course.entity.MeetingInformation;
 import com.latelier.api.domain.member.entity.Member;
+import com.latelier.api.domain.member.enumeration.Role;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,34 +39,24 @@ class CourseControllerTest {
     @DisplayName("강의_입장정보_요청성공")
     void getMeeting() throws Exception {
         // given
-        String name = "홍길동";
+        String username = "홍길동";
         String email = "test@a.b";
         String phoneNumber = "01074787389";
         String password = "pwd";
 
         registerRole();
-        Member member = Member.builder()
-                .name(name)
-                .email(email)
-                .phoneNumber(phoneNumber)
-                .password(password)
-                .build();
+        Member member = Member.of(email, phoneNumber, username, password, Role.ROLE_INSTRUCTOR.getRoleName());
         em.persist(member);
 
         String courseName = "테스트";
-        Course course = Course.builder()
-                .teacher(member)
-                .courseName(courseName)
+        Course course = Course.builder(member, courseName)
                 .build();
         em.persist(course);
         Long courseId = course.getId();
 
         String meetingId = "000000";
         String meetingPw = "pwd";
-        MeetingInformation meetingInformation = new MeetingInformation(
-                course,
-                meetingId,
-                meetingPw);
+        MeetingInformation meetingInformation = MeetingInformation.of(course, meetingId, meetingPw);
         em.persist(meetingInformation);
 
         // when
@@ -77,7 +68,7 @@ class CourseControllerTest {
                 .andExpect(jsonPath("$.content.apiKey").exists())
                 .andExpect(jsonPath("$.content.meetingNumber").exists())
                 .andExpect(jsonPath("$.content.meetingPassword").exists())
-                .andExpect(jsonPath("$.content.userName").exists())
+                .andExpect(jsonPath("$.content.username").exists())
                 .andExpect(jsonPath("$.content.signature").exists())
                 .andDo(print());
     }
@@ -87,34 +78,24 @@ class CourseControllerTest {
     @DisplayName("강의_입장정보_요청실패_비회원")
     void getMeetingNonMemberFail() throws Exception {
         // given
-        String name = "홍길동";
+        String username = "홍길동";
         String email = "test@a.b";
         String phoneNumber = "01074787389";
         String password = "pwd";
 
         registerRole();
-        Member member = Member.builder()
-                .name(name)
-                .email(email)
-                .phoneNumber(phoneNumber)
-                .password(password)
-                .build();
+        Member member = Member.of(email, phoneNumber, username, password, Role.ROLE_INSTRUCTOR.getRoleName());
         em.persist(member);
 
         String courseName = "테스트";
-        Course course = Course.builder()
-                .teacher(member)
-                .courseName(courseName)
+        Course course = Course.builder(member, courseName)
                 .build();
         em.persist(course);
         Long courseId = course.getId();
 
         String meetingId = "000000";
         String meetingPw = "pwd";
-        MeetingInformation meetingInformation = new MeetingInformation(
-                course,
-                meetingId,
-                meetingPw);
+        MeetingInformation meetingInformation = MeetingInformation.of(course, meetingId, meetingPw);
         em.persist(meetingInformation);
 
         // when
@@ -131,33 +112,23 @@ class CourseControllerTest {
     @DisplayName("강의_입장정보_요청실패_열려있지_않은_강의")
     void getMeetingNotOpenFail() throws Exception {
         // given
-        String name = "홍길동";
+        String username = "홍길동";
         String email = "test@a.b";
         String phoneNumber = "01074787389";
         String password = "pwd";
 
         registerRole();
-        Member member = Member.builder()
-                .name(name)
-                .email(email)
-                .phoneNumber(phoneNumber)
-                .password(password)
-                .build();
+        Member member = Member.of(email, phoneNumber, username, password, Role.ROLE_INSTRUCTOR.getRoleName());
         em.persist(member);
 
         String courseName = "테스트";
-        Course course = Course.builder()
-                .teacher(member)
-                .courseName(courseName)
+        Course course = Course.builder(member, courseName)
                 .build();
         em.persist(course);
 
         String meetingId = "000000";
         String meetingPw = "pwd";
-        MeetingInformation meetingInformation = new MeetingInformation(
-                course,
-                meetingId,
-                meetingPw);
+        MeetingInformation meetingInformation = MeetingInformation.of(course, meetingId, meetingPw);
         em.persist(meetingInformation);
 
         // when
@@ -172,7 +143,7 @@ class CourseControllerTest {
 
     private void registerRole() {
         em.createNativeQuery("INSERT INTO authority (authority_name) VALUES ('ROLE_USER')").executeUpdate();
-        em.createNativeQuery("INSERT INTO authority (authority_name) VALUES ('ROLE_TEACHER')").executeUpdate();
+        em.createNativeQuery("INSERT INTO authority (authority_name) VALUES ('ROLE_INSTRUCTOR')").executeUpdate();
         em.createNativeQuery("INSERT INTO authority (authority_name) VALUES ('ROLE_ADMIN')").executeUpdate();
     }
 

@@ -1,7 +1,6 @@
 package com.latelier.api.domain.member.entity;
 
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -13,8 +12,9 @@ import javax.persistence.Embeddable;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Address {
 
-    @Builder
-    private Address(final String address, final String zipCode) {
+    private Address(final String address,
+                    final String zipCode) {
+
         this.address = address;
         this.zipCode = zipCode;
     }

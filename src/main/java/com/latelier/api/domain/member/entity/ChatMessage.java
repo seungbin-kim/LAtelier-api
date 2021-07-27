@@ -34,11 +34,21 @@ public class ChatMessage extends BaseTimeEntity {
     private ChatRoom chatRoom;
 
 
-    public ChatMessage(final String message, final Member member, final ChatRoom chatRoom) {
+    private ChatMessage(final String message,
+                       final Member member,
+                       final ChatRoom chatRoom) {
 
         this.message = message;
         this.member = member;
         this.chatRoom = chatRoom;
+    }
+
+
+    public static ChatMessage of(final String message,
+                                 final Member member,
+                                 final ChatRoom chatRoom) {
+
+        return new ChatMessage(message, member, chatRoom);
     }
 
 }

@@ -12,44 +12,45 @@ import java.time.Duration;
 @RequiredArgsConstructor
 public class SmsCertificationRepository {
 
-  private final AppProperties appProperties;
+    private final AppProperties appProperties;
 
-  private final StringRedisTemplate stringRedisTemplate;
+    private final StringRedisTemplate stringRedisTemplate;
 
-  private String PREFIX;
+    private String PREFIX;
 
-  private long LIMIT_TIME;
-
-
-  @PostConstruct
-  public void init() {
-    PREFIX = appProperties.getSms().getRedisPrefix();
-    LIMIT_TIME = appProperties.getSms().getExpireTime();
-  }
+    private long LIMIT_TIME;
 
 
-  public void saveSmsCertification(final String phoneNumber, final int certificationNumber) {
-
-    stringRedisTemplate.opsForValue()
-        .set(PREFIX + phoneNumber, Integer.toString(certificationNumber), Duration.ofMinutes(LIMIT_TIME));
-  }
-
-
-  public String getSmsCertification(final String phoneNumber) {
-
-    return stringRedisTemplate.opsForValue().get(PREFIX + phoneNumber);
-  }
+    @PostConstruct
+    public void init() {
+        PREFIX = appProperties.getSms().getRedisPrefix();
+        LIMIT_TIME = appProperties.getSms().getExpireTime();
+    }
 
 
-  public void removeSmsCertification(final String phoneNumber) {
+    public void saveSmsCertification(final String phoneNumber,
+                                     final int certificationNumber) {
 
-    stringRedisTemplate.delete(PREFIX + phoneNumber);
-  }
+        stringRedisTemplate.opsForValue()
+                .set(PREFIX + phoneNumber, Integer.toString(certificationNumber), Duration.ofMinutes(LIMIT_TIME));
+    }
 
 
-  public boolean hasKey(final String phoneNumber) {
+    public String getSmsCertification(final String phoneNumber) {
 
-    return stringRedisTemplate.hasKey(PREFIX + phoneNumber);
-  }
+        return stringRedisTemplate.opsForValue().get(PREFIX + phoneNumber);
+    }
+
+
+    public void removeSmsCertification(final String phoneNumber) {
+
+        stringRedisTemplate.delete(PREFIX + phoneNumber);
+    }
+
+
+    public boolean hasKey(final String phoneNumber) {
+
+        return stringRedisTemplate.hasKey(PREFIX + phoneNumber);
+    }
 
 }

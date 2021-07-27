@@ -6,6 +6,7 @@ import com.latelier.api.domain.member.packet.request.ReqSignUp;
 import com.latelier.api.domain.member.packet.request.ReqSmsAuthentication;
 import com.latelier.api.domain.member.packet.request.ReqSmsVerification;
 import com.latelier.api.domain.member.repository.SmsCertificationRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ParameterContext;
@@ -47,8 +48,13 @@ class AuthControllerTest {
     @Autowired
     ObjectMapper objectMapper;
 
-    @Autowired
-    EntityManager em;
+
+    @BeforeEach
+    void init(@Autowired EntityManager em) {
+        em.createNativeQuery("INSERT INTO authority (authority_name) VALUES ('ROLE_USER')").executeUpdate();
+        em.createNativeQuery("INSERT INTO authority (authority_name) VALUES ('ROLE_INSTRUCTOR')").executeUpdate();
+        em.createNativeQuery("INSERT INTO authority (authority_name) VALUES ('ROLE_ADMIN')").executeUpdate();
+    }
 
 
     @Test
@@ -97,14 +103,12 @@ class AuthControllerTest {
 
 
     @DisplayName("회원등록후_로그인_성공")
-    @ParameterizedTest(name = "[{index}] name={0}, phoneNumber={1}, email={2}, isTeacher={4}")
+    @ParameterizedTest(name = "[{index}] username={0}, phoneNumber={1}, email={2}, role={4}")
     @CsvSource({
-            "홍길동, 01011111111, test1@a.b, !myPassword486@, true",
-            "홍길순, 01022222222, test2@a.b, !myPassword486@, false"})
+            "홍길동, 01011111111, test1@a.b, !myPassword486@, user",
+            "홍길순, 01022222222, test2@a.b, !myPassword486@, instructor"})
     void signIn(@AggregateWith(SignUpRequestAggregator.class) ReqSignUp req) throws Exception {
         // given
-        registerRole();
-
         String signUpRequest = objectMapper.writeValueAsString(req);
 
         ReqSignIn reqSignIn = new ReqSignIn();
@@ -134,14 +138,12 @@ class AuthControllerTest {
 
 
     @DisplayName("회원등록후_로그인_실패(이메일)")
-    @ParameterizedTest(name = "[{index}] name={0}, phoneNumber={1}, email={2}, isTeacher={4}")
+    @ParameterizedTest(name = "[{index}] username={0}, phoneNumber={1}, email={2}, role={4}")
     @CsvSource({
-            "홍길동, 01011111111, test1@a.b, !myPassword486@, true",
-            "홍길순, 01022222222, test2@a.b, !myPassword486@, false"})
+            "홍길동, 01011111111, test1@a.b, !myPassword486@, user",
+            "홍길순, 01022222222, test2@a.b, !myPassword486@, instructor"})
     void signInFailEmail(@AggregateWith(SignUpRequestAggregator.class) ReqSignUp req) throws Exception {
         // given
-        registerRole();
-
         String signUpRequest = objectMapper.writeValueAsString(req);
 
         ReqSignIn reqSignIn = new ReqSignIn();
@@ -170,14 +172,12 @@ class AuthControllerTest {
 
 
     @DisplayName("회원등록후_로그인_실패(비밀번호)")
-    @ParameterizedTest(name = "[{index}] name={0}, phoneNumber={1}, email={2}, isTeacher={4}")
+    @ParameterizedTest(name = "[{index}] username={0}, phoneNumber={1}, email={2}, role={4}")
     @CsvSource({
-            "홍길동, 01011111111, test1@a.b, !myPassword486@, true",
-            "홍길순, 01022222222, test2@a.b, !myPassword486@, false"})
+            "홍길동, 01011111111, test1@a.b, !myPassword486@, user",
+            "홍길순, 01022222222, test2@a.b, !myPassword486@, instructor"})
     void signInPasswordFail(@AggregateWith(SignUpRequestAggregator.class) ReqSignUp req) throws Exception {
         // given
-        registerRole();
-
         String signUpRequest = objectMapper.writeValueAsString(req);
 
         ReqSignIn reqSignIn = new ReqSignIn();
@@ -211,21 +211,14 @@ class AuthControllerTest {
         public Object aggregateArguments(ArgumentsAccessor accessor, ParameterContext context) throws ArgumentsAggregationException {
 
             ReqSignUp reqSignUp = new ReqSignUp();
-            ReflectionTestUtils.setField(reqSignUp, "name", accessor.getString(0));
+            ReflectionTestUtils.setField(reqSignUp, "username", accessor.getString(0));
             ReflectionTestUtils.setField(reqSignUp, "phoneNumber", accessor.getString(1));
             ReflectionTestUtils.setField(reqSignUp, "email", accessor.getString(2));
             ReflectionTestUtils.setField(reqSignUp, "password", accessor.getString(3));
-            ReflectionTestUtils.setField(reqSignUp, "isTeacher", accessor.getString(4));
+            ReflectionTestUtils.setField(reqSignUp, "role", accessor.getString(4));
             return reqSignUp;
         }
 
-    }
-
-
-    private void registerRole() {
-        em.createNativeQuery("INSERT INTO authority (authority_name) VALUES ('ROLE_USER')").executeUpdate();
-        em.createNativeQuery("INSERT INTO authority (authority_name) VALUES ('ROLE_TEACHER')").executeUpdate();
-        em.createNativeQuery("INSERT INTO authority (authority_name) VALUES ('ROLE_ADMIN')").executeUpdate();
     }
 
 }

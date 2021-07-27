@@ -32,7 +32,9 @@ public class ChatRoomJoin extends BaseTimeEntity {
     private ChatRoom chatRoom;
 
 
-    public ChatRoomJoin(Member member, ChatRoom chatRoom) {
+    public ChatRoomJoin(final Member member,
+                        final ChatRoom chatRoom) {
+
         this.member = member;
         this.chatRoom = chatRoom;
     }

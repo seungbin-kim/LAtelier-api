@@ -32,8 +32,8 @@ public class ResMeetingInformation {
 
     @ApiModelProperty(
             value = "이름",
-            name = "userName")
-    private final String userName;
+            name = "username")
+    private final String username;
 
     @ApiModelProperty(
             value = "Signature",
@@ -41,18 +41,17 @@ public class ResMeetingInformation {
     private final String signature;
 
 
-    public static ResMeetingInformation createResponse(final String apiKey,
-                                                       final MeetingInformation meetingInformation,
-                                                       final String userName,
-                                                       final String signature) {
+    public static ResMeetingInformation of(final String apiKey,
+                                           final MeetingInformation meetingInformation,
+                                           final String userName,
+                                           final String signature) {
 
-        return
-                new ResMeetingInformation(
-                        apiKey,
-                        Long.parseLong(meetingInformation.getMeetingId()),
-                        meetingInformation.getMeetingPw(),
-                        userName,
-                        signature);
+        return new ResMeetingInformation(
+                apiKey,
+                Long.parseLong(meetingInformation.getMeetingId()),
+                meetingInformation.getMeetingPw(),
+                userName,
+                signature);
     }
 
 }

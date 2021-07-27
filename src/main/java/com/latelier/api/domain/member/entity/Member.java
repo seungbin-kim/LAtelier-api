@@ -1,9 +1,9 @@
 package com.latelier.api.domain.member.entity;
 
-import com.latelier.api.domain.model.BaseTimeEntity;
 import com.latelier.api.domain.file.entity.File;
+import com.latelier.api.domain.member.enumeration.Role;
+import com.latelier.api.domain.model.BaseTimeEntity;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -42,7 +42,7 @@ public class Member extends BaseTimeEntity {
     private File file;
 
     @Column(length = 20, nullable = false)
-    private String name;
+    private String username;
 
     @Column(length = 20)
     private String nickname;
@@ -58,25 +58,62 @@ public class Member extends BaseTimeEntity {
 
     private boolean activated = true;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany
     @JoinTable(
             name = "member_authority",
             joinColumns = {@JoinColumn(name = "member_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "authority_name", referencedColumnName = "authority_name")})
     private Set<Authority> authorities = new HashSet<>();
 
+    @Column(length = 10)
+    private String role;
 
-    @Builder
-    private Member(final String email, final String phoneNumber, final File file, final String name,
-                   final String password, final String introduction, final Address address) {
+
+    private Member(final String email,
+                   final String phoneNumber,
+                   final String username,
+                   final String password,
+                   final String role) {
 
         this.email = email;
         this.phoneNumber = phoneNumber;
-        this.file = file;
-        this.name = name;
+        this.username = username;
         this.password = password;
-        this.introduction = introduction;
-        this.address = address;
+        this.role = role;
+    }
+
+
+    /**
+     * Member 생성 메서드
+     *
+     * @param email       이메일
+     * @param phoneNumber 휴대폰번호
+     * @param username    실명
+     * @param password    비밀번호
+     * @param role        가입 구분
+     * @return 생성된 Member Entity
+     */
+    public static Member of(final String email,
+                            final String phoneNumber,
+                            final String username,
+                            final String password,
+                            final String role) {
+
+        Member member = new Member(email, phoneNumber, username, password, role);
+        setVeryFirstAuthorities(member.getAuthorities(), role);
+        return member;
+    }
+
+
+    private static void setVeryFirstAuthorities(final Set<Authority> authorities, final String role) {
+        switch (role) {
+            case "admin":
+                authorities.add(new Authority(Role.ROLE_ADMIN));
+            case "instructor":
+                authorities.add(new Authority(Role.ROLE_INSTRUCTOR));
+            case "user":
+                authorities.add(new Authority(Role.ROLE_USER));
+        }
     }
 
 

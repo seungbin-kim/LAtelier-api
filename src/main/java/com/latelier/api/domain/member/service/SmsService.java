@@ -3,13 +3,11 @@ package com.latelier.api.domain.member.service;
 import com.latelier.api.domain.member.exception.PhoneNumberDuplicateException;
 import com.latelier.api.domain.member.exception.SmsApiRequestException;
 import com.latelier.api.domain.member.exception.SmsVerificationException;
-import com.latelier.api.domain.member.packet.request.ReqSms;
-import com.latelier.api.domain.member.packet.response.ResSms;
 import com.latelier.api.domain.member.repository.MemberRepository;
 import com.latelier.api.domain.member.repository.SmsCertificationRepository;
 import com.latelier.api.domain.util.SignatureGenerator;
 import com.latelier.api.global.properties.NaverProperties;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -94,10 +92,10 @@ public class SmsService {
         String from = naverProperties.getCloudPlatform().getSens().getSmsFrom();
 
         List<ReqSms.Message> messages = new ArrayList<>();
-        messages.add(ReqSms.Message.createMessage(phoneNumber));
+        messages.add(ReqSms.Message.of(phoneNumber));
 
         String content = "[Latelier] 인증번호는 [" + randomNumber + "] 입니다.";
-        return ReqSms.createSmsRequest(from, content, messages);
+        return ReqSms.of(from, content, messages);
     }
 
 
@@ -138,3 +136,66 @@ public class SmsService {
     }
 
 }
+
+
+@Getter
+@Setter
+@EqualsAndHashCode
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+class ReqSms {
+
+    private final String type;
+
+    private final String from;
+
+    private final String content;
+
+    private final List<Message> messages;
+
+    private String countryCode;
+
+    private String contentType;
+
+
+    public static ReqSms of(final String from, final String content, final List<Message> messages) {
+
+        return new ReqSms("SMS", from, content, messages);
+    }
+
+
+    @Getter
+    @Setter
+    @EqualsAndHashCode
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Message {
+
+        private final String to;
+
+        private String content;
+
+
+        public static Message of(final String to) {
+
+            return new Message(to);
+        }
+
+    }
+
+}
+
+
+@Getter
+@ToString
+class ResSms {
+
+    private String requestId;
+
+    private String requestTime;
+
+    private String statusCode;
+
+    private String statusName;
+
+}
+
+
