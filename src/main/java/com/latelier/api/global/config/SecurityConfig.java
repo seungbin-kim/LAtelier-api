@@ -18,7 +18,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
 
 
 @Configuration
@@ -94,14 +93,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public RoleHierarchyVoter roleHierarchyVoter() {
         return new RoleHierarchyVoter(roleHierarchy());
-    }
-
-
-    @Bean
-    public DefaultWebSecurityExpressionHandler expressionHandler() {
-        DefaultWebSecurityExpressionHandler expressionHandler = new DefaultWebSecurityExpressionHandler();
-        expressionHandler.setRoleHierarchy(roleHierarchy());
-        return expressionHandler;
     }
 
 }
