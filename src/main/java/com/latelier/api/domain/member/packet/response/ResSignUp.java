@@ -14,7 +14,7 @@ public class ResSignUp {
 
     @ApiModelProperty(
             value = "이름",
-            name = "name",
+            name = "username",
             example = "홍길동")
     private final String username;
 

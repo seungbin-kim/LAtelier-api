@@ -64,11 +64,13 @@ public class Member extends BaseTimeEntity {
     private Member(final String email,
                    final String phoneNumber,
                    final String username,
+                   final String nickname,
                    final String password) {
 
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.username = username;
+        this.nickname = nickname;
         this.password = password;
     }
 
@@ -89,7 +91,7 @@ public class Member extends BaseTimeEntity {
                             final String password,
                             final String role) {
 
-        Member member = new Member(email, phoneNumber, username, password);
+        Member member = new Member(email, phoneNumber, username, username, password);
         setAuthority(member, role);
         return member;
     }
