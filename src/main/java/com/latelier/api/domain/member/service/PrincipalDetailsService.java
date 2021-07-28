@@ -11,8 +11,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +30,7 @@ public class PrincipalDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(final String email) {
 
-        return memberRepository.findByEmailWithAuthorities(email)
+        return memberRepository.findByEmail(email)
                 .map(this::createUserDetails)
                 .orElseThrow(() -> new InternalAuthenticationServiceException("찾을 수 없는 사용자." + email));
     }
@@ -48,11 +48,13 @@ public class PrincipalDetailsService implements UserDetailsService {
             throw new MemberNotActivatedException(member.getEmail());
         }
 
-        List<SimpleGrantedAuthority> grantedAuthorities = member.getAuthorities().stream()
-                .map(authority -> new SimpleGrantedAuthority(authority.getAuthorityName().toString()))
-                .collect(Collectors.toList());
+        List<SimpleGrantedAuthority> grantedAuthorities =
+                Collections.singletonList(new SimpleGrantedAuthority(member.getAuthority().toString()));
 
-        return new User(String.valueOf(member.getId()), member.getPassword(), grantedAuthorities);
+        return new User(
+                String.valueOf(member.getId()),
+                member.getPassword(),
+                grantedAuthorities);
     }
 
 }

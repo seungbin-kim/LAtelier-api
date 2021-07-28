@@ -6,7 +6,6 @@ import com.latelier.api.domain.member.packet.request.ReqSignUp;
 import com.latelier.api.domain.member.packet.request.ReqSmsAuthentication;
 import com.latelier.api.domain.member.packet.request.ReqSmsVerification;
 import com.latelier.api.domain.member.repository.SmsCertificationRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ParameterContext;
@@ -27,8 +26,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -47,14 +44,6 @@ class AuthControllerTest {
 
     @Autowired
     ObjectMapper objectMapper;
-
-
-    @BeforeEach
-    void init(@Autowired EntityManager em) {
-        em.createNativeQuery("INSERT INTO authority (authority_name) VALUES ('ROLE_USER')").executeUpdate();
-        em.createNativeQuery("INSERT INTO authority (authority_name) VALUES ('ROLE_INSTRUCTOR')").executeUpdate();
-        em.createNativeQuery("INSERT INTO authority (authority_name) VALUES ('ROLE_ADMIN')").executeUpdate();
-    }
 
 
     @Test

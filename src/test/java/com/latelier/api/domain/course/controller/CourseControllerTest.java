@@ -44,7 +44,6 @@ class CourseControllerTest {
         String phoneNumber = "01074787389";
         String password = "pwd";
 
-        registerRole();
         Member member = Member.of(email, phoneNumber, username, password, Role.ROLE_INSTRUCTOR.getRoleName());
         em.persist(member);
 
@@ -83,7 +82,6 @@ class CourseControllerTest {
         String phoneNumber = "01074787389";
         String password = "pwd";
 
-        registerRole();
         Member member = Member.of(email, phoneNumber, username, password, Role.ROLE_INSTRUCTOR.getRoleName());
         em.persist(member);
 
@@ -117,7 +115,6 @@ class CourseControllerTest {
         String phoneNumber = "01074787389";
         String password = "pwd";
 
-        registerRole();
         Member member = Member.of(email, phoneNumber, username, password, Role.ROLE_INSTRUCTOR.getRoleName());
         em.persist(member);
 
@@ -138,13 +135,6 @@ class CourseControllerTest {
         // then
         perform.andExpect(status().isNotFound())
                 .andDo(print());
-    }
-
-
-    private void registerRole() {
-        em.createNativeQuery("INSERT INTO authority (authority_name) VALUES ('ROLE_USER')").executeUpdate();
-        em.createNativeQuery("INSERT INTO authority (authority_name) VALUES ('ROLE_INSTRUCTOR')").executeUpdate();
-        em.createNativeQuery("INSERT INTO authority (authority_name) VALUES ('ROLE_ADMIN')").executeUpdate();
     }
 
 }

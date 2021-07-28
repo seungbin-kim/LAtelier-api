@@ -54,7 +54,7 @@ public class AuthController {
 
 
     @GetMapping("/zoom/callback")
-    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
+    @PreAuthorize("hasRole('INSTRUCTOR')")
     @ApiOperation(
             value = "Zoom OAuth 인증과 회의생성 API 호출",
             notes = "Zoom OAuth 인증 후 회의생성 API 를 호출하여 start url 을 반환합니다.",

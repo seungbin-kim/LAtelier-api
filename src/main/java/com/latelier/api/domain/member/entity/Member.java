@@ -8,8 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Getter
@@ -58,28 +56,20 @@ public class Member extends BaseTimeEntity {
 
     private boolean activated = true;
 
-    @ManyToMany
-    @JoinTable(
-            name = "member_authority",
-            joinColumns = {@JoinColumn(name = "member_id", referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name = "authority_name", referencedColumnName = "authority_name")})
-    private Set<Authority> authorities = new HashSet<>();
-
-    @Column(length = 10)
-    private String role;
+    @Column(name = "authority", length = 20)
+    @Enumerated(EnumType.STRING)
+    private Role authority;
 
 
     private Member(final String email,
                    final String phoneNumber,
                    final String username,
-                   final String password,
-                   final String role) {
+                   final String password) {
 
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.username = username;
         this.password = password;
-        this.role = role;
     }
 
 
@@ -99,20 +89,23 @@ public class Member extends BaseTimeEntity {
                             final String password,
                             final String role) {
 
-        Member member = new Member(email, phoneNumber, username, password, role);
-        setVeryFirstAuthorities(member.getAuthorities(), role);
+        Member member = new Member(email, phoneNumber, username, password);
+        setAuthority(member, role);
         return member;
     }
 
 
-    private static void setVeryFirstAuthorities(final Set<Authority> authorities, final String role) {
+    private static void setAuthority(final Member member, final String role) {
         switch (role) {
             case "admin":
-                authorities.add(new Authority(Role.ROLE_ADMIN));
+                member.authority = Role.ROLE_ADMIN;
+                break;
             case "instructor":
-                authorities.add(new Authority(Role.ROLE_INSTRUCTOR));
+                member.authority = Role.ROLE_INSTRUCTOR;
+                break;
             case "user":
-                authorities.add(new Authority(Role.ROLE_USER));
+                member.authority = Role.ROLE_USER;
+                break;
         }
     }
 

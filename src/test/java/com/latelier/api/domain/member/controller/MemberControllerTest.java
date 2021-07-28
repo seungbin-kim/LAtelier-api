@@ -6,7 +6,6 @@ import com.latelier.api.domain.member.enumeration.Role;
 import com.latelier.api.domain.member.packet.request.ReqSignUp;
 import com.latelier.api.domain.member.repository.MemberRepository;
 import com.latelier.api.global.error.exception.ErrorCode;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -24,8 +23,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -45,14 +42,6 @@ class MemberControllerTest {
 
     @Autowired
     ApplicationContext context;
-
-
-    @BeforeEach
-    void init(@Autowired EntityManager em) {
-        em.createNativeQuery("INSERT INTO authority (authority_name) VALUES ('ROLE_USER')").executeUpdate();
-        em.createNativeQuery("INSERT INTO authority (authority_name) VALUES ('ROLE_INSTRUCTOR')").executeUpdate();
-        em.createNativeQuery("INSERT INTO authority (authority_name) VALUES ('ROLE_ADMIN')").executeUpdate();
-    }
 
 
     @DisplayName("회원등록_성공")

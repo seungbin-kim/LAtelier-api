@@ -1,6 +1,7 @@
 package com.latelier.api.domain.member.repository;
 
 import com.latelier.api.domain.member.entity.Member;
+import com.latelier.api.domain.member.enumeration.Role;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,10 +22,6 @@ class MemberRepositoryTest {
 
     @BeforeEach
     void init(@Autowired EntityManager em) {
-        em.createNativeQuery("INSERT INTO authority (authority_name) VALUES ('ROLE_USER')").executeUpdate();
-        em.createNativeQuery("INSERT INTO authority (authority_name) VALUES ('ROLE_INSTRUCTOR')").executeUpdate();
-        em.createNativeQuery("INSERT INTO authority (authority_name) VALUES ('ROLE_ADMIN')").executeUpdate();
-
         Member member = Member.of(
                 "test1@test.com",
                 "01012341234",
@@ -99,11 +96,11 @@ class MemberRepositoryTest {
         String email = "test1@test.com";
 
         // when
-        Optional<Member> optionalMember = memberRepository.findByEmailWithAuthorities(email);
+        Optional<Member> optionalMember = memberRepository.findByEmail(email);
 
         // then
         assertTrue(optionalMember.isPresent());
-        assertEquals(3, optionalMember.get().getAuthorities().size());
+        assertEquals(Role.ROLE_ADMIN, optionalMember.get().getAuthority());
     }
 
 }

@@ -43,7 +43,7 @@ public class ResSignUp {
                 member.getUsername(),
                 member.getPhoneNumber(),
                 member.getEmail(),
-                member.getRole());
+                member.getAuthority().getRoleName());
     }
 
 }
