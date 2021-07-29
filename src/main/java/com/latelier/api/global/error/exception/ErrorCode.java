@@ -13,7 +13,7 @@ public enum ErrorCode {
   INVALID_TOKEN(401, "C003", "Invalid Token"),
   UNAUTHORIZED(401, "C004", "Unauthorized"),
   INSUFFICIENT_SCOPE(403, "C005", "Insufficient Scope"),
-//  NOT_FOUND(404, "C006", "Not Found"),
+  NOT_FOUND(404, "C006", "Not Found"),
 //  DUPLICATION(409, "C007", "Duplicate"),
   INCORRECT_FORMAT(400, "C008", "Incorrect Format"),
   INTERNAL_SERVER_ERROR(500, "C050", "Server Error"),

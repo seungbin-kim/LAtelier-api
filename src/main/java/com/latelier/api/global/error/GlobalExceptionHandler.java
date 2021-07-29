@@ -12,6 +12,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -98,6 +99,20 @@ public class GlobalExceptionHandler {
 
         log.error("handleHttpMessageNotReadableException", e);
         final ErrorResponse response = ErrorResponse.of(ErrorCode.INCORRECT_FORMAT);
+
+        return ResponseEntity.status(valueOf(response.getStatus()))
+                .body(response);
+    }
+
+
+    /**
+     * 처리 핸들러를 찾지 못한경우
+     */
+    @ExceptionHandler(NoHandlerFoundException.class)
+    protected ResponseEntity<ErrorResponse> handleNoHandlerFoundException(final NoHandlerFoundException e) {
+
+        log.error("handleNoHandlerFoundException", e);
+        final ErrorResponse response = ErrorResponse.of(ErrorCode.NOT_FOUND);
 
         return ResponseEntity.status(valueOf(response.getStatus()))
                 .body(response);

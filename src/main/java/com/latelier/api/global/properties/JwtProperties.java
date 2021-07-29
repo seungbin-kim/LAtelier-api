@@ -17,4 +17,6 @@ public class JwtProperties {
 
   private final Long tokenValidityInSeconds;
 
+  private final Long tokenReissueCriteriaInSeconds;
+
 }

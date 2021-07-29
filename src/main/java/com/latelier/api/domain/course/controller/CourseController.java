@@ -29,7 +29,7 @@ public class CourseController {
     @ApiOperation(
             value = "강의 입장정보 요청",
             notes = "SDK 에서 강의에 입장하기위한 정보를 요청합니다.",
-            authorizations = {@Authorization(value = "Authorization")})
+            authorizations = {@Authorization(value = "jwt")})
     @ApiImplicitParams({
             @ApiImplicitParam(name = "courseId", value = "강의 ID", required = true, dataType = "long", paramType = "path", example = "1")})
     @ApiResponses({

@@ -1,25 +1,28 @@
 package com.latelier.api.domain.member.controller;
 
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.latelier.api.domain.member.packet.request.ReqSignIn;
 import com.latelier.api.domain.member.packet.request.ReqSmsAuthentication;
 import com.latelier.api.domain.member.packet.request.ReqSmsVerification;
 import com.latelier.api.domain.member.packet.response.ResToken;
-import com.latelier.api.domain.member.service.MemberAuthService;
+import com.latelier.api.domain.member.service.MemberService;
 import com.latelier.api.domain.member.service.SmsService;
 import com.latelier.api.domain.member.service.ZoomService;
 import com.latelier.api.domain.model.Result;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.Authorization;
+import com.latelier.api.domain.util.TokenProvider;
+import io.swagger.annotations.*;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -35,21 +38,71 @@ public class AuthController {
 
     private final SmsService smsService;
 
-    private final MemberAuthService signInService;
+    private final MemberService memberService;
+
+    private final TokenProvider tokenProvider;
 
 
+    @PreAuthorize("isAnonymous()")
     @PostMapping("/sign-in")
     @ApiOperation(
             value = "로그인",
-            notes = "로그인 정보를 받아 Json Web Token 을 반환합니다.")
+            notes = "로그인 정보를 받아 쿠키에 JWT 를 설정합니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "로그인처리 성공"),
-            @ApiResponse(responseCode = "400", description = "이메일 또는 비밀번호 불일치")})
+            @ApiResponse(responseCode = "400", description = "이메일 또는 비밀번호 불일치"),
+            @ApiResponse(responseCode = "403", description = "이미 로그인 되어있는 경우")})
     public ResponseEntity<Result<ResToken>> signIn(@RequestBody @Valid final ReqSignIn reqSignIn) {
 
-        String token = signInService.signIn(reqSignIn);
-        ResToken resToken = new ResToken(token);
-        return ResponseEntity.ok(Result.of(resToken));
+        Authentication authentication = memberService.getAuthentication(reqSignIn.getEmail(), reqSignIn.getPassword());
+        String token = tokenProvider.createToken(authentication);
+        ResponseCookie tokenCookie = tokenProvider.createTokenCookie(token);
+
+        ResToken resToken = ResToken.of(tokenCookie.getValue());
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, tokenCookie.toString())
+                .body(Result.of(resToken));
+    }
+
+
+    @PreAuthorize("hasRole('USER')")
+    @PostMapping("/sign-out")
+    @ApiOperation(
+            value = "로그아웃",
+            notes = "쿠키의 JWT 를 삭제합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "로그아웃 성공"),
+            @ApiResponse(responseCode = "401", description = "이미 로그아웃 되어있는 경우")})
+    public ResponseEntity<Void> signOut() {
+
+        ResponseCookie responseCookie = tokenProvider.createTokenCookie("");
+        return ResponseEntity.noContent()
+                .header(HttpHeaders.SET_COOKIE, responseCookie.toString())
+                .build();
+    }
+
+
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/check")
+    @ApiOperation(
+            value = "로그인상태 체크",
+            notes = "쿠키의 JWT 를 확인하여 로그인 상태를 확인합니다. 토큰의 만료기한이 짧아지면 재발급합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "정상 상태"),
+            @ApiResponse(responseCode = "401", description = "로그인 중이 아님")})
+    public ResponseEntity<Void> check(@ApiIgnore @CookieValue final String token,
+                                      @ApiIgnore final Authentication authentication) {
+
+        // @PreAuthorize("hasRole('USER')") 으로 진입했기 때문에 필터에서 무조건 토큰해독에 성공
+        DecodedJWT decodedJWT = tokenProvider.validateAndDecodeToken(token); // 해독해도 null 이 아님
+        if (tokenProvider.checkTokenReissue(decodedJWT)) {
+            String ReissuedToken = tokenProvider.createToken(authentication);
+            ResponseCookie responseCookie = tokenProvider.createTokenCookie(ReissuedToken);
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.SET_COOKIE, responseCookie.toString())
+                    .build();
+        }
+        return ResponseEntity.ok().build();
     }
 
 
@@ -58,7 +111,7 @@ public class AuthController {
     @ApiOperation(
             value = "Zoom OAuth 인증과 회의생성 API 호출",
             notes = "Zoom OAuth 인증 후 회의생성 API 를 호출하여 start url 을 반환합니다.",
-            authorizations = {@Authorization(value = "Authorization")})
+            authorizations = {@Authorization(value = "jwt")})
     @ApiImplicitParams({
             @ApiImplicitParam(name = "code", value = "authorization code", required = true, dataType = "string", paramType = "query"),
             @ApiImplicitParam(name = "state", value = "회의를 생성할 강의 ID", required = true, dataType = "long", paramType = "query")})

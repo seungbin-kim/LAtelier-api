@@ -9,14 +9,16 @@ import com.latelier.api.domain.member.enumeration.Role;
 import com.latelier.api.global.properties.JwtProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.Collections;
 import java.util.List;
 
@@ -89,6 +91,36 @@ public class TokenProvider {
             log.error("토큰해독 실패", e);
         }
         return null;
+    }
+
+
+    /**
+     * 토큰으로 쿠키 생성
+     * @param token JWT
+     * @return 응답 쿠키
+     */
+    public ResponseCookie createTokenCookie(final String token) {
+
+        long ageInSeconds = StringUtils.hasText(token) ? jwtProperties.getTokenValidityInSeconds() : 0;
+        return ResponseCookie.from("token", token)
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(ageInSeconds)
+                .build();
+    }
+
+
+    /**
+     * 재발급 기준 확인
+     *
+     * @param decodedJWT 해독된 JWT
+     * @return true - 재발급 필요, false - 재발급 불필요
+     */
+    public boolean checkTokenReissue(final DecodedJWT decodedJWT) {
+
+        return decodedJWT.getExpiresAt()
+                .before(new Date(System.currentTimeMillis() + jwtProperties.getTokenReissueCriteriaInSeconds()));
     }
 
 }
