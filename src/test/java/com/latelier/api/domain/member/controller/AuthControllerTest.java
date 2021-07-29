@@ -1,11 +1,15 @@
 package com.latelier.api.domain.member.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.latelier.api.domain.member.entity.Member;
+import com.latelier.api.domain.member.enumeration.Role;
 import com.latelier.api.domain.member.packet.request.ReqSignIn;
 import com.latelier.api.domain.member.packet.request.ReqSignUp;
 import com.latelier.api.domain.member.packet.request.ReqSmsAuthentication;
 import com.latelier.api.domain.member.packet.request.ReqSmsVerification;
+import com.latelier.api.domain.member.repository.MemberRepository;
 import com.latelier.api.domain.member.repository.SmsCertificationRepository;
+import com.latelier.api.global.error.exception.ErrorCode;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ParameterContext;
@@ -91,7 +95,133 @@ class AuthControllerTest {
     }
 
 
-    @DisplayName("회원등록후_로그인_성공")
+    @DisplayName("회원등록_성공")
+    @ParameterizedTest(name = "[{index}] username={0}, phoneNumber={1}, email={2}, role={4}")
+    @CsvSource({
+            "홍길동, 01011111111, test1@a.b, !myPassword486@, user",
+            "홍길순, 01022222222, test2@a.b, !myPassword486@, instructor",
+            "홍길복, 01033333333, test3@a.b, !myPassword486@, admin"})
+    void signUpSuccess(@AggregateWith(SignUpRequestAggregator.class) ReqSignUp req) throws Exception {
+        // given
+        String content = objectMapper.writeValueAsString(req);
+
+        // when
+        ResultActions perform = mockMvc.perform(post("/api/auth/members")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+                .accept(MediaType.APPLICATION_JSON));
+
+        // then
+        perform
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.content.username").value(req.getUsername()))
+                .andExpect(jsonPath("$.content.phoneNumber").value(req.getPhoneNumber()))
+                .andExpect(jsonPath("$.content.email").value(req.getEmail()))
+                .andExpect(jsonPath("$.content.role").value(req.getRole()))
+                .andDo(print());
+    }
+
+
+    @DisplayName("회원등록_실패_이메일중복")
+    @ParameterizedTest(name = "[{index}] email={2}")
+    @CsvSource({
+            "홍길동, 01011111111, test@a.b, !myPassword486@, user",
+            "홍길순, 01022222222, test@a.b, !myPassword486@, instructor",
+            "홍길복, 01033333333, test@a.b, !myPassword486@, admin"})
+    void signUpEmailDuplicate(@AggregateWith(SignUpRequestAggregator.class) ReqSignUp req) throws Exception {
+        // given
+        MemberRepository memberRepository = context.getBean(MemberRepository.class);
+        Member member = Member.of(
+                req.getEmail(),
+                "01000000000",
+                "테스터",
+                "password",
+                Role.ROLE_USER.getRoleName());
+        memberRepository.save(member);
+
+        String content = objectMapper.writeValueAsString(req);
+
+        // when
+        ResultActions perform = mockMvc.perform(post("/api/auth/members")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+                .accept(MediaType.APPLICATION_JSON));
+
+        // then
+        perform
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message").value(ErrorCode.EMAIL_DUPLICATE.getMessage()))
+                .andDo(print());
+    }
+
+
+    @DisplayName("회원등록_실패_휴대폰중복")
+    @ParameterizedTest(name = "[{index}] phoneNumber={1}")
+    @CsvSource({
+            "홍길동, 01000000000, test1@a.b, !myPassword486@, user",
+            "홍길순, 01000000000, test2@a.b, !myPassword486@, instructor",
+            "홍길복, 01000000000, test3@a.b, !myPassword486@, admin"})
+    void signUpPhoneNumberDuplicate(@AggregateWith(SignUpRequestAggregator.class) ReqSignUp req) throws Exception {
+        // given
+        MemberRepository memberRepository = context.getBean(MemberRepository.class);
+        Member member = Member.of(
+                "test@a.b",
+                req.getPhoneNumber(),
+                "테스터",
+                "password",
+                Role.ROLE_USER.getRoleName());
+        memberRepository.save(member);
+
+        String content = objectMapper.writeValueAsString(req);
+
+        // when
+        ResultActions perform = mockMvc.perform(post("/api/auth/members")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+                .accept(MediaType.APPLICATION_JSON));
+
+        // then
+        perform
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message").value(ErrorCode.PHONE_NUMBER_DUPLICATE.getMessage()))
+                .andDo(print());
+    }
+
+
+    @DisplayName("회원등록_실패_모두중복")
+    @ParameterizedTest(name = "[{index}] phoneNumber={1} email={2}")
+    @CsvSource({
+            "홍길동, 01000000000, test@a.b, !myPassword486@, user",
+            "홍길순, 01000000000, test@a.b, !myPassword486@, instructor",
+            "홍길복, 01000000000, test@a.b, !myPassword486@, admin"})
+    void signUpDuplicate(@AggregateWith(SignUpRequestAggregator.class) ReqSignUp req) throws Exception {
+        // given
+        MemberRepository memberRepository = context.getBean(MemberRepository.class);
+        Member member = Member.of(
+                req.getEmail(),
+                req.getPhoneNumber(),
+                "테스터",
+                "password",
+                Role.ROLE_USER.getRoleName());
+        memberRepository.save(member);
+
+        String content = objectMapper.writeValueAsString(req);
+
+        // when
+        ResultActions perform = mockMvc.perform(post("/api/auth/members")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+                .accept(MediaType.APPLICATION_JSON));
+
+        // then
+        perform
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message").value(ErrorCode.EMAIL_AND_PHONE_NUMBER_DUPLICATE.getMessage()))
+                .andDo(print());
+    }
+
+
+    @DisplayName("회원등록_로그인_성공")
     @ParameterizedTest(name = "[{index}] username={0}, phoneNumber={1}, email={2}, role={4}")
     @CsvSource({
             "홍길동, 01011111111, test1@a.b, !myPassword486@, user",
@@ -106,11 +236,11 @@ class AuthControllerTest {
         String content = objectMapper.writeValueAsString(reqSignIn);
 
         // when
-        ResultActions signUp = mockMvc.perform(post("/api/members")
+        ResultActions signUp = mockMvc.perform(post("/api/auth/members")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(signUpRequest));
 
-        ResultActions perform = mockMvc.perform(post("/api/auth/sign-in")
+        ResultActions signIn = mockMvc.perform(post("/api/auth/sign-in")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content));
 
@@ -119,14 +249,16 @@ class AuthControllerTest {
                 .andExpect(status().isCreated())
                 .andDo(print());
 
-        perform
+        signIn
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content.token").isNotEmpty())
+                .andExpect(jsonPath("$.content.username").value(req.getUsername()))
+                .andExpect(jsonPath("$.content.email").value(req.getEmail()))
+                .andExpect(jsonPath("$.content.role").value(req.getRole()))
                 .andDo(print());
     }
 
 
-    @DisplayName("회원등록후_로그인_실패(이메일)")
+    @DisplayName("회원등록_로그인_실패(이메일)")
     @ParameterizedTest(name = "[{index}] username={0}, phoneNumber={1}, email={2}, role={4}")
     @CsvSource({
             "홍길동, 01011111111, test1@a.b, !myPassword486@, user",
@@ -141,7 +273,7 @@ class AuthControllerTest {
         String content = objectMapper.writeValueAsString(reqSignIn);
 
         // when
-        ResultActions signUp = mockMvc.perform(post("/api/members")
+        ResultActions signUp = mockMvc.perform(post("/api/auth/members")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(signUpRequest));
 
@@ -160,7 +292,7 @@ class AuthControllerTest {
     }
 
 
-    @DisplayName("회원등록후_로그인_실패(비밀번호)")
+    @DisplayName("회원등록_로그인_실패(비밀번호)")
     @ParameterizedTest(name = "[{index}] username={0}, phoneNumber={1}, email={2}, role={4}")
     @CsvSource({
             "홍길동, 01011111111, test1@a.b, !myPassword486@, user",
@@ -175,7 +307,7 @@ class AuthControllerTest {
         String content = objectMapper.writeValueAsString(reqSignIn);
 
         // when
-        ResultActions signUp = mockMvc.perform(post("/api/members")
+        ResultActions signUp = mockMvc.perform(post("/api/auth/members")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(signUpRequest));
 

@@ -6,14 +6,10 @@ import com.latelier.api.domain.member.exception.EmailDuplicateException;
 import com.latelier.api.domain.member.exception.MemberNotFoundException;
 import com.latelier.api.domain.member.exception.PhoneNumberDuplicateException;
 import com.latelier.api.domain.member.packet.request.ReqSignUp;
-import com.latelier.api.domain.member.packet.response.ResSignUp;
 import com.latelier.api.domain.member.repository.MemberRepository;
 import com.latelier.api.global.error.exception.BusinessException;
 import com.latelier.api.global.error.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,8 +23,6 @@ public class MemberService {
 
     private final PasswordEncoder passwordEncoder;
 
-    private final AuthenticationManagerBuilder authenticationManagerBuilder;
-
 
     /**
      * 로그인 이메일과 비밀번호로 인증정보 받기
@@ -37,14 +31,27 @@ public class MemberService {
      * @param password 사용자 비밀번호
      * @return 인증정보
      */
-    public Authentication getAuthentication(final String email, final String password) {
+    public Member findMemberByEmail(final String email,
+                                    final String password) {
 
-        UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(email, password);
-        try {
-            return authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-        } catch (Exception e) {
-            throw new BusinessException(e.getMessage(), ErrorCode.LOGIN_INPUT_INVALID);
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new BusinessException(ErrorCode.LOGIN_INPUT_INVALID));
+        checkPassword(member, password);
+        return member;
+    }
+
+
+    /**
+     * 패스워드 확인
+     *
+     * @param member   사용자
+     * @param password 입력 비밀번호
+     */
+    private void checkPassword(final Member member,
+                               final String password) {
+
+        if (!passwordEncoder.matches(password, member.getPassword())) {
+            throw new BusinessException(ErrorCode.LOGIN_INPUT_INVALID);
         }
     }
 
@@ -53,16 +60,14 @@ public class MemberService {
      * 회원 등록하기
      *
      * @param reqSignUp 회원가입 요청정보
-     * @return 등록한 회원정보
+     * @return 등록한 회원
      */
     @Transactional
-    public ResSignUp addMember(final ReqSignUp reqSignUp) {
+    public Member addMember(final ReqSignUp reqSignUp) {
 
         checkDuplicateEmailAndPhoneNumber(reqSignUp.getEmail(), reqSignUp.getPhoneNumber());
-
         Member member = createMember(reqSignUp);
-        memberRepository.save(member);
-        return ResSignUp.of(member);
+        return memberRepository.save(member);
     }
 
 

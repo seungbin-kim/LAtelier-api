@@ -5,6 +5,7 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.latelier.api.domain.member.entity.Member;
 import com.latelier.api.domain.member.enumeration.Role;
 import com.latelier.api.global.properties.JwtProperties;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +19,8 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import java.util.Date;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 @Slf4j
@@ -31,7 +32,25 @@ public class TokenProvider {
 
 
     /**
-     * JWT 생성
+     * 토큰으로 쿠키 생성
+     *
+     * @param token JWT
+     * @return 응답 쿠키
+     */
+    public ResponseCookie createTokenCookie(final String token) {
+
+        long ageInSeconds = StringUtils.hasText(token) ? jwtProperties.getTokenValidityInSeconds() : 0;
+        return ResponseCookie.from("token", token)
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(ageInSeconds)
+                .build();
+    }
+
+
+    /**
+     * 유저 인증정보로 JWT 생성
      *
      * @param authentication 유저 인증정보
      * @return 유저의 ID, 권한이 담긴 JWT
@@ -43,15 +62,22 @@ public class TokenProvider {
                 .map(GrantedAuthority::getAuthority)
                 .orElseGet(Role.ROLE_USER::toString);
 
-        Date validity =
-                new Date(System.currentTimeMillis() + (jwtProperties.getTokenValidityInSeconds() * 1000));
+        return generateToken(authentication.getName(), authority);
+    }
 
-        return JWT.create()
-                .withIssuer(jwtProperties.getIssuer())
-                .withSubject(authentication.getName())
-                .withClaim("role", authority)
-                .withExpiresAt(validity)
-                .sign(Algorithm.HMAC512(jwtProperties.getSecret()));
+
+    /**
+     * 유저 엔티티로 JWT 생성
+     *
+     * @param member 유저
+     * @return 유저의 ID, 권한이 담긴 JWT
+     */
+    public String createToken(final Member member) {
+
+        String authority = member.getAuthority().toString();
+        String id = String.valueOf(member.getId());
+
+        return generateToken(id, authority);
     }
 
 
@@ -95,23 +121,6 @@ public class TokenProvider {
 
 
     /**
-     * 토큰으로 쿠키 생성
-     * @param token JWT
-     * @return 응답 쿠키
-     */
-    public ResponseCookie createTokenCookie(final String token) {
-
-        long ageInSeconds = StringUtils.hasText(token) ? jwtProperties.getTokenValidityInSeconds() : 0;
-        return ResponseCookie.from("token", token)
-                .httpOnly(true)
-                .secure(true)
-                .path("/")
-                .maxAge(ageInSeconds)
-                .build();
-    }
-
-
-    /**
      * 재발급 기준 확인
      *
      * @param decodedJWT 해독된 JWT
@@ -121,6 +130,27 @@ public class TokenProvider {
 
         return decodedJWT.getExpiresAt()
                 .before(new Date(System.currentTimeMillis() + jwtProperties.getTokenReissueCriteriaInSeconds()));
+    }
+
+
+    /**
+     * JWT 생성
+     *
+     * @param id        문자열로 된 유저의 고유 ID
+     * @param authority 유저의 권한
+     * @return JWT
+     */
+    private String generateToken(final String id,
+                                 final String authority) {
+        Date validity =
+                new Date(System.currentTimeMillis() + (jwtProperties.getTokenValidityInSeconds() * 1000));
+
+        return JWT.create()
+                .withIssuer(jwtProperties.getIssuer())
+                .withSubject(id)
+                .withClaim("role", authority)
+                .withExpiresAt(validity)
+                .sign(Algorithm.HMAC512(jwtProperties.getSecret()));
     }
 
 }
