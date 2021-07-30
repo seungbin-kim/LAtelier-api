@@ -83,7 +83,7 @@ public class AuthController {
             @ApiResponse(responseCode = "403", description = "이미 로그인 되어있는 경우")})
     public ResponseEntity<Result<ResSignIn>> signIn(@RequestBody @Valid final ReqSignIn reqSignIn) {
 
-        Member member = memberService.findMemberByEmail(reqSignIn.getEmail(), reqSignIn.getPassword());
+        Member member = memberService.authenticate(reqSignIn.getEmail(), reqSignIn.getPassword());
         String token = tokenProvider.createToken(member);
         ResponseCookie tokenCookie = tokenProvider.createTokenCookie(token);
 

@@ -25,14 +25,14 @@ public class MemberService {
 
 
     /**
-     * 로그인 이메일과 비밀번호로 인증정보 받기
+     * 로그인 이메일과 비밀번호로 사용자 확인하기
      *
      * @param email    사용자 이메일
      * @param password 사용자 비밀번호
-     * @return 인증정보
+     * @return 사용자 정보
      */
-    public Member findMemberByEmail(final String email,
-                                    final String password) {
+    public Member authenticate(final String email,
+                               final String password) {
 
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new BusinessException(ErrorCode.LOGIN_INPUT_INVALID));
