@@ -1,5 +1,6 @@
 package com.latelier.api.domain.member.packet.request;
 
+import com.latelier.api.global.validator.PhoneNumber;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.EqualsAndHashCode;
@@ -23,8 +24,7 @@ public class ReqSignUp {
             required = true)
     private String username;
 
-    @Pattern(regexp = "^01[0-9]{8,9}$",
-            message = "올바른 형식이 아닙니다.")
+    @PhoneNumber
     @NotBlank(message = "휴대폰번호는 필수입니다.")
     @ApiModelProperty(
             value = "휴대폰번호",

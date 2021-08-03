@@ -21,7 +21,8 @@ public class SocketController {
     public void sendMessage(final ChatMessage chatMessage) {
 
         ResChatMessage resChatMessage = chatService.saveChatMessage(chatMessage);
-        template.convertAndSend("/topic/" + chatMessage.getReceiverId(), resChatMessage);
+        // 주고받는 방법 더 생각하기
+        template.convertAndSend("/topic/" + chatMessage.getChatRoomId(), resChatMessage);
     }
 
 

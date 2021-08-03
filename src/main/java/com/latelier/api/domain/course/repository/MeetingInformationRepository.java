@@ -7,6 +7,6 @@ import java.util.Optional;
 
 public interface MeetingInformationRepository extends JpaRepository<MeetingInformation, Long> {
 
-  Optional<MeetingInformation> findByCourseId(final Long courseId);
+  Optional<MeetingInformation> findByCourseId(Long courseId);
 
 }

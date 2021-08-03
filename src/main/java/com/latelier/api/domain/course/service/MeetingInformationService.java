@@ -63,12 +63,11 @@ public class MeetingInformationService {
     public ResMeetingInformation getMeetingInformation(final Long courseId) {
 
         return meetingInformationRepository.findByCourseId(courseId)
-                .map(m -> ResMeetingInformation
-                        .of(
-                                zoomProperties.getApi().getKey(),
-                                m,
-                                "테스트",
-                                signatureGenerator.generateSignatureForZoomSDK(m.getMeetingId())))
+                .map(m -> ResMeetingInformation.of(
+                        zoomProperties.getApi().getKey(),
+                        m,
+                        "테스트",
+                        signatureGenerator.generateSignatureForZoomSDK(m.getMeetingId())))
                 .orElseThrow(() -> new CourseMeetingNotFoundException(courseId));
     }
 
