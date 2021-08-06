@@ -120,8 +120,10 @@ public class AuthController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "정상 상태"),
             @ApiResponse(responseCode = "403", description = "로그인 중이 아님")})
-    public ResponseEntity<Void> check(@ApiIgnore @CookieValue(required = false) final String token,
+    public ResponseEntity<Result<ResSignIn>> check(@ApiIgnore @CookieValue(required = false) final String token,
                                       @ApiIgnore final Authentication authentication) {
+
+        Member member = memberService.getMemberById(Long.parseLong(authentication.getName()));
 
         // @PreAuthorize("hasRole('USER')") 으로 진입했기 때문에 필터에서 무조건 토큰해독에 성공
         DecodedJWT decodedJWT = tokenProvider.validateAndDecodeToken(token); // 해독해도 null 이 아님
@@ -130,9 +132,10 @@ public class AuthController {
             ResponseCookie responseCookie = tokenProvider.createTokenCookie(ReissuedToken);
             return ResponseEntity.ok()
                     .header(HttpHeaders.SET_COOKIE, responseCookie.toString())
-                    .build();
+                    .body(Result.of(ResSignIn.of(member)));
         }
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok()
+                .body(Result.of(ResSignIn.of(member)));
     }
 
 
