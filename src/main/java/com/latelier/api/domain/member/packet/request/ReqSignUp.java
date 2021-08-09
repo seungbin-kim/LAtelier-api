@@ -53,7 +53,8 @@ public class ReqSignUp {
     private String password;
 
     @NotBlank(message = "회원구분은 필수입니다.")
-    @Pattern(regexp = "^(user|instructor|admin)$", message = "입력값은 user, instructor, admin 중 하나입니다.")
+    @Pattern(regexp = "^(user|instructor|admin)$",
+            message = "입력값은 user, instructor, admin 중 하나입니다.")
     @ApiModelProperty(
             value = "회원구분",
             name = "role",

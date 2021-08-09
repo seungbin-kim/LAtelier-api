@@ -1,6 +1,5 @@
 package com.latelier.api.global.config.resttemplate;
 
-import lombok.RequiredArgsConstructor;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.context.annotation.Bean;
@@ -12,7 +11,6 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Collections;
 
 @Configuration
-@RequiredArgsConstructor
 public class RestTemplateConfig {
 
   @Bean
