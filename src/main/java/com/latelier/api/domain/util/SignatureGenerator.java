@@ -23,6 +23,9 @@ public class SignatureGenerator {
 
   private final NaverProperties naverProperties;
 
+  private final SecretKeySpec sdkSigningKey;
+
+  private final SecretKeySpec smsSigningKey;
 
   /**
    * Web SDK 입장시 필요한 시그니처 생성
@@ -35,13 +38,12 @@ public class SignatureGenerator {
   public String generateSignatureForZoomSDK(final String meetingNumber) {
     try {
       String apiKey = zoomProperties.getApi().getKey();
-      String apiSecret = zoomProperties.getApi().getSecret();
 
       Mac hasher = Mac.getInstance("HmacSHA256");
       String ts = Long.toString(System.currentTimeMillis() - 30000);
       String msg = String.format("%s%s%s%d", apiKey, meetingNumber, ts, 0);
 
-      hasher.init(new SecretKeySpec(apiSecret.getBytes(), "HmacSHA256"));
+      hasher.init(sdkSigningKey);
 
       String message = Base64.getEncoder().encodeToString(msg.getBytes());
       byte[] hash = hasher.doFinal(message.getBytes());
@@ -70,9 +72,8 @@ public class SignatureGenerator {
       String method = "POST";
       String url = "/sms/v2/services/" + naverProperties.getCloudPlatform().getSens().getServiceId() + "/messages";
       String accessKey = naverProperties.getCloudPlatform().getKey();
-      String secretKey = naverProperties.getCloudPlatform().getSecret();
 
-      String message = new StringBuffer()
+      String message = new StringBuilder()
           .append(method)
           .append(space)
           .append(url)
@@ -82,9 +83,8 @@ public class SignatureGenerator {
           .append(accessKey)
           .toString();
 
-      SecretKeySpec signingKey = new SecretKeySpec(secretKey.getBytes("UTF-8"), "HmacSHA256");
       Mac mac = Mac.getInstance("HmacSHA256");
-      mac.init(signingKey);
+      mac.init(smsSigningKey);
 
       byte[] rawHmac = mac.doFinal(message.getBytes("UTF-8"));
       return Base64.getEncoder().encodeToString(rawHmac);
