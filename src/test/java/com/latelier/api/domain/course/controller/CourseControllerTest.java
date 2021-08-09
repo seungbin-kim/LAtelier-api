@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -35,7 +35,7 @@ class CourseControllerTest {
 
 
     @Test
-    @WithMockUser(value = "1", roles = {"USER"})
+    @WithMockUser(value = "1")
     @DisplayName("강의_입장정보_요청성공")
     void getMeeting() throws Exception {
         // given
@@ -106,7 +106,7 @@ class CourseControllerTest {
     }
 
     @Test
-    @WithMockUser(value = "1", roles = {"USER"})
+    @WithMockUser(value = "1")
     @DisplayName("강의_입장정보_요청실패_열려있지_않은_강의")
     void getMeetingNotOpenFail() throws Exception {
         // given
