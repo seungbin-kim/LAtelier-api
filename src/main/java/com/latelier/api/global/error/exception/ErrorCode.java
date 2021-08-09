@@ -9,40 +9,43 @@ public enum ErrorCode {
 
   // Common
   METHOD_NOT_ALLOWED(405, "C001", "Method Not Allowed"),
-  INVALID_INPUT_VALUE(400, "C002", "Invalid Input Value"),
-  INVALID_TOKEN(401, "C003", "Invalid Token"),
-  UNAUTHORIZED(401, "C004", "Unauthorized"),
-  INSUFFICIENT_SCOPE(403, "C005", "Insufficient Scope"),
-  NOT_FOUND(404, "C006", "Not Found"),
+  INVALID_INPUT_VALUE(400, "C002", "입력값이 잘못되었습니다."),
+  INVALID_TOKEN(401, "C003", "권한이 없습니다."),
+//  UNAUTHORIZED(401, "C004", "권한이 없습니다."),
+  INSUFFICIENT_SCOPE(403, "C005", "권한이 부족합니다."),
+  NOT_FOUND(404, "C006", "찾을 수 없습니다."),
 //  DUPLICATION(409, "C007", "Duplicate"),
-  INCORRECT_FORMAT(400, "C008", "Incorrect Format"),
+  INCORRECT_FORMAT(400, "C008", "잘못된 형식입니다."),
   INTERNAL_SERVER_ERROR(500, "C050", "Server Error"),
 
   // Member
-  MEMBER_NOT_FOUND(404, "M001", "Not Found Member"),
-  LOGIN_INPUT_INVALID(400, "M002", "Login input is invalid"),
-  SMS_VERIFICATION_FAILED(400, "M003", "Sms Verification Failed"),
-  EMAIL_DUPLICATE(409, "M004", "Duplicate Email"),
-  PHONE_NUMBER_DUPLICATE(409, "M005", "Duplicate Phone Number"),
-  EMAIL_AND_PHONE_NUMBER_DUPLICATE(409, "M006", "Duplicate Email And Phone Number"),
-  EMAIL_NOT_FOUND(404, "M007", "Not Found Email"),
-  NOT_ACTIVATED(404, "M010", "Not Activated"),
-
-  // Zoom
-  ACCESS_TOKEN_NOT_OBTAIN(500, "Z001", "Not Obtain Access Token"),
-  MEETING_INFORMATION_NOT_OBTAIN(500, "Z002", "Not Obtain Meeting Information"),
-  ACCESS_TOKEN_REQUEST_FAILED(500, "Z003", "Access Token Request Failed"),
-  ZOOM_API_CALL_FAILED(500, "Z004", "Zoom API Request Failed"),
-
-  // Naver
-  SMS_API_CALL_FAILED(500, "N001", "SMS API Request Failed"),
+  MEMBER_NOT_FOUND(404, "M001", "사용자를 찾을 수 없습니다."),
+  LOGIN_INPUT_INVALID(400, "M002", "이메일 혹은 비밀번호가 틀립니다."),
+  SMS_VERIFICATION_FAILED(400, "M003", "SMS 인증 실패"),
+  EMAIL_DUPLICATE(409, "M004", "이메일이 중복됩니다."),
+  PHONE_NUMBER_DUPLICATE(409, "M005", "휴대폰 번호가 중복됩니다."),
+  EMAIL_AND_PHONE_NUMBER_DUPLICATE(409, "M006", "이메일과 휴대폰 번호가 중복됩니다."),
+  EMAIL_NOT_FOUND(404, "M007", "이메일을 찾을 수 없습니다."),
+  NOT_ACTIVATED(404, "M010", "비활성화 된 사용자입니다."),
 
   // Course
-  COURSE_NOT_FOUND(404, "CS001", "Course Not Found"),
-  COURSE_MEETING_NOT_FOUND(404, "CS002", "Course Meeting Not Found"),
+  COURSE_NOT_FOUND(404, "CS001", "강의를 찾을 수 없습니다."),
+  COURSE_MEETING_NOT_FOUND(404, "CS002", "강의 진행정보가 없습니다."),
 
   // CHAT
-  CHAT_ROOM_NOT_FOUND(404, "CH001", "Chat Room Not Found");
+  CHAT_ROOM_NOT_FOUND(404, "CH001", "채팅방을 찾을 수 없습니다."),
+
+  // FILE
+  FILE_UPLOAD_SIZE_EXCEEDED(413, "F001", "최대 업로드 크기를 초과합니다."),
+
+  // Zoom
+  ACCESS_TOKEN_NOT_OBTAIN(500, "Z001", "ZOOM 액세스 토큰을 얻을 수 없습니다."),
+  MEETING_INFORMATION_NOT_OBTAIN(500, "Z002", "회의 정보를 얻을 수 없습니다."),
+  ACCESS_TOKEN_REQUEST_FAILED(500, "Z003", "ZOOM 액세스 토큰 요청에 실패하였습니다."),
+  ZOOM_API_CALL_FAILED(500, "Z004", "ZOOM API 요청에 실패하였습니다."),
+
+  // Naver
+  SMS_API_CALL_FAILED(500, "N001", "SMS API 요청에 실패하였습니다.");
 
   private final int status;
 

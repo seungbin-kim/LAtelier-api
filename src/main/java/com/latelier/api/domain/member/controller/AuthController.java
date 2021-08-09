@@ -12,6 +12,7 @@ import com.latelier.api.domain.member.service.MemberService;
 import com.latelier.api.domain.member.service.SmsService;
 import com.latelier.api.domain.member.service.ZoomService;
 import com.latelier.api.domain.model.Result;
+import com.latelier.api.domain.util.SecurityUtil;
 import com.latelier.api.domain.util.TokenProvider;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -26,7 +27,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -50,6 +50,8 @@ public class AuthController {
 
     private final TokenProvider tokenProvider;
 
+    private final SecurityUtil securityUtil;
+
 
     @PreAuthorize("isAnonymous()")
     @PostMapping("/members")
@@ -58,6 +60,7 @@ public class AuthController {
             notes = "사용자 정보를 등록하면서 쿠키에 JWT 를 설정합니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "회원등록 성공"),
+            @ApiResponse(responseCode = "400", description = "입력값 이상"),
             @ApiResponse(responseCode = "403", description = "이미 로그인 상태"),
             @ApiResponse(responseCode = "409", description = "이메일 또는 휴대폰번호 중복")})
     public ResponseEntity<Result<ResSignUp>> signUp(@RequestBody @Valid final ReqSignUp reqSignUp) {
@@ -95,14 +98,13 @@ public class AuthController {
     }
 
 
-    @PreAuthorize("hasRole('USER')")
     @PostMapping("/sign-out")
     @ApiOperation(
             value = "로그아웃",
             notes = "쿠키의 JWT 를 삭제합니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "로그아웃 성공"),
-            @ApiResponse(responseCode = "403", description = "이미 로그아웃 되어있는 경우")})
+            @ApiResponse(responseCode = "401", description = "이미 로그아웃 되어있는 경우")})
     public ResponseEntity<Void> signOut() {
 
         ResponseCookie responseCookie = tokenProvider.createTokenCookie("");
@@ -112,23 +114,20 @@ public class AuthController {
     }
 
 
-    @PreAuthorize("hasRole('USER')")
     @GetMapping("/check")
     @ApiOperation(
             value = "로그인상태 체크",
             notes = "쿠키의 JWT 를 확인하여 로그인 상태를 확인합니다. 토큰의 만료기한이 짧아지면 재발급합니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "정상 상태"),
-            @ApiResponse(responseCode = "403", description = "로그인 중이 아님")})
-    public ResponseEntity<Result<ResSignIn>> check(@ApiIgnore @CookieValue(required = false) final String token,
-                                      @ApiIgnore final Authentication authentication) {
+            @ApiResponse(responseCode = "401", description = "로그인 중이 아님")})
+    public ResponseEntity<Result<ResSignIn>> check(@ApiIgnore @CookieValue(required = false) final String token) {
 
-        Member member = memberService.getMemberById(Long.parseLong(authentication.getName()));
+        Member member = memberService.getMemberById(securityUtil.getMemberId());
 
-        // @PreAuthorize("hasRole('USER')") 으로 진입했기 때문에 필터에서 무조건 토큰해독에 성공
-        DecodedJWT decodedJWT = tokenProvider.validateAndDecodeToken(token); // 해독해도 null 이 아님
+        DecodedJWT decodedJWT = tokenProvider.validateAndDecodeToken(token);
         if (tokenProvider.checkTokenReissue(decodedJWT)) {
-            String ReissuedToken = tokenProvider.createToken(authentication);
+            String ReissuedToken = tokenProvider.createToken(securityUtil.getAuthentication());
             ResponseCookie responseCookie = tokenProvider.createTokenCookie(ReissuedToken);
             return ResponseEntity.ok()
                     .header(HttpHeaders.SET_COOKIE, responseCookie.toString())
@@ -139,7 +138,7 @@ public class AuthController {
     }
 
 
-//    @PreAuthorize("hasRole('INSTRUCTOR')")
+    @PreAuthorize("hasRole('INSTRUCTOR')")
     @GetMapping("/zoom/callback")
     @ApiOperation(
             value = "Zoom OAuth 인증과 회의생성 API 호출",
