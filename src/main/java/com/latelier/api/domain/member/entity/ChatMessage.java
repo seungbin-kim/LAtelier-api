@@ -12,8 +12,7 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SequenceGenerator(
         name = "CHAT_MESSAGE_SEQ_GENERATOR",
-        sequenceName = "CHAT_MESSAGE_SEQ",
-        allocationSize = 50)
+        sequenceName = "CHAT_MESSAGE_SEQ")
 public class ChatMessage extends BaseTimeEntity {
 
     @Id
@@ -35,8 +34,8 @@ public class ChatMessage extends BaseTimeEntity {
 
 
     private ChatMessage(final String message,
-                       final Member member,
-                       final ChatRoom chatRoom) {
+                        final Member member,
+                        final ChatRoom chatRoom) {
 
         this.message = message;
         this.member = member;

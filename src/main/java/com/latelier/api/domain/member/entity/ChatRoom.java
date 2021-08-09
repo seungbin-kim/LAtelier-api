@@ -9,8 +9,7 @@ import javax.persistence.*;
 @Entity
 @SequenceGenerator(
         name = "CHAT_ROOM_SEQ_GENERATOR",
-        sequenceName = "CHAT_ROOM_SEQ",
-        allocationSize = 50)
+        sequenceName = "CHAT_ROOM_SEQ")
 public class ChatRoom extends BaseTimeEntity {
 
     @Id

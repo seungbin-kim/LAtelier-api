@@ -12,8 +12,7 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SequenceGenerator(
         name = "CHAT_ROOM_JOIN_SEQ_GENERATOR",
-        sequenceName = "CHAT_ROOM_JOIN_SEQ",
-        allocationSize = 50)
+        sequenceName = "CHAT_ROOM_JOIN_SEQ")
 public class ChatRoomJoin extends BaseTimeEntity {
 
     @Id

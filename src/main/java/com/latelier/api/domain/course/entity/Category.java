@@ -8,19 +8,18 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SequenceGenerator(
-    name = "CATEGORY_SEQ_GENERATOR",
-    sequenceName = "CATEGORY_SEQ",
-    allocationSize = 1)
+        name = "CATEGORY_SEQ_GENERATOR",
+        sequenceName = "CATEGORY_SEQ")
 public class Category {
 
-  @Id
-  @GeneratedValue(
-      strategy = GenerationType.SEQUENCE,
-      generator = "CATEGORY_SEQ_GENERATOR")
-  @Column(columnDefinition = "bigint")
-  private Long id;
+    @Id
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "CATEGORY_SEQ_GENERATOR")
+    @Column(columnDefinition = "bigint")
+    private Long id;
 
-  @Column(length = 10)
-  private String categoryName;
+    @Column(length = 10)
+    private String categoryName;
 
 }

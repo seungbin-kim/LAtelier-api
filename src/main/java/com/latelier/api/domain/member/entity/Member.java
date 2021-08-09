@@ -14,8 +14,7 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SequenceGenerator(
         name = "MEMBER_SEQ_GENERATOR",
-        sequenceName = "MEMBER_SEQ",
-        allocationSize = 1)
+        sequenceName = "MEMBER_SEQ")
 @Table(
         uniqueConstraints = {
                 @UniqueConstraint(name = "email_unique", columnNames = {"email"}),
