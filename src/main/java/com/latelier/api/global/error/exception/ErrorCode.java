@@ -37,6 +37,8 @@ public enum ErrorCode {
 
   // FILE
   FILE_UPLOAD_SIZE_EXCEEDED(413, "F001", "최대 업로드 크기를 초과합니다."),
+  FILE_NOT_EXISTED(400, "F004", "파일이 존재하지 않습니다."),
+  FILE_IO_FAILED(500, "F003", "파일 입출력 실패."),
 
   // Zoom
   ACCESS_TOKEN_NOT_OBTAIN(500, "Z001", "ZOOM 액세스 토큰을 얻을 수 없습니다."),

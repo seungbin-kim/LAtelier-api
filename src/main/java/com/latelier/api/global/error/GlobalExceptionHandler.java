@@ -2,32 +2,44 @@ package com.latelier.api.global.error;
 
 import com.latelier.api.global.error.exception.BusinessException;
 import com.latelier.api.global.error.exception.ErrorCode;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.MessageSource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.validation.BindException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.NoHandlerFoundException;
+
+import java.util.Locale;
 
 import static org.springframework.http.HttpStatus.*;
 
 @Slf4j
 @RestControllerAdvice
+@RequiredArgsConstructor
 public class GlobalExceptionHandler {
+
+    private final MessageSource messageSource;
 
     /**
      * javax.validation.Valid or @Validated binding error 발생시
      */
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    protected ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(final MethodArgumentNotValidException e) {
+    @ExceptionHandler(BindException.class)
+    protected ResponseEntity<ErrorResponse> handleBindException(final BindException e, final Locale locale) {
 
-        log.error("handleMethodArgumentNotValidException", e);
-        final ErrorResponse response = ErrorResponse.of(ErrorCode.INVALID_INPUT_VALUE, e.getBindingResult());
+        log.error("handleBindException", e);
+        final ErrorResponse response = ErrorResponse.of(
+                ErrorCode.INVALID_INPUT_VALUE,
+                e.getBindingResult(),
+                messageSource,
+                locale);
 
         return ResponseEntity.status(BAD_REQUEST)
                 .body(response);
@@ -71,6 +83,20 @@ public class GlobalExceptionHandler {
 
         log.error("handleAuthenticationException", e);
         final ErrorResponse response = ErrorResponse.of(ErrorCode.INVALID_TOKEN);
+
+        return ResponseEntity.status(valueOf(response.getStatus()))
+                .body(response);
+    }
+
+
+    /**
+     * 파일 업로드 사이즈 초과
+     */
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    protected ResponseEntity<ErrorResponse> handleMaxUploadSizeExceededException(final MaxUploadSizeExceededException e) {
+
+        log.error("handleMaxUploadSizeExceededException", e);
+        final ErrorResponse response = ErrorResponse.of(ErrorCode.FILE_UPLOAD_SIZE_EXCEEDED);
 
         return ResponseEntity.status(valueOf(response.getStatus()))
                 .body(response);

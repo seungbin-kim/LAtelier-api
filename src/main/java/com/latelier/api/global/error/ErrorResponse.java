@@ -4,11 +4,15 @@ import com.latelier.api.global.error.exception.ErrorCode;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.context.MessageSource;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 @Getter
@@ -19,12 +23,12 @@ public class ErrorResponse {
 
     private int status;
 
-    private List<FieldError> errors;
+    private List<Error> errors;
 
     private String code;
 
 
-    private ErrorResponse(final ErrorCode code, final List<FieldError> errors) {
+    private ErrorResponse(final ErrorCode code, final List<Error> errors) {
         this.message = code.getMessage();
         this.status = code.getStatus();
         this.errors = errors;
@@ -41,9 +45,11 @@ public class ErrorResponse {
 
 
     public static ErrorResponse of(final ErrorCode code,
-                                   final BindingResult bindingResult) {
+                                   final BindingResult bindingResult,
+                                   final MessageSource messageSource,
+                                   final Locale locale) {
 
-        return new ErrorResponse(code, FieldError.of(bindingResult));
+        return new ErrorResponse(code, Error.of(bindingResult, messageSource, locale));
     }
 
 
@@ -54,7 +60,7 @@ public class ErrorResponse {
 
 
     public static ErrorResponse of(final ErrorCode code,
-                                   final List<FieldError> errors) {
+                                   final List<Error> errors) {
 
         return new ErrorResponse(code, errors);
     }
@@ -63,7 +69,7 @@ public class ErrorResponse {
     public static ErrorResponse of(MethodArgumentTypeMismatchException e) {
 
         final String value = e.getValue() == null ? "" : e.getValue().toString();
-        final List<ErrorResponse.FieldError> errors = ErrorResponse.FieldError.of(e.getName(), value, e.getErrorCode());
+        final List<Error> errors = Error.of(e.getName(), value, e.getErrorCode());
 
         return new ErrorResponse(ErrorCode.INVALID_INPUT_VALUE, errors);
     }
@@ -71,43 +77,55 @@ public class ErrorResponse {
 
     @Getter
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
-    public static class FieldError {
+    public static class Error {
 
-        private String field;
+        private String target;
 
         private String value;
 
         private String reason;
 
 
-        private FieldError(final String field,
-                           final String value,
-                           final String reason) {
+        private Error(final String target,
+                      final String value,
+                      final String reason) {
 
-            this.field = field;
-            this.value = value;
+            this.target = target;
+            this.value = value.contains("@") ? "" : value;
             this.reason = reason;
         }
 
 
-        public static List<FieldError> of(final String field,
-                                          final String value,
-                                          final String reason) {
+        public static List<Error> of(final String target,
+                                     final String value,
+                                     final String reason) {
 
-            List<FieldError> fieldErrors = new ArrayList<>();
-            fieldErrors.add(new FieldError(field, value, reason));
-            return fieldErrors;
+            List<Error> errors = new ArrayList<>();
+            errors.add(new Error(target, value, reason));
+            return errors;
         }
 
 
-        private static List<FieldError> of(final BindingResult bindingResult) {
+        private static List<Error> of(final BindingResult bindingResult,
+                                      final MessageSource messageSource,
+                                      final Locale locale) {
 
-            final List<org.springframework.validation.FieldError> fieldErrors = bindingResult.getFieldErrors();
-            return fieldErrors.stream()
-                    .map(error -> new FieldError(
-                            error.getField(),
-                            error.getRejectedValue() == null ? "" : error.getRejectedValue().toString(),
-                            error.getDefaultMessage()))
+            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+            if (!fieldErrors.isEmpty()) {
+                return fieldErrors.stream()
+                        .map(error -> new Error(
+                                error.getField(),
+                                error.getRejectedValue() == null ? "" : error.getRejectedValue().toString(),
+                                messageSource.getMessage(error, locale)))
+                        .collect(Collectors.toList());
+            }
+
+            List<ObjectError> allErrors = bindingResult.getAllErrors();
+            return allErrors.stream()
+                    .map(objectError -> new Error(
+                            objectError.getObjectName(),
+                            "",
+                            objectError.getDefaultMessage()))
                     .collect(Collectors.toList());
         }
 
