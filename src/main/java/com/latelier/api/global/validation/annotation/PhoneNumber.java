@@ -1,4 +1,6 @@
-package com.latelier.api.global.validator;
+package com.latelier.api.global.validation.annotation;
+
+import com.latelier.api.global.validation.validator.PhoneNumberValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;

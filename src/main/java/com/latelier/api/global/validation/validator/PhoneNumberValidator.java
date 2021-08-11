@@ -1,5 +1,6 @@
-package com.latelier.api.global.validator;
+package com.latelier.api.global.validation.validator;
 
+import com.latelier.api.global.validation.annotation.PhoneNumber;
 import org.springframework.util.StringUtils;
 
 import javax.validation.ConstraintValidator;
@@ -12,7 +13,7 @@ public class PhoneNumberValidator implements ConstraintValidator<PhoneNumber, St
 
 
     @Override
-    public boolean isValid(String value, ConstraintValidatorContext context) {
+    public boolean isValid(final String value, final ConstraintValidatorContext context) {
 
         if (!StringUtils.hasText(value)) {
             return false;
