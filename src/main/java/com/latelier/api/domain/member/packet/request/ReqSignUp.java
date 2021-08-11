@@ -1,6 +1,6 @@
 package com.latelier.api.domain.member.packet.request;
 
-import com.latelier.api.global.validator.PhoneNumber;
+import com.latelier.api.global.validation.annotation.PhoneNumber;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.EqualsAndHashCode;
