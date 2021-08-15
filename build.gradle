@@ -31,6 +31,7 @@ dependencies {
     implementation group: 'com.auth0', name: 'java-jwt', version: '3.10.3'
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
     implementation group: 'org.apache.tika', name: 'tika-core', version: '1.24.1'
+    implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-aws', version: '2.2.6.RELEASE'
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'org.postgresql:postgresql'

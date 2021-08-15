@@ -21,11 +21,11 @@ public class CourseBoardFile {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "course_board_id", columnDefinition = "bigint")
+    @JoinColumn(name = "course_board_id", columnDefinition = "bigint", nullable = false)
     private CourseBoard board;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "file_id", columnDefinition = "bigint")
+    @JoinColumn(name = "file_id", columnDefinition = "bigint", nullable = false)
     private File file;
 
 }

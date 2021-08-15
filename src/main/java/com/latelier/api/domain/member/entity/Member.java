@@ -55,7 +55,7 @@ public class Member extends BaseTimeEntity {
 
     private boolean activated = true;
 
-    @Column(name = "authority", length = 20)
+    @Column(length = 20)
     @Enumerated(EnumType.STRING)
     private Role authority;
 
