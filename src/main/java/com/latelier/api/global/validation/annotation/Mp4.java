@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
 @Constraint(validatedBy = Mp4Validator.class)
 public @interface Mp4 {
 
-    String message() default "MP4 형식의 동영상이 아닙니다.";
+    String message() default "파일이 없거나 MP4 형식의 동영상이 아닙니다.";
 
     Class<?>[] groups() default {};
 
