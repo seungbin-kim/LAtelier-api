@@ -11,8 +11,7 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SequenceGenerator(
         name = "MEETING_INFORMATION_SEQ_GENERATOR",
-        sequenceName = "MEETING_INFORMATION_SEQ",
-        allocationSize = 1)
+        sequenceName = "MEETING_INFORMATION_SEQ")
 public class MeetingInformation {
 
     @Id

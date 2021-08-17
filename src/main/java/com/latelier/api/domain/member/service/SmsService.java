@@ -135,67 +135,64 @@ public class SmsService {
         return (int) (Math.random() * 900000) + 100000;
     }
 
-}
-
-
-@Getter
-@Setter
-@EqualsAndHashCode
-@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-class ReqSms {
-
-    private final String type;
-
-    private final String from;
-
-    private final String content;
-
-    private final List<Message> messages;
-
-    private String countryCode;
-
-    private String contentType;
-
-
-    public static ReqSms of(final String from, final String content, final List<Message> messages) {
-
-        return new ReqSms("SMS", from, content, messages);
-    }
-
 
     @Getter
     @Setter
     @EqualsAndHashCode
     @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-    public static class Message {
+    static class ReqSms {
 
-        private final String to;
+        private final String type;
 
-        private String content;
+        private final String from;
+
+        private final String content;
+
+        private final List<Message> messages;
+
+        private String countryCode;
+
+        private String contentType;
 
 
-        public static Message of(final String to) {
+        public static ReqSms of(final String from, final String content, final List<Message> messages) {
 
-            return new Message(to);
+            return new ReqSms("SMS", from, content, messages);
+        }
+
+
+        @Getter
+        @Setter
+        @EqualsAndHashCode
+        @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+        static class Message {
+
+            private final String to;
+
+            private String content;
+
+
+            public static Message of(final String to) {
+
+                return new Message(to);
+            }
+
         }
 
     }
 
+
+    @Getter
+    static class ResSms {
+
+        private String requestId;
+
+        private String requestTime;
+
+        private String statusCode;
+
+        private String statusName;
+
+    }
+
 }
-
-
-@Getter
-@ToString
-class ResSms {
-
-    private String requestId;
-
-    private String requestTime;
-
-    private String statusCode;
-
-    private String statusName;
-
-}
-
-
