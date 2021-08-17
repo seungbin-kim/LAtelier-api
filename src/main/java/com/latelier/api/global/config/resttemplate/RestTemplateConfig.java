@@ -13,21 +13,21 @@ import java.util.Collections;
 @Configuration
 public class RestTemplateConfig {
 
-  @Bean
-  public RestTemplate restTemplate() {
-    HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
-    factory.setConnectTimeout(5000);
-    factory.setReadTimeout(5000);
+    @Bean
+    public RestTemplate restTemplate() {
+        HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
+        factory.setConnectTimeout(5000);
+        factory.setReadTimeout(5000);
 
-    CloseableHttpClient client = HttpClientBuilder.create()
-        .setMaxConnTotal(50)
-        .setMaxConnPerRoute(20)
-        .build();
-    factory.setHttpClient(client);
+        CloseableHttpClient client = HttpClientBuilder.create()
+                .setMaxConnTotal(50)
+                .setMaxConnPerRoute(20)
+                .build();
+        factory.setHttpClient(client);
 
-    RestTemplate restTemplate = new RestTemplate(new BufferingClientHttpRequestFactory(factory));
-    restTemplate.setInterceptors(Collections.singletonList(new RestTemplateClientHttpRequestInterceptor()));
-    return restTemplate;
-  }
+        RestTemplate restTemplate = new RestTemplate(new BufferingClientHttpRequestFactory(factory));
+        restTemplate.setInterceptors(Collections.singletonList(new RestTemplateClientHttpRequestInterceptor()));
+        return restTemplate;
+    }
 
 }

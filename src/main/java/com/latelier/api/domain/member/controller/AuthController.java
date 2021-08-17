@@ -21,7 +21,6 @@ import io.swagger.annotations.Authorization;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -36,7 +35,6 @@ import java.net.URISyntaxException;
 
 import static org.springframework.http.HttpStatus.CREATED;
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/auth")
@@ -145,8 +143,8 @@ public class AuthController {
             notes = "Zoom OAuth 인증 후 회의생성 API 를 호출하여 start url 을 반환합니다.",
             authorizations = {@Authorization(value = "jwt")})
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "code", value = "authorization code", required = true, dataType = "string", paramType = "query"),
-            @ApiImplicitParam(name = "state", value = "회의를 생성할 강의 ID", required = true, dataType = "long", paramType = "query")})
+            @ApiImplicitParam(name = "code", value = "authorization code", required = true, dataTypeClass = String.class, paramType = "query"),
+            @ApiImplicitParam(name = "state", value = "회의를 생성할 강의 ID", required = true, dataTypeClass = Long.class, paramType = "query")})
     @ApiResponses({
             @ApiResponse(responseCode = "303", description = "성공적으로 회의가 생성되어 start url 반환"),
             @ApiResponse(responseCode = "500", description = "액세스 토큰을 얻지 못하거나 회의 생성에 실패")})

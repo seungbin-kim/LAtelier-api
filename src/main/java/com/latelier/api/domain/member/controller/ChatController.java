@@ -43,7 +43,7 @@ public class ChatController {
             value = "채팅방 메세지 반환",
             notes = "채팅방의 기존 메세지들을 반환합니다.")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "roomId", value = "채팅방 ID", required = true, dataType = "long", paramType = "path")})
+            @ApiImplicitParam(name = "roomId", value = "채팅방 ID", required = true, dataTypeClass = Long.class, paramType = "path")})
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "메세지 목록 반환 성공")})
     public ResponseEntity<Result<List<ResChatMessage>>> getChatMessages(@PathVariable("roomId") final Long roomId) {
