@@ -15,7 +15,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -48,7 +47,7 @@ public class CourseController {
     }
 
 
-    @PreAuthorize("hasRole('INSTRUCTOR')")
+//    @PreAuthorize("hasRole('INSTRUCTOR')")
     @PostMapping(consumes = "multipart/form-data")
     @ApiOperation(
             value = "강의 등록(신청)",
