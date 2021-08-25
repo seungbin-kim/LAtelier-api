@@ -46,8 +46,8 @@ public class ReqCourseRegister implements ValidPeriod {
     @NotNull(message = "강의 가격은 필수입니다.")
     @Min(value = 0,
             message = "강의 가격은 0 이상입니다.")
-    @Max(value = Integer.MAX_VALUE,
-            message = "강의 가격은 최대 2147483647 입니다.")
+    @Max(value = 10_000_000,
+            message = "강의 가격은 최대 1000만원(10000000) 입니다.")
     @ApiModelProperty(
             value = "강의 가격",
             name = "price",
