@@ -50,10 +50,10 @@ public class ReqCourseRegister implements ValidPeriod {
             message = "강의 가격은 최대 1000만원(10000000) 입니다.")
     @ApiModelProperty(
             value = "강의 가격",
-            name = "price",
+            name = "coursePrice",
             example = "10000",
             required = true)
-    private Integer price;
+    private Integer coursePrice;
 
     @NotNull(message = "강의 최대 인원수는 필수입니다.")
     @Min(value = 0,
@@ -62,10 +62,10 @@ public class ReqCourseRegister implements ValidPeriod {
             message = "강의 최대 인원수는 최대 1000 입니다.")
     @ApiModelProperty(
             value = "강의 최대 인원수",
-            name = "maxSize",
+            name = "headCount",
             example = "1000",
             required = true)
-    private Integer maxSize;
+    private Integer headCount;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     @NotNull(message = "강의 시작일은 필수입니다.")
