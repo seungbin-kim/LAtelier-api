@@ -31,15 +31,15 @@ public class ResCourseRegister {
 
     @ApiModelProperty(
             value = "강의 가격",
-            name = "price",
+            name = "coursePrice",
             example = "10000")
-    private final Integer price;
+    private final Integer coursePrice;
 
     @ApiModelProperty(
             value = "강의 최대 인원수",
-            name = "maxSize",
+            name = "headCount",
             example = "1000")
-    private final Integer maxSize;
+    private final Integer headCount;
 
     @ApiModelProperty(
             value = "강의 시작일",
@@ -66,7 +66,7 @@ public class ResCourseRegister {
 
     public static ResCourseRegister of(final Course course,
                                        final List<Category> categories,
-                                       final List<File> fileList) {
+                                       final List<File> files) {
 
         return new ResCourseRegister(
                 course.getCourseName(),
@@ -78,7 +78,7 @@ public class ResCourseRegister {
                 categories.stream()
                         .map(ResCategory::withoutSubCategoriesOf)
                         .collect(Collectors.toList()),
-                fileList.stream()
+                files.stream()
                         .map(ResFileInformation::of)
                         .collect(Collectors.toList()));
     }

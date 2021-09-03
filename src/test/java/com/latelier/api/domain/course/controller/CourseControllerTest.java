@@ -48,8 +48,7 @@ class CourseControllerTest {
         em.persist(member);
 
         String courseName = "테스트";
-        Course course = Course.builder(member, courseName)
-                .build();
+        Course course = Course.of(member, courseName, "", null, null, null, null);
         em.persist(course);
         Long courseId = course.getId();
 
@@ -86,8 +85,7 @@ class CourseControllerTest {
         em.persist(member);
 
         String courseName = "테스트";
-        Course course = Course.builder(member, courseName)
-                .build();
+        Course course = Course.of(member, courseName, "", null, null, null, null);
         em.persist(course);
         Long courseId = course.getId();
 
@@ -119,8 +117,7 @@ class CourseControllerTest {
         em.persist(member);
 
         String courseName = "테스트";
-        Course course = Course.builder(member, courseName)
-                .build();
+        Course course = Course.of(member, courseName, "", null, null, null, null);
         em.persist(course);
 
         String meetingId = "000000";

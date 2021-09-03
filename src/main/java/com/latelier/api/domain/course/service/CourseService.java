@@ -108,8 +108,8 @@ public class CourseService {
                 instructor,
                 request.getCourseName(),
                 request.getExplanation(),
-                request.getPrice(),
-                request.getMaxSize(),
+                request.getCoursePrice(),
+                request.getHeadCount(),
                 request.getStartDate(),
                 request.getEndDate());
     }
@@ -134,4 +134,15 @@ public class CourseService {
     }
 
 
+    /**
+     * 강의를 검색합니다.
+     * 검색 기준이 있을 수 있습니다.
+     *
+     * @param searchCriteria 검색 기준
+     * @return 검색한 강의목록
+     */
+//    public ResCourse search(final SearchCriteria searchCriteria) {
+//
+//        return ResCourse.of();
+//    }
 }

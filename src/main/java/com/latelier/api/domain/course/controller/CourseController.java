@@ -59,8 +59,21 @@ public class CourseController {
             @ApiResponse(responseCode = "500", description = "파일 입출력 실패 등 내부 서버에러")})
     public ResponseEntity<Result<ResCourseRegister>> registerCourse(@Valid final ReqCourseRegister reqCourseRegister) {
 
-        ResCourseRegister response = courseService.addCourse(securityUtil.getMemberId(), reqCourseRegister);
+//        ResCourseRegister response = courseService.addCourse(securityUtil.getMemberId(), reqCourseRegister);
+        ResCourseRegister response = courseService.addCourse(1L, reqCourseRegister);
         return ResponseEntity.ok(Result.of(response));
     }
+
+
+//    @GetMapping
+//    @ApiOperation(
+//            value = "강의 검색",
+//            notes = "강의를 검색합니다.")
+//    public ResponseEntity<Result<ResCourse>> searchCourse(@Valid final SearchCriteria searchCriteria) {
+//
+//        ResCourse response = courseService.search(searchCriteria);
+//        return ResponseEntity.ok(Result.of(response));
+//    }
+
 
 }

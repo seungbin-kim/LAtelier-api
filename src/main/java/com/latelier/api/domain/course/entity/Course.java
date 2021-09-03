@@ -13,7 +13,6 @@ import java.util.List;
 
 @Getter
 @Entity
-@Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SequenceGenerator(
@@ -96,14 +95,6 @@ public class Course extends BaseTimeEntity {
                 maxSize,
                 startDate,
                 endDate);
-    }
-
-
-    // TODO 빌더패턴 지우기. 테스트도 고치기
-    public static CourseBuilder builder(final Member instructor,
-                                        final String courseName) {
-
-        return new CourseBuilder().instructor(instructor).courseName(courseName);
     }
 
 }
