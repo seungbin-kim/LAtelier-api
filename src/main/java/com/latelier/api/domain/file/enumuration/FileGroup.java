@@ -14,7 +14,7 @@ public enum FileGroup {
     COURSE_DETAIL_IMAGE("강의 상세정보 이미지"),
     COURSE_VIDEO("강의 비디오");
 
-    private final String name;
+    private final String description;
 
     @Getter
     @RequiredArgsConstructor

@@ -1,6 +1,7 @@
 package com.latelier.api.domain.file.packet.response;
 
 import com.latelier.api.domain.file.entity.File;
+import com.latelier.api.domain.file.enumuration.FileGroup;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AccessLevel;
@@ -21,8 +22,8 @@ public class ResFileInformation {
     @ApiModelProperty(
             value = "파일그룹 이름",
             name = "fileGroup",
-            example = "프로필 이미지")
-    private final String fileGroup;
+            example = "COURSE_THUMBNAIL_IMAGE")
+    private final FileGroup fileGroup;
 
     @ApiModelProperty(
             value = "원본 파일이름",
@@ -53,7 +54,7 @@ public class ResFileInformation {
 
         return new ResFileInformation(
                 file.getId(),
-                file.getFileGroup().getName(),
+                file.getFileGroup(),
                 file.getOriginalFilename(),
                 file.getStoredFilename(),
                 file.getUri(),

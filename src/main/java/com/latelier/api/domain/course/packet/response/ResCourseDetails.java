@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public class ResCourseRegister {
+public class ResCourseDetails {
 
     @ApiModelProperty(
             value = "강의 고유번호",
@@ -44,20 +44,26 @@ public class ResCourseRegister {
 
     @ApiModelProperty(
             value = "강의 가격",
-            name = "coursePrice",
+            name = "price",
             example = "10000")
     private final Integer coursePrice;
 
     @ApiModelProperty(
             value = "강의 최대 인원수",
-            name = "headCount",
+            name = "maxHeadCount",
             example = "1000")
-    private final Integer headCount;
+    private final Integer maxHeadCount;
+
+    @ApiModelProperty(
+            value = "강의 현재 인원수",
+            name = "currentHeadCount",
+            example = "1000")
+    private final Integer currentHeadCount;
 
     @ApiModelProperty(
             value = "강의 상태",
             name = "state",
-            example = "WAITING")
+            example = "APPROVED")
     private final CourseState state;
 
     @ApiModelProperty(
@@ -83,17 +89,18 @@ public class ResCourseRegister {
     private final List<ResFileInformation> uploadedFiles;
 
 
-    public static ResCourseRegister of(final Course course,
-                                       final List<Category> categories,
-                                       final List<File> files) {
+    public static ResCourseDetails of(final Course course,
+                                      final List<Category> categories,
+                                      final List<File> files) {
 
-        return new ResCourseRegister(
+        return new ResCourseDetails(
                 course.getId(),
                 course.getCourseName(),
                 course.getInstructor().getUsername(),
                 course.getExplanation(),
                 course.getCoursePrice(),
                 course.getMaxHeadCount(),
+                course.getCurrentHeadCount(),
                 course.getState(),
                 course.getStartDate(),
                 course.getEndDate(),

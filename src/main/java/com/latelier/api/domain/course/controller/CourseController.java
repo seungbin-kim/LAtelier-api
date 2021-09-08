@@ -1,7 +1,9 @@
 package com.latelier.api.domain.course.controller;
 
 import com.latelier.api.domain.course.packet.request.ReqCourseRegister;
+import com.latelier.api.domain.course.packet.response.ResCourseDetails;
 import com.latelier.api.domain.course.packet.response.ResCourseRegister;
+import com.latelier.api.domain.course.packet.response.ResCourseSimple;
 import com.latelier.api.domain.course.packet.response.ResMeetingInformation;
 import com.latelier.api.domain.course.service.CourseService;
 import com.latelier.api.domain.course.service.MeetingInformationService;
@@ -14,7 +16,11 @@ import io.swagger.annotations.Authorization;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -47,7 +53,7 @@ public class CourseController {
     }
 
 
-//    @PreAuthorize("hasRole('INSTRUCTOR')")
+    //    @PreAuthorize("hasRole('INSTRUCTOR')")
     @PostMapping(consumes = "multipart/form-data")
     @ApiOperation(
             value = "강의 등록(신청)",
@@ -65,15 +71,50 @@ public class CourseController {
     }
 
 
-//    @GetMapping
-//    @ApiOperation(
-//            value = "강의 검색",
-//            notes = "강의를 검색합니다.")
-//    public ResponseEntity<Result<ResCourse>> searchCourse(@Valid final SearchCriteria searchCriteria) {
-//
-//        ResCourse response = courseService.search(searchCriteria);
-//        return ResponseEntity.ok(Result.of(response));
-//    }
+    @GetMapping
+    @ApiOperation(
+            value = "강의 검색",
+            notes = "강의를 검색합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "강의목록 검색 성공")})
+    public ResponseEntity<Page<ResCourseSimple>> searchCourse(@RequestParam(defaultValue = "APPROVED") final String state,
+                                                              @Valid final Pageable pageable) {
 
+        Page<ResCourseSimple> response = courseService.search(state, pageable);
+        return ResponseEntity.ok(response);
+    }
+
+
+    @GetMapping("/{courseId}")
+    @ApiOperation(
+            value = "강의 상세보기",
+            notes = "강의에 대한 상세정보를 반환합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "강의 상세정보 반환 성공"),
+            @ApiResponse(responseCode = "404", description = "강의를 찾지 못함")})
+    public ResponseEntity<Result<ResCourseDetails>> getCourseDetails(@PathVariable final Long courseId) {
+
+        ResCourseDetails response = courseService.getCourseDetails(courseId);
+        return ResponseEntity.ok(Result.of(response));
+    }
+
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PatchMapping("/approval/{courseId}")
+    @ApiOperation(
+            value = "강의 승인",
+            notes = "등록 대기중인 강의를 승인합니다.",
+            authorizations = {@Authorization(value = "jwt")})
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "강의 승인 성공"),
+            @ApiResponse(responseCode = "400", description = "이미 강의가 승인됨"),
+            @ApiResponse(responseCode = "401", description = "권한이 없음"),
+            @ApiResponse(responseCode = "403", description = "권한이 부족함"),
+            @ApiResponse(responseCode = "404", description = "강의를 찾지 못함")})
+    public ResponseEntity<Void> approveCourse(@PathVariable final Long courseId) {
+
+        courseService.approveCourse(courseId);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
 
 }

@@ -38,13 +38,13 @@ public class Course extends BaseTimeEntity {
     private String explanation;
 
     @Column(columnDefinition = "int")
-    private Integer price;
+    private Integer coursePrice;
 
     @Column(columnDefinition = "int")
-    private Integer currentSize = 0;
+    private Integer currentHeadCount = 0;
 
     @Column(columnDefinition = "int")
-    private Integer maxSize;
+    private Integer maxHeadCount;
 
     private LocalDateTime startDate;
 
@@ -64,16 +64,16 @@ public class Course extends BaseTimeEntity {
     private Course(final Member instructor,
                    final String courseName,
                    final String explanation,
-                   final Integer price,
-                   final Integer maxSize,
+                   final Integer coursePrice,
+                   final Integer maxHeadCount,
                    final LocalDateTime startDate,
                    final LocalDateTime endDate) {
 
         this.instructor = instructor;
         this.courseName = courseName;
         this.explanation = explanation;
-        this.price = price;
-        this.maxSize = maxSize;
+        this.coursePrice = coursePrice;
+        this.maxHeadCount = maxHeadCount;
         this.startDate = startDate;
         this.endDate = endDate;
     }
@@ -82,8 +82,8 @@ public class Course extends BaseTimeEntity {
     public static Course of(final Member instructor,
                             final String courseName,
                             final String explanation,
-                            final Integer price,
-                            final Integer maxSize,
+                            final Integer coursePrice,
+                            final Integer maxHeadCount,
                             final LocalDateTime startDate,
                             final LocalDateTime endDate) {
 
@@ -91,10 +91,16 @@ public class Course extends BaseTimeEntity {
                 instructor,
                 courseName,
                 explanation,
-                price,
-                maxSize,
+                coursePrice,
+                maxHeadCount,
                 startDate,
                 endDate);
+    }
+
+
+    public void changeState(final CourseState newState) {
+
+        state = newState;
     }
 
 }

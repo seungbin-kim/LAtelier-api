@@ -1,11 +1,13 @@
 package com.latelier.api.domain.course.entity;
 
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SequenceGenerator(
         name = "COURSE_CATEGORY_SEQ_GENERATOR",
