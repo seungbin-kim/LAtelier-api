@@ -28,23 +28,23 @@ public class Member extends BaseTimeEntity {
     @Column(columnDefinition = "bigint")
     private Long id;
 
-    @Column(length = 50, nullable = false)
+    @Column(length = 50)
     private String email;
 
-    @Column(length = 20, nullable = false)
+    @Column(length = 20)
     private String phoneNumber;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "icon_file_id", columnDefinition = "bigint")
     private File file;
 
-    @Column(length = 20, nullable = false)
+    @Column(length = 20)
     private String username;
 
     @Column(length = 20)
     private String nickname;
 
-    @Column(length = 100, nullable = false)
+    @Column(length = 100)
     private String password;
 
     @Column(length = 500)
@@ -91,7 +91,7 @@ public class Member extends BaseTimeEntity {
                             final String role) {
 
         Member member = new Member(email, phoneNumber, username, username, password);
-        setAuthority(member, role);
+        setAuthority(member, Role.ROLE_USER.getRoleName());
         return member;
     }
 

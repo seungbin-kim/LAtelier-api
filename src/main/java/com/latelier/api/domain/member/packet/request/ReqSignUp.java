@@ -1,36 +1,23 @@
 package com.latelier.api.domain.member.packet.request;
 
-import com.latelier.api.global.validation.annotation.PhoneNumber;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 
 @Getter
 @EqualsAndHashCode
 @ApiModel("회원가입 요청정보")
 public class ReqSignUp {
 
-    @Size(min = 2,
-            max = 10,
-            message = "이름의 길이는 2 ~ 10글자 이어야 합니다.")
-    @NotBlank(message = "이름은 필수입니다.")
-    @ApiModelProperty(
-            value = "이름",
-            name = "username",
-            example = "홍길동",
-            required = true)
+
     private String username;
 
-    @PhoneNumber
-    @NotBlank(message = "휴대폰번호는 필수입니다.")
-    @ApiModelProperty(
-            value = "휴대폰번호",
-            name = "phoneNumber",
-            example = "01000000000",
-            required = true)
+
     private String phoneNumber;
 
     @Email(message = "이메일 형식이 잘못되었습니다.")
@@ -52,14 +39,6 @@ public class ReqSignUp {
             required = true)
     private String password;
 
-    @NotBlank(message = "회원구분은 필수입니다.")
-    @Pattern(regexp = "^(user|instructor|admin)$",
-            message = "입력값은 user, instructor, admin 중 하나입니다.")
-    @ApiModelProperty(
-            value = "회원구분",
-            name = "role",
-            example = "user",
-            required = true)
     private String role;
 
 }
