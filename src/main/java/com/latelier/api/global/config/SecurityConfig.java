@@ -66,6 +66,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/courses").permitAll() // 임시
                 .antMatchers("/api/auth/members").permitAll()
                 .antMatchers("/api/auth/sign-in").permitAll()
+//                .antMatchers("/api/auth/check").permitAll()
                 .antMatchers("/api/auth/sms/**").permitAll()
                 .anyRequest().authenticated()
 
@@ -94,5 +95,3 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
 }
-
-

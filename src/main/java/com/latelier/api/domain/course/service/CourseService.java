@@ -158,9 +158,9 @@ public class CourseService {
      * @param pageable 페이징, 정렬정보
      * @return 검색된 강의 목록 페이지
      */
-    public Page<ResCourseSimple> search(final String state, final Pageable pageable) {
+    public Page<ResCourseSimple> search(final String state, final String search, final Pageable pageable) {
 
-        Page<Course> coursePage = courseRepositoryCustom.searchWithMember(state, pageable);
+        Page<Course> coursePage = courseRepositoryCustom.searchWithMember(state, search, pageable);
         List<CourseFile> courseFiles = courseFileRepository.findImageFileByCourses(FileGroup.COURSE_THUMBNAIL_IMAGE, coursePage.getContent());
         Map<Course, File> courseImageFileMap = mappingCourseThumbnail(courseFiles);
         return coursePage.map(course -> ResCourseSimple.of(course, courseImageFileMap.get(course)));

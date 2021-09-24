@@ -78,9 +78,10 @@ public class CourseController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "강의목록 검색 성공")})
     public ResponseEntity<Page<ResCourseSimple>> searchCourse(@RequestParam(defaultValue = "APPROVED") final String state,
+                                                              @RequestParam(required = false) final String search,
                                                               @Valid final Pageable pageable) {
 
-        Page<ResCourseSimple> response = courseService.search(state, pageable);
+        Page<ResCourseSimple> response = courseService.search(state, search, pageable);
         return ResponseEntity.ok(response);
     }
 

@@ -1,11 +1,16 @@
 package com.latelier.api.domain.member.service;
 
+import com.latelier.api.domain.course.entity.Course;
+import com.latelier.api.domain.course.exception.CourseNotFoundException;
+import com.latelier.api.domain.course.repository.CourseRepository;
+import com.latelier.api.domain.member.entity.Cart;
 import com.latelier.api.domain.member.entity.Member;
 import com.latelier.api.domain.member.exception.EmailAndPhoneNumberDuplicateException;
 import com.latelier.api.domain.member.exception.EmailDuplicateException;
 import com.latelier.api.domain.member.exception.MemberNotFoundException;
 import com.latelier.api.domain.member.exception.PhoneNumberDuplicateException;
 import com.latelier.api.domain.member.packet.request.ReqSignUp;
+import com.latelier.api.domain.member.repository.CartRepository;
 import com.latelier.api.domain.member.repository.MemberRepository;
 import com.latelier.api.global.error.exception.BusinessException;
 import com.latelier.api.global.error.exception.ErrorCode;
@@ -20,6 +25,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+
+    private final CourseRepository courseRepository;
+
+    private final CartRepository cartRepository;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -59,7 +68,7 @@ public class MemberService {
     /**
      * 회원 등록하기
      *
-     * @param reqSignUp 회원가입 요청정보
+     * @param reqSignUp 회원등록 요청정보
      * @return 등록한 회원
      */
     @Transactional
@@ -86,9 +95,31 @@ public class MemberService {
 
 
     /**
+     * 사용자의 장바구니 목록에 강의를 추가
+     *
+     * @param memberId 사용자 ID
+     * @param courseId 강의 ID
+     */
+    public void addInUserCart(final Long memberId,
+                              final Long courseId) {
+
+        Member member = getMemberById(memberId);
+        Course course = getCourseById(courseId);
+        cartRepository.save(Cart.of(member, course));
+    }
+
+
+    private Course getCourseById(final Long courseId) {
+
+        return courseRepository.findById(courseId)
+                .orElseThrow(() -> new CourseNotFoundException(courseId));
+    }
+
+
+    /**
      * Member Entity 생성하기
      *
-     * @param reqSignUp 회원가입 요청정보
+     * @param reqSignUp 등록 요청정보
      * @return 생성된 Member Entity
      */
     private Member createMember(final ReqSignUp reqSignUp) {
