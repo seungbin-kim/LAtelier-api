@@ -1,7 +1,7 @@
 package com.latelier.api.domain.order.entity;
 
 import com.latelier.api.domain.model.BaseTimeEntity;
-import com.latelier.api.domain.order.enumeration.OrderStatus;
+import com.latelier.api.domain.order.enumeration.OrderState;
 import com.latelier.api.domain.member.entity.Member;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -27,7 +27,8 @@ public class Order extends BaseTimeEntity {
     @JoinColumn(name = "member_id", columnDefinition = "bigint")
     private Member member;
 
+    @Column(length = 20)
     @Enumerated(EnumType.STRING)
-    private OrderStatus orderStatus;
+    private OrderState state;
 
 }
