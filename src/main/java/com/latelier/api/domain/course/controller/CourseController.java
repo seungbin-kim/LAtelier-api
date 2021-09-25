@@ -75,6 +75,9 @@ public class CourseController {
     @ApiOperation(
             value = "강의 검색",
             notes = "강의를 검색합니다.")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "state", value = "강의 상태", required = true, dataTypeClass = String.class, paramType = "query"),
+            @ApiImplicitParam(name = "search", value = "강의 검색어", required = false, dataTypeClass = String.class, paramType = "query")})
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "강의목록 검색 성공")})
     public ResponseEntity<Page<ResCourseSimple>> searchCourse(@RequestParam(defaultValue = "APPROVED") final String state,
@@ -90,6 +93,8 @@ public class CourseController {
     @ApiOperation(
             value = "강의 상세보기",
             notes = "강의에 대한 상세정보를 반환합니다.")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "courseId", value = "강의 ID", required = true, dataTypeClass = Long.class, paramType = "path")})
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "강의 상세정보 반환 성공"),
             @ApiResponse(responseCode = "404", description = "강의를 찾지 못함")})
@@ -106,8 +111,10 @@ public class CourseController {
             value = "강의 승인",
             notes = "등록 대기중인 강의를 승인합니다.",
             authorizations = {@Authorization(value = "jwt")})
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "courseId", value = "강의 ID", required = true, dataTypeClass = Long.class, paramType = "path")})
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "강의 승인 성공"),
+            @ApiResponse(responseCode = "204", description = "강의 승인 성공"),
             @ApiResponse(responseCode = "400", description = "이미 강의가 승인됨"),
             @ApiResponse(responseCode = "401", description = "권한이 없음"),
             @ApiResponse(responseCode = "403", description = "권한이 부족함"),
@@ -115,7 +122,7 @@ public class CourseController {
     public ResponseEntity<Void> approveCourse(@PathVariable final Long courseId) {
 
         courseService.approveCourse(courseId);
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
 }

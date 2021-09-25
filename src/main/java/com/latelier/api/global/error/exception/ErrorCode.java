@@ -27,6 +27,8 @@ public enum ErrorCode {
   EMAIL_AND_PHONE_NUMBER_DUPLICATE(409, "M006", "이메일과 휴대폰 번호가 중복됩니다."),
   EMAIL_NOT_FOUND(404, "M007", "이메일을 찾을 수 없습니다."),
   NOT_ACTIVATED(404, "M010", "비활성화 된 사용자입니다."),
+  CART_DUPLICATE(409, "M011", "이미 장바구니에 있습니다."),
+  CART_NOT_FOUND(404, "M012", "존재하지 않는 요소입니다."),
 
   // Course
   COURSE_NOT_FOUND(404, "CS001", "강의를 찾을 수 없습니다."),

@@ -1,8 +1,13 @@
 package com.latelier.api.domain.member.service;
 
 import com.latelier.api.domain.course.entity.Course;
+import com.latelier.api.domain.course.enumuration.CourseState;
 import com.latelier.api.domain.course.exception.CourseNotFoundException;
 import com.latelier.api.domain.course.repository.CourseRepository;
+import com.latelier.api.domain.file.entity.CourseFile;
+import com.latelier.api.domain.file.entity.File;
+import com.latelier.api.domain.file.enumuration.FileGroup;
+import com.latelier.api.domain.file.repository.CourseFileRepository;
 import com.latelier.api.domain.member.entity.Cart;
 import com.latelier.api.domain.member.entity.Member;
 import com.latelier.api.domain.member.exception.EmailAndPhoneNumberDuplicateException;
@@ -10,6 +15,8 @@ import com.latelier.api.domain.member.exception.EmailDuplicateException;
 import com.latelier.api.domain.member.exception.MemberNotFoundException;
 import com.latelier.api.domain.member.exception.PhoneNumberDuplicateException;
 import com.latelier.api.domain.member.packet.request.ReqSignUp;
+import com.latelier.api.domain.member.packet.response.ResAddCart;
+import com.latelier.api.domain.member.packet.response.ResMyCart;
 import com.latelier.api.domain.member.repository.CartRepository;
 import com.latelier.api.domain.member.repository.MemberRepository;
 import com.latelier.api.global.error.exception.BusinessException;
@@ -19,6 +26,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -27,6 +39,8 @@ public class MemberService {
     private final MemberRepository memberRepository;
 
     private final CourseRepository courseRepository;
+
+    private final CourseFileRepository courseFileRepository;
 
     private final CartRepository cartRepository;
 
@@ -100,18 +114,78 @@ public class MemberService {
      * @param memberId 사용자 ID
      * @param courseId 강의 ID
      */
-    public void addInUserCart(final Long memberId,
-                              final Long courseId) {
+    @Transactional
+    public ResAddCart addInUserCart(final Long memberId,
+                                    final Long courseId) {
 
         Member member = getMemberById(memberId);
-        Course course = getCourseById(courseId);
-        cartRepository.save(Cart.of(member, course));
+        Course course = getOpenedCourseById(courseId);
+        if (cartRepository.existsByMemberAndCourse(member, course)) {
+            throw new BusinessException(ErrorCode.CART_DUPLICATE);
+        }
+        Cart cart = cartRepository.save(Cart.of(member, course));
+        return ResAddCart.of(cart);
     }
 
 
-    private Course getCourseById(final Long courseId) {
+    /**
+     * 사용자의 장바구니 목록 조회
+     *
+     * @param memberId 사용자 ID
+     * @return 사용자 장바구니 리스트
+     */
+    public List<ResMyCart> getUserCartList(final Long memberId) {
 
-        return courseRepository.findById(courseId)
+        Member member = getMemberById(memberId);
+        List<Cart> cartList = cartRepository.findAllWithCourseByMember(member);
+        List<Course> courseList = cartList.stream()
+                .map(Cart::getCourse)
+                .collect(Collectors.toList());
+        List<CourseFile> courseFileList = courseFileRepository
+                .findWithFileByFileGroupAndCourses(FileGroup.COURSE_THUMBNAIL_IMAGE, courseList);
+        Map<Course, File> courseFileMap = mappingCourseThumbnail(courseFileList);
+
+        return cartList.stream()
+                .map(cart -> ResMyCart.of(cart, courseFileMap.get(cart.getCourse())))
+                .collect(Collectors.toList());
+    }
+
+
+    /**
+     * 장바구니에서 특정 요소를 제거
+     *
+     * @param memberId 사용자 ID
+     * @param cartId   장바구니 요소 ID
+     */
+    @Transactional
+    public void deleteInUserCart(final Long memberId, final Long cartId) {
+
+        Member member = getMemberById(memberId);
+        if (cartRepository.deleteByIdAndMember(cartId, member) == 0) {
+            throw new BusinessException(ErrorCode.CART_NOT_FOUND);
+        }
+    }
+
+
+    @Transactional
+    public void deleteAllInUserCart(final Long memberId) {
+
+        Member member = getMemberById(memberId);
+        cartRepository.deleteAllByMember(member);
+    }
+
+
+    private Map<Course, File> mappingCourseThumbnail(final List<CourseFile> courseFiles) {
+
+        Map<Course, File> courseImageFileMap = new HashMap<>();
+        courseFiles.forEach(courseFile -> courseImageFileMap.put(courseFile.getCourse(), courseFile.getFile()));
+        return courseImageFileMap;
+    }
+
+
+    private Course getOpenedCourseById(final Long courseId) {
+
+        return courseRepository.findByIdAndStateLike(courseId, CourseState.APPROVED)
                 .orElseThrow(() -> new CourseNotFoundException(courseId));
     }
 
@@ -154,5 +228,4 @@ public class MemberService {
             throw new PhoneNumberDuplicateException(phoneNumber);
         }
     }
-
 }

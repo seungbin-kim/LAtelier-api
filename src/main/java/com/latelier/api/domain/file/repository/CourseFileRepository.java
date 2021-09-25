@@ -16,8 +16,8 @@ public interface CourseFileRepository extends JpaRepository<CourseFile, Long> {
             "JOIN FETCH cf.file cff " +
             "WHERE cff.fileGroup = :fileGroup " +
             "AND cf.course IN :courses")
-    List<CourseFile> findImageFileByCourses(@Param("fileGroup") final FileGroup fileGroup,
-                                            @Param("courses") final List<Course> courses);
+    List<CourseFile> findWithFileByFileGroupAndCourses(@Param("fileGroup") final FileGroup fileGroup,
+                                                       @Param("courses") final List<Course> courses);
 
     @Query("SELECT cf " +
             "FROM CourseFile cf " +

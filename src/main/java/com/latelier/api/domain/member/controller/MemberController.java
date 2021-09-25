@@ -1,0 +1,104 @@
+package com.latelier.api.domain.member.controller;
+
+import com.latelier.api.domain.member.packet.response.ResAddCart;
+import com.latelier.api.domain.member.packet.response.ResMyCart;
+import com.latelier.api.domain.member.service.MemberService;
+import com.latelier.api.domain.model.Result;
+import com.latelier.api.domain.util.SecurityUtil;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.Authorization;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/members")
+public class MemberController {
+
+    private final MemberService memberService;
+
+    private final SecurityUtil securityUtil;
+
+
+    @PreAuthorize("hasRole('USER')")
+    @PostMapping("/me/cart/{courseId}")
+    @ApiOperation(
+            value = "장바구니 추가",
+            notes = "장바구니에 강의를 추가합니다.",
+            authorizations = {@Authorization(value = "jwt")})
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "courseId", value = "강의 ID", required = true, dataTypeClass = Long.class, paramType = "path")})
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "장바구니 추가 성공"),
+            @ApiResponse(responseCode = "401", description = "권한이 없음"),
+            @ApiResponse(responseCode = "404", description = "강의 또는 현재 유저를 찾지 못함"),
+            @ApiResponse(responseCode = "409", description = "이미 장바구니에 있음")})
+    public ResponseEntity<Result<ResAddCart>> addMyCart(@PathVariable final Long courseId) {
+
+        ResAddCart response = memberService.addInUserCart(securityUtil.getMemberId(), courseId);
+        return ResponseEntity.ok(Result.of(response));
+    }
+
+
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/me/cart")
+    @ApiOperation(
+            value = "장바구니 목록 조회",
+            notes = "유저의 장바구니에 목록을 조회합니다.",
+            authorizations = {@Authorization(value = "jwt")})
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "장바구니 추가 성공"),
+            @ApiResponse(responseCode = "401", description = "권한이 없음"),
+            @ApiResponse(responseCode = "404", description = "현재 유저를 찾지 못함")})
+    public ResponseEntity<Result<List<ResMyCart>>> getMyCart() {
+
+        List<ResMyCart> response = memberService.getUserCartList(securityUtil.getMemberId());
+        return ResponseEntity.ok(Result.of(response));
+    }
+
+
+    @PreAuthorize("hasRole('USER')")
+    @DeleteMapping("/me/cart/{cartId}")
+    @ApiOperation(
+            value = "장바구니 강의 제거",
+            notes = "장바구니에 있는 특정 요소를 제거합니다.",
+            authorizations = {@Authorization(value = "jwt")})
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "cartId", value = "장바구니 요소 ID", required = true, dataTypeClass = Long.class, paramType = "path")})
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "제거 성공"),
+            @ApiResponse(responseCode = "401", description = "권한이 없음"),
+            @ApiResponse(responseCode = "404", description = "제거대상 또는 현재 유저를 찾지 못함")})
+    public ResponseEntity<Void> deleteMyCart(@PathVariable final Long cartId) {
+
+        memberService.deleteInUserCart(securityUtil.getMemberId(), cartId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+
+    @PreAuthorize("hasRole('USER')")
+    @DeleteMapping("/me/cart")
+    @ApiOperation(
+            value = "장바구니 강의 제거",
+            notes = "장바구니에 있는 특정 강의를 제거합니다.",
+            authorizations = {@Authorization(value = "jwt")})
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "제거 성공"),
+            @ApiResponse(responseCode = "401", description = "권한이 없음"),
+            @ApiResponse(responseCode = "404", description = "현재 유저를 찾지 못함")})
+    public ResponseEntity<Void> deleteAllMyCart() {
+
+        memberService.deleteAllInUserCart(securityUtil.getMemberId());
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+    
+}
