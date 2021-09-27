@@ -2,6 +2,7 @@ package com.latelier.api.global.error;
 
 import com.latelier.api.global.error.exception.BusinessException;
 import com.latelier.api.global.error.exception.ErrorCode;
+import com.siot.IamportRestClient.exception.IamportResponseException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
@@ -156,6 +157,17 @@ public class GlobalExceptionHandler {
         final ErrorResponse response = ErrorResponse.of(errorCode);
 
         return ResponseEntity.status(valueOf(errorCode.getStatus()))
+                .body(response);
+    }
+
+
+    @ExceptionHandler(IamportResponseException.class)
+    protected ResponseEntity<ErrorResponse> handleIamportResponseException(final IamportResponseException e) {
+
+        log.error("handleIamportResponseException", e);
+        final ErrorResponse response = ErrorResponse.of(ErrorCode.IAMPORT_ERROR);
+
+        return ResponseEntity.status(valueOf(response.getStatus()))
                 .body(response);
     }
 

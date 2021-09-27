@@ -38,8 +38,8 @@ public class CourseFile {
     }
 
 
-    public static CourseFile createAndConnect(final Course course,
-                                              final File file) {
+    public static CourseFile of(final Course course,
+                                final File file) {
 
         CourseFile courseFile = new CourseFile(course, file);
         course.getCourseFiles().add(courseFile);

@@ -5,8 +5,10 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.latelier.api.global.properties.CloudProperties;
+import com.latelier.api.global.properties.IamportProperties;
 import com.latelier.api.global.properties.NaverProperties;
 import com.latelier.api.global.properties.ZoomProperties;
+import com.siot.IamportRestClient.IamportClient;
 import lombok.RequiredArgsConstructor;
 import org.apache.tika.Tika;
 import org.springframework.context.annotation.Bean;
@@ -24,6 +26,8 @@ public class BeanConfig {
     private final NaverProperties naverProperties;
 
     private final CloudProperties cloudProperties;
+
+    private final IamportProperties iamportProperties;
 
 
     @Bean
@@ -62,6 +66,12 @@ public class BeanConfig {
     @Bean
     public Tika tika() {
         return new Tika();
+    }
+
+
+    @Bean
+    public IamportClient iamportClient() {
+        return new IamportClient(iamportProperties.getKey(), iamportProperties.getSecret());
     }
 
 }

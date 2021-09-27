@@ -30,7 +30,7 @@ import java.util.function.Function;
 @Repository
 public abstract class Querydsl4RepositorySupport {
 
-    private final Class domainClass;
+    private final Class<?> domainClass;
     private Querydsl querydsl;
     private EntityManager entityManager;
     private JPAQueryFactory queryFactory;
@@ -45,9 +45,9 @@ public abstract class Querydsl4RepositorySupport {
     public void setEntityManager(EntityManager entityManager) {
 
         Assert.notNull(entityManager, "EntityManager must not be null!");
-        JpaEntityInformation entityInformation = JpaEntityInformationSupport.getEntityInformation(domainClass, entityManager);
+        JpaEntityInformation<?, ?> entityInformation = JpaEntityInformationSupport.getEntityInformation(domainClass, entityManager);
         SimpleEntityPathResolver resolver = SimpleEntityPathResolver.INSTANCE;
-        EntityPath path = resolver.createPath(entityInformation.getJavaType());
+        EntityPath<?> path = resolver.createPath(entityInformation.getJavaType());
         this.entityManager = entityManager;
         this.querydsl = new Querydsl(entityManager, new PathBuilder<>(path.getType(), path.getMetadata()));
         this.queryFactory = new JPAQueryFactory(entityManager);

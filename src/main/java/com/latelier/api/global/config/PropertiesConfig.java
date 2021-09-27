@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
                 NaverProperties.class,
                 AppProperties.class,
                 JwtProperties.class,
-                CloudProperties.class})
+                CloudProperties.class,
+                IamportProperties.class})
 public class PropertiesConfig {
 }

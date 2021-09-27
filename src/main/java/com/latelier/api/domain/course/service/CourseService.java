@@ -19,12 +19,14 @@ import com.latelier.api.domain.file.enumuration.FileGroup;
 import com.latelier.api.domain.file.repository.CourseFileRepository;
 import com.latelier.api.domain.file.service.FileService;
 import com.latelier.api.domain.member.entity.Member;
+import com.latelier.api.domain.member.repository.EnrollmentRepository;
 import com.latelier.api.domain.member.service.MemberService;
 import com.latelier.api.global.error.exception.BusinessException;
 import com.latelier.api.global.error.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,6 +52,8 @@ public class CourseService {
 
     private final CourseRepositoryCustom courseRepositoryCustom;
 
+    private final EnrollmentRepository enrollmentRepository;
+
     private final MemberService memberService;
 
     private final FileService fileService;
@@ -73,7 +77,7 @@ public class CourseService {
         courseRepository.save(course);
 
         List<File> files = uploadCourseFiles(request, course.getId());
-        connectCourseToFiles(course, files);
+        saveFilesInformation(course, files);
 
         return ResCourseRegister.of(
                 course,
@@ -100,12 +104,12 @@ public class CourseService {
      * @param course 강의
      * @param files  강의와 관련된 파일들
      */
-    private void connectCourseToFiles(final Course course,
+    private void saveFilesInformation(final Course course,
                                       final List<File> files) {
 
         courseFileRepository.saveAll(
                 files.stream()
-                        .map(file -> CourseFile.createAndConnect(course, file))
+                        .map(file -> CourseFile.of(course, file))
                         .collect(Collectors.toList()));
     }
 
@@ -155,10 +159,13 @@ public class CourseService {
      *
      * @param state    강의 상태 문자열
      *                 com.latelier.api.domain.course.enumuration.CourseState
+     * @param search   검색어
      * @param pageable 페이징, 정렬정보
-     * @return 검색된 강의 목록 페이지
+     * @return 검색된 강의목록 페이지
      */
-    public Page<ResCourseSimple> search(final String state, final String search, final Pageable pageable) {
+    public Page<ResCourseSimple> search(final String state,
+                                        final String search,
+                                        final Pageable pageable) {
 
         Page<Course> coursePage = courseRepositoryCustom.searchWithMember(state, search, pageable);
         List<CourseFile> courseFiles = courseFileRepository
@@ -185,10 +192,12 @@ public class CourseService {
     /**
      * 강의 상세정보를 반환합니다.
      *
+     * @param memberId 사용자 ID
      * @param courseId 강의 ID
      * @return 강의 상세정보
      */
-    public ResCourseDetails getCourseDetails(final Long courseId) {
+    public ResCourseDetails getCourseDetails(@Nullable final Long memberId,
+                                             final Long courseId) {
 
         Course course = getCourseWithInstructor(courseId);
 
@@ -199,14 +208,16 @@ public class CourseService {
         List<File> files = courseFileRepository.findAllWithFileByCourse(course).stream()
                 .map(CourseFile::getFile)
                 .collect(Collectors.toList());
-        return ResCourseDetails.of(course, categories, files);
+
+        boolean hasPaid = memberId != null && enrollmentRepository.existsByMemberIdAndCourse(memberId, course);
+        return ResCourseDetails.of(hasPaid, course, categories, files);
     }
 
 
     private Course getCourseWithInstructor(final Long courseId) {
 
         return courseRepository.findWithInstructorById(courseId)
-                .orElseThrow(() -> new CourseNotFoundException(courseId));
+                .orElseThrow(() -> new BusinessException(ErrorCode.COURSE_NOT_FOUND));
     }
 
 

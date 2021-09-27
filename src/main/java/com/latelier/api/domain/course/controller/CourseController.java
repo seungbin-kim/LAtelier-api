@@ -18,12 +18,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
 
 @RestController
 @RequiredArgsConstructor
@@ -46,9 +48,11 @@ public class CourseController {
             @ApiImplicitParam(name = "courseId", value = "강의 ID", required = true, dataTypeClass = Long.class, paramType = "path")})
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "입장정보 반환 성공"),
+            @ApiResponse(responseCode = "401", description = "로그인하지 않음"),
             @ApiResponse(responseCode = "404", description = "사용자 혹은 입장정보를 찾을 수 없음")})
     public ResponseEntity<Result<ResMeetingInformation>> getMeeting(@PathVariable final Long courseId) {
 
+        // TODO 로그인 된 사용자 정보 사용해야함 SecurityUtil
         return ResponseEntity.ok(Result.of(meetingInformationService.getMeetingInformation(courseId)));
     }
 
@@ -60,14 +64,16 @@ public class CourseController {
             notes = "강의를 등록(신청)합니다.",
             authorizations = {@Authorization(value = "jwt")})
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "강의등록(신청) 성공"),
+            @ApiResponse(responseCode = "201", description = "강의등록(신청) 성공"),
+            @ApiResponse(responseCode = "403", description = "강사가 아님"),
             @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없음"),
             @ApiResponse(responseCode = "500", description = "파일 입출력 실패 등 내부 서버에러")})
     public ResponseEntity<Result<ResCourseRegister>> registerCourse(@Valid final ReqCourseRegister reqCourseRegister) {
 
 //        ResCourseRegister response = courseService.addCourse(securityUtil.getMemberId(), reqCourseRegister);
         ResCourseRegister response = courseService.addCourse(1L, reqCourseRegister);
-        return ResponseEntity.ok(Result.of(response));
+        return ResponseEntity.status(CREATED)
+                .body(Result.of(response));
     }
 
 
@@ -100,7 +106,9 @@ public class CourseController {
             @ApiResponse(responseCode = "404", description = "강의를 찾지 못함")})
     public ResponseEntity<Result<ResCourseDetails>> getCourseDetails(@PathVariable final Long courseId) {
 
-        ResCourseDetails response = courseService.getCourseDetails(courseId);
+        Long memberId = null;
+        if (securityUtil.isLoggedIn()) memberId = securityUtil.getMemberId();
+        ResCourseDetails response = courseService.getCourseDetails(memberId, courseId);
         return ResponseEntity.ok(Result.of(response));
     }
 
@@ -116,13 +124,12 @@ public class CourseController {
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "강의 승인 성공"),
             @ApiResponse(responseCode = "400", description = "이미 강의가 승인됨"),
-            @ApiResponse(responseCode = "401", description = "권한이 없음"),
-            @ApiResponse(responseCode = "403", description = "권한이 부족함"),
+            @ApiResponse(responseCode = "403", description = "관리자가 아님"),
             @ApiResponse(responseCode = "404", description = "강의를 찾지 못함")})
     public ResponseEntity<Void> approveCourse(@PathVariable final Long courseId) {
 
         courseService.approveCourse(courseId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.status(NO_CONTENT).build();
     }
 
 }

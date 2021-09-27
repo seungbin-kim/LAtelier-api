@@ -96,13 +96,14 @@ public class AuthController {
     }
 
 
+    @PreAuthorize("hasRole('USER')")
     @PostMapping("/sign-out")
     @ApiOperation(
             value = "로그아웃",
             notes = "쿠키의 JWT 를 삭제합니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "로그아웃 성공"),
-            @ApiResponse(responseCode = "401", description = "이미 로그아웃 되어있는 경우")})
+            @ApiResponse(responseCode = "403", description = "이미 로그아웃 되어있는 경우")})
     public ResponseEntity<Void> signOut() {
 
         ResponseCookie responseCookie = tokenProvider.createTokenCookie("");
@@ -147,6 +148,7 @@ public class AuthController {
             @ApiImplicitParam(name = "state", value = "회의를 생성할 강의 ID", required = true, dataTypeClass = Long.class, paramType = "query")})
     @ApiResponses({
             @ApiResponse(responseCode = "303", description = "성공적으로 회의가 생성되어 start url 반환"),
+            @ApiResponse(responseCode = "403", description = "강사가 아님"),
             @ApiResponse(responseCode = "500", description = "액세스 토큰을 얻지 못하거나 회의 생성에 실패")})
     public ResponseEntity<Void> callback(@RequestParam final String code,
                                          @RequestParam(name = "state") final Long courseId) throws URISyntaxException {
@@ -170,13 +172,13 @@ public class AuthController {
             value = "SMS 인증 문자보내기",
             notes = "인증번호를 생성하여 사용자에게 문자를 전송합니다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "인증번호 전송 성공"),
+            @ApiResponse(responseCode = "204", description = "인증번호 전송 성공"),
             @ApiResponse(responseCode = "409", description = "휴대폰 번호 중복"),
             @ApiResponse(responseCode = "500", description = "메세지 전송 실패")})
     public ResponseEntity<Void> sendSms(@RequestBody @Valid final ReqSmsAuthentication request) {
 
         smsService.sendCertificationNumber(request.getPhoneNumber());
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
 

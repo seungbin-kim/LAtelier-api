@@ -18,6 +18,7 @@ import com.latelier.api.domain.member.packet.request.ReqSignUp;
 import com.latelier.api.domain.member.packet.response.ResAddCart;
 import com.latelier.api.domain.member.packet.response.ResMyCart;
 import com.latelier.api.domain.member.repository.CartRepository;
+import com.latelier.api.domain.member.repository.EnrollmentRepository;
 import com.latelier.api.domain.member.repository.MemberRepository;
 import com.latelier.api.global.error.exception.BusinessException;
 import com.latelier.api.global.error.exception.ErrorCode;
@@ -43,6 +44,8 @@ public class MemberService {
     private final CourseFileRepository courseFileRepository;
 
     private final CartRepository cartRepository;
+
+    private final EnrollmentRepository enrollmentRepository;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -120,9 +123,7 @@ public class MemberService {
 
         Member member = getMemberById(memberId);
         Course course = getOpenedCourseById(courseId);
-        if (cartRepository.existsByMemberAndCourse(member, course)) {
-            throw new BusinessException(ErrorCode.CART_DUPLICATE);
-        }
+        checkCanAdd(member, course);
         Cart cart = cartRepository.save(Cart.of(member, course));
         return ResAddCart.of(cart);
     }
@@ -132,22 +133,31 @@ public class MemberService {
      * 사용자의 장바구니 목록 조회
      *
      * @param memberId 사용자 ID
-     * @return 사용자 장바구니 리스트
+     * @return 사용자 장바구니
      */
-    public List<ResMyCart> getUserCartList(final Long memberId) {
+    public ResMyCart getUserCartList(final Long memberId) {
 
         Member member = getMemberById(memberId);
+
+        // 사용자의 장바구니 목록 얻어와 강의들을 추출
         List<Cart> cartList = cartRepository.findAllWithCourseByMember(member);
         List<Course> courseList = cartList.stream()
                 .map(Cart::getCourse)
                 .collect(Collectors.toList());
+
+        // 장바구니 목록 강의들의 썸네일 이미지 추출
         List<CourseFile> courseFileList = courseFileRepository
                 .findWithFileByFileGroupAndCourses(FileGroup.COURSE_THUMBNAIL_IMAGE, courseList);
         Map<Course, File> courseFileMap = mappingCourseThumbnail(courseFileList);
 
-        return cartList.stream()
-                .map(cart -> ResMyCart.of(cart, courseFileMap.get(cart.getCourse())))
+        // 강의와 강의 썸네일 이미지 주소 결합, 장바구니에 담긴 전체요소의 가격 구하기
+        List<ResMyCart.CartElement> cartElements = cartList.stream()
+                .map(cart -> ResMyCart.CartElement.of(cart, courseFileMap.get(cart.getCourse())))
                 .collect(Collectors.toList());
+        int totalPrice = cartElements.stream()
+                .mapToInt(ResMyCart.CartElement::getCoursePrice)
+                .sum();
+        return ResMyCart.of(cartElements, totalPrice, member);
     }
 
 
@@ -167,6 +177,11 @@ public class MemberService {
     }
 
 
+    /**
+     * 사용자 장바구니 모두 비우기
+     *
+     * @param memberId 사용자 ID
+     */
     @Transactional
     public void deleteAllInUserCart(final Long memberId) {
 
@@ -175,6 +190,29 @@ public class MemberService {
     }
 
 
+    /**
+     * 이미 구매하였거나 장바구니에 있는 강의인지 확인합니다.
+     *
+     * @param member 사용자
+     * @param course 강의
+     */
+    private void checkCanAdd(final Member member,
+                             final Course course) {
+
+        if (cartRepository.existsByMemberAndCourse(member, course)) {
+            throw new BusinessException(ErrorCode.CART_DUPLICATE);
+        } else if (enrollmentRepository.existsByMemberIdAndCourse(member.getId(), course)) {
+            throw new BusinessException(ErrorCode.ALREADY_ENROLLED);
+        }
+    }
+
+
+    /**
+     * 강의와 강의 썸네일 이미지를 매핑
+     *
+     * @param courseFiles 강의파일 리스트
+     * @return 매핑된 Map
+     */
     private Map<Course, File> mappingCourseThumbnail(final List<CourseFile> courseFiles) {
 
         Map<Course, File> courseImageFileMap = new HashMap<>();
@@ -183,6 +221,12 @@ public class MemberService {
     }
 
 
+    /**
+     * 열린 강의 얻어오기
+     *
+     * @param courseId 강의 ID
+     * @return 강의 Entity
+     */
     private Course getOpenedCourseById(final Long courseId) {
 
         return courseRepository.findByIdAndStateLike(courseId, CourseState.APPROVED)

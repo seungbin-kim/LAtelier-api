@@ -19,6 +19,12 @@ import java.util.stream.Collectors;
 public class ResCourseDetails {
 
     @ApiModelProperty(
+            value = "조회자의 강의 구매 여부. 비회원은 false",
+            name = "hasPaid",
+            example = "true")
+    private final boolean hasPaid;
+
+    @ApiModelProperty(
             value = "강의 고유번호",
             name = "id",
             example = "1")
@@ -89,11 +95,13 @@ public class ResCourseDetails {
     private final List<ResFileInformation> uploadedFiles;
 
 
-    public static ResCourseDetails of(final Course course,
+    public static ResCourseDetails of(final boolean hasPaid,
+                                      final Course course,
                                       final List<Category> categories,
                                       final List<File> files) {
 
         return new ResCourseDetails(
+                hasPaid,
                 course.getId(),
                 course.getCourseName(),
                 course.getInstructor().getUsername(),

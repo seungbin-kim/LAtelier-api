@@ -13,6 +13,12 @@ import lombok.RequiredArgsConstructor;
 public class ResSignUp {
 
     @ApiModelProperty(
+            value = "사용자 고유 ID",
+            name = "id",
+            example = "1")
+    private final Long id;
+
+    @ApiModelProperty(
             value = "이름",
             name = "username",
             example = "홍길동")
@@ -40,6 +46,7 @@ public class ResSignUp {
     public static ResSignUp of(final Member member) {
 
         return new ResSignUp(
+                member.getId(),
                 member.getUsername(),
                 member.getPhoneNumber(),
                 member.getEmail(),

@@ -19,15 +19,13 @@ public class CourseRepositoryCustom extends Querydsl4RepositorySupport {
     }
 
 
-    public Page<Course> searchWithMember(final String state, final String search, final Pageable pageable) {
+    public Page<Course> searchWithMember(final String state,
+                                         final String search,
+                                         final Pageable pageable) {
 
         return applyPagination(pageable, query -> query
                         .selectFrom(course)
                         .join(course.instructor, member).fetchJoin()
-                        .where(stateLike(state), keywordLike(search)),
-                countQuery -> countQuery
-                        .select(course.id)
-                        .from(course)
                         .where(stateLike(state), keywordLike(search)));
     }
 

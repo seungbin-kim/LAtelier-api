@@ -9,14 +9,14 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SequenceGenerator(
-        name = "ENROLMENT_SEQ_GENERATOR",
-        sequenceName = "ENROLMENT_SEQ")
-public class Enrolment {
+        name = "ENROLLMENT_SEQ_GENERATOR",
+        sequenceName = "ENROLLMENT_SEQ")
+public class Enrollment {
 
     @Id
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
-            generator = "ENROLMENT_SEQ_GENERATOR")
+            generator = "ENROLLMENT_SEQ_GENERATOR")
     @Column(columnDefinition = "bigint")
     private Long id;
 
@@ -28,4 +28,18 @@ public class Enrolment {
     @JoinColumn(name = "course_id", columnDefinition = "bigint")
     private Course course;
 
+
+    private Enrollment(final Member member,
+                       final Course course) {
+
+        this.member = member;
+        this.course = course;
+    }
+
+
+    public static Enrollment of(final Member member,
+                                final Course course) {
+
+        return new Enrollment(member, course);
+    }
 }

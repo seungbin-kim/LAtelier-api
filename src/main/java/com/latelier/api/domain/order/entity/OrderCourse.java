@@ -9,14 +9,14 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SequenceGenerator(
-        name = "ORDER_ITEM_SEQ_GENERATOR",
-        sequenceName = "ORDER_ITEM_SEQ")
+        name = "ORDER_COURSE_SEQ_GENERATOR",
+        sequenceName = "ORDER_COURSE_SEQ")
 public class OrderCourse {
 
     @Id
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
-            generator = "ORDER_ITEM_SEQ_GENERATOR")
+            generator = "ORDER_COURSE_SEQ_GENERATOR")
     @Column(columnDefinition = "bigint")
     private Long id;
 
@@ -34,4 +34,26 @@ public class OrderCourse {
     @Column(columnDefinition = "int")
     private Integer price;
 
+
+    private OrderCourse(final Order order,
+                        final Course course,
+                        final Integer quantity,
+                        final Integer price) {
+
+        this.order = order;
+        this.course = course;
+        this.quantity = quantity;
+        this.price = price;
+    }
+
+
+    public static OrderCourse of(final Order order,
+                                 final Course course,
+                                 final Integer quantity,
+                                 final Integer price) {
+
+        OrderCourse orderCourse = new OrderCourse(order, course, quantity, price);
+        order.getOrderCourses().add(orderCourse);
+        return orderCourse;
+    }
 }

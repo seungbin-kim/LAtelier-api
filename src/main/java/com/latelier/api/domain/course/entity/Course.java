@@ -50,7 +50,7 @@ public class Course extends BaseTimeEntity {
 
     private LocalDateTime endDate;
 
-    @OneToMany(mappedBy = "course", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "course", orphanRemoval = true)
     private List<CourseFile> courseFiles = new ArrayList<>();
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)

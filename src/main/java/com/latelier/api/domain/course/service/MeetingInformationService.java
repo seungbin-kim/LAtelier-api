@@ -52,7 +52,7 @@ public class MeetingInformationService {
     }
 
 
-    // TODO 로그인 구현후, 사용자 이름부분 로그인된 유저로 넣기
+    // TODO 로그인 구현후, 사용자 이름부분 로그인된 유저로 넣기, 사용자가 등록한 강의인지 확인 등
 
     /**
      * Web SDK 에서 접속하기위한 회의정보 얻기
