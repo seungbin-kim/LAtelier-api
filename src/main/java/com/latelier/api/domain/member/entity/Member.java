@@ -15,10 +15,6 @@ import javax.persistence.*;
 @SequenceGenerator(
         name = "MEMBER_SEQ_GENERATOR",
         sequenceName = "MEMBER_SEQ")
-@Table(
-        uniqueConstraints = {
-                @UniqueConstraint(name = "email_unique", columnNames = {"email"}),
-                @UniqueConstraint(name = "phone_number_unique", columnNames = {"phoneNumber"})})
 public class Member extends BaseTimeEntity {
 
     @Id

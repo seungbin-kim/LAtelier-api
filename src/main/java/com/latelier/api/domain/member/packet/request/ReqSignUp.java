@@ -14,9 +14,7 @@ import javax.validation.constraints.Pattern;
 @ApiModel("회원가입 요청정보")
 public class ReqSignUp {
 
-
     private String username;
-
 
     private String phoneNumber;
 

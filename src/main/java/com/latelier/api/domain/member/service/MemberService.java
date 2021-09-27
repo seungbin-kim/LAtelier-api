@@ -65,7 +65,7 @@ public class MemberService {
     @Transactional
     public Member addMember(final ReqSignUp reqSignUp) {
 
-        checkDuplicateEmailAndPhoneNumber(reqSignUp.getEmail(), reqSignUp.getPhoneNumber());
+//        checkDuplicateEmailAndPhoneNumber(reqSignUp.getEmail(), reqSignUp.getPhoneNumber());
         Member member = createMember(reqSignUp);
         return memberRepository.save(member);
     }
