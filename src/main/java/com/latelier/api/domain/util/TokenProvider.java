@@ -43,6 +43,7 @@ public class TokenProvider {
         return ResponseCookie.from("token", token)
                 .httpOnly(true)
                 .secure(true)
+                .sameSite("None")
                 .path("/")
                 .maxAge(ageInSeconds)
                 .build();
