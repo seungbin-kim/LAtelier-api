@@ -42,7 +42,8 @@ public class ResMyCart {
         int elementSize = cartList.size();
         final String title =
                 elementSize == 0 ? "" : elementSize == 1 ?
-                        cartList.get(0).courseName : cartList.get(0).courseName + " 외 " + elementSize + "개";
+                        cartList.get(0).courseName : cartList.get(0).courseName + " 외 " + (elementSize - 1) + "개";
+
         return new ResMyCart(
                 cartList,
                 totalPrice,
