@@ -54,7 +54,7 @@ class CourseControllerTest {
 
         String meetingId = "000000";
         String meetingPw = "pwd";
-        MeetingInformation meetingInformation = MeetingInformation.of(course, meetingId, meetingPw);
+        MeetingInformation meetingInformation = MeetingInformation.of(course, meetingId, meetingPw, null);
         em.persist(meetingInformation);
 
         // when
@@ -91,7 +91,7 @@ class CourseControllerTest {
 
         String meetingId = "000000";
         String meetingPw = "pwd";
-        MeetingInformation meetingInformation = MeetingInformation.of(course, meetingId, meetingPw);
+        MeetingInformation meetingInformation = MeetingInformation.of(course, meetingId, meetingPw, null);
         em.persist(meetingInformation);
 
         // when
@@ -122,7 +122,7 @@ class CourseControllerTest {
 
         String meetingId = "000000";
         String meetingPw = "pwd";
-        MeetingInformation meetingInformation = MeetingInformation.of(course, meetingId, meetingPw);
+        MeetingInformation meetingInformation = MeetingInformation.of(course, meetingId, meetingPw, null);
         em.persist(meetingInformation);
 
         // when

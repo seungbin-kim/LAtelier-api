@@ -12,6 +12,10 @@ import javax.persistence.*;
 @SequenceGenerator(
         name = "MEETING_INFORMATION_SEQ_GENERATOR",
         sequenceName = "MEETING_INFORMATION_SEQ")
+@Table(
+        uniqueConstraints = {
+                @UniqueConstraint(name = "course_id_unique", columnNames = {"course_id"}),
+                @UniqueConstraint(name = "course_id_unique", columnNames = {"meetingId"})})
 public class MeetingInformation {
 
     @Id
@@ -31,22 +35,28 @@ public class MeetingInformation {
     @Column(length = 50)
     private String meetingPw;
 
+    @Column(length = 100)
+    private String joinUrl;
+
 
     private MeetingInformation(final Course course,
                                final String meetingId,
-                               final String meetingPw) {
+                               final String meetingPw,
+                               final String joinUrl) {
 
         this.course = course;
         this.meetingId = meetingId;
         this.meetingPw = meetingPw;
+        this.joinUrl = joinUrl;
     }
 
 
     public static MeetingInformation of(final Course course,
                                         final String meetingId,
-                                        final String meetingPw) {
+                                        final String meetingPw,
+                                        final String joinUrl) {
 
-        return new MeetingInformation(course, meetingId, meetingPw);
+        return new MeetingInformation(course, meetingId, meetingPw, joinUrl);
     }
 
 }

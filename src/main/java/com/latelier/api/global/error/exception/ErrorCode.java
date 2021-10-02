@@ -35,6 +35,9 @@ public enum ErrorCode {
     COURSE_NOT_FOUND(404, "CS001", "강의를 찾을 수 없습니다."),
     COURSE_MEETING_NOT_FOUND(404, "CS002", "강의 진행정보가 없습니다."),
     COURSE_STATE_ALREADY_APPROVED(400, "CS003", "이미 승인된 강의입니다."),
+    COURSE_MEETING_ALREADY_EXIST(409, "CS004", "이미 현재 진행중인 강의가 있습니다."),
+    COURSE_INSTRUCTOR_NOT_MATCH(400, "CS005", "강사님의 강의가 아닙니다."),
+    NOT_ENROLLED(400, "CS006", "해당 강의에 등록되지 않았습니다."),
 
     // Order
     IAMPORT_ERROR(500, "OD001", "결제 검증 응답 에러. 또는 잘못된 impUid"),

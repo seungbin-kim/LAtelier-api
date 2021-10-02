@@ -21,9 +21,9 @@ public class ResMeetingInformation {
 
     @ApiModelProperty(
             value = "미팅 번호",
-            name = "meetingNumber",
+            name = "meetingId",
             notes = "미팅 입장에 필요한 ID")
-    private final Long meetingNumber;
+    private final String meetingId;
 
     @ApiModelProperty(
             value = "미팅 비밀번호",
@@ -48,7 +48,7 @@ public class ResMeetingInformation {
 
         return new ResMeetingInformation(
                 apiKey,
-                Long.parseLong(meetingInformation.getMeetingId()),
+                meetingInformation.getMeetingId(),
                 meetingInformation.getMeetingPw(),
                 userName,
                 signature);

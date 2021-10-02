@@ -1,9 +1,9 @@
-package com.latelier.api.domain.member.service;
+package com.latelier.api.domain.course.service;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.latelier.api.domain.course.entity.Course;
 import com.latelier.api.domain.course.exception.CourseNotFoundException;
 import com.latelier.api.domain.course.repository.CourseRepository;
-import com.latelier.api.domain.course.service.MeetingInformationService;
 import com.latelier.api.domain.member.exception.AccessTokenNotBeObtainedException;
 import com.latelier.api.domain.member.exception.MeetingInformationNotBeObtainedException;
 import com.latelier.api.domain.member.exception.ZoomAccessTokenRequestException;
@@ -48,25 +48,26 @@ public class ZoomService {
      * @return redirect url
      */
     @Transactional
-    public String createCourseMeeting(final String code, final Long courseId) {
+    public String createCourseMeeting(final String code,
+                                      final Long courseId) {
 
-        // TODO 로그인 구현 후, 강사의 강의가 맞는지 확인하는 로직 필요
-
-        Optional<Course> byCourseId = courseRepository.findById(courseId);
-        Course course = byCourseId.orElseThrow(() -> new CourseNotFoundException(courseId));
-
+        // 존재하는 강의인가?
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new CourseNotFoundException(courseId));
+        // 사용자 액세스토큰 얻기
         String accessToken = requestAccessToken(code)
                 .orElseThrow(AccessTokenNotBeObtainedException::new);
-
+        // 액세스 토큰으로 회의생성
         ResZoomMeeting resZoomMeeting = requestMeetingCreation(accessToken, course.getCourseName())
                 .orElseThrow(MeetingInformationNotBeObtainedException::new);
-
+        // 회의정보 저장
         meetingInformationService.addMeetingInformation(
                 course,
                 resZoomMeeting.getId(),
-                resZoomMeeting.getPassword());
+                resZoomMeeting.getPassword(),
+                resZoomMeeting.getJoinUrl());
 
-        return resZoomMeeting.getStart_url();
+        return resZoomMeeting.getStartUrl();
     }
 
 
@@ -131,7 +132,7 @@ public class ZoomService {
                     entity,
                     ResZoomOAuthToken.class);
 
-            return Optional.ofNullable(zoomOAuthToken).map(ResZoomOAuthToken::getAccess_token);
+            return Optional.ofNullable(zoomOAuthToken).map(ResZoomOAuthToken::getAccessToken);
         } catch (Exception e) {
             throw new ZoomAccessTokenRequestException();
         }
@@ -144,13 +145,17 @@ public class ZoomService {
 @EqualsAndHashCode
 class ResZoomOAuthToken {
 
-    private String access_token;
+    @JsonProperty("access_token")
+    private String accessToken;
 
-    private String token_type;
+    @JsonProperty("token_type")
+    private String tokenYype;
 
-    private String refresh_token;
+    @JsonProperty("refresh_token")
+    private String refreshToken;
 
-    private int expires_in;
+    @JsonProperty("expires_in")
+    private int expiresIn;
 
     private String scope;
 
@@ -181,17 +186,36 @@ class ReqZoomMeeting {
 @EqualsAndHashCode
 class ResZoomMeeting {
 
-    private String created_at;
-    private String encrypted_password;
-    private String h323_password;
-    private String host_email;
-    private String host_id;
+    @JsonProperty("created_at")
+    private String createdAt;
+
+    @JsonProperty("encrypted_password")
+    private String encryptedPassword;
+
+    @JsonProperty("h323_password")
+    private String h323Password;
+
+    @JsonProperty("host_email")
+    private String hostEmail;
+
+    @JsonProperty("host_id")
+    private String hostId;
+
     private String id;
-    private String join_url;
+
+    @JsonProperty("join_url")
+    private String joinUrl;
+
     private String password;
-    private String pstn_password;
+
+    @JsonProperty("pstn_password")
+    private String pstnPassword;
+
     private Settings settings;
-    private String start_url;
+
+    @JsonProperty("start_url")
+    private String startUrl;
+
     private String status;
     private String timezone;
     private String topic;
@@ -200,39 +224,90 @@ class ResZoomMeeting {
 
     @Getter
     @EqualsAndHashCode
-    public class Settings {
+    public static class Settings {
 
-        private Boolean allow_multiple_devices;
-        private String alternative_hosts;
-        private Integer approval_type;
-        private ApprovedOrDeniedCountriesOrRegions approved_or_denied_countries_or_regions;
+        @JsonProperty("allow_multiple_devices")
+        private Boolean allowMultipleDevices;
+
+        @JsonProperty("alternative_hosts")
+        private String alternativeHosts;
+
+        @JsonProperty("approval_type")
+        private Integer approvalType;
+
+        @JsonProperty("approved_or_denied_countries_or_regions")
+        private ApprovedOrDeniedCountriesOrRegions approvedOrDeniedCountriesOrRegions;
+
         private String audio;
-        private String auto_recording;
-        private BreakoutRoom breakout_room;
-        private Boolean close_registration;
-        private Boolean cn_meeting;
-        private Boolean device_testing;
-        private String encryption_type;
-        private Boolean enforce_login;
-        private String enforceLogin_domains;
-        private Boolean host_video;
-        private Boolean in_meeting;
-        private Integer jbh_time;
-        private Boolean join_beforeHost;
-        private Boolean meeting_authentication;
-        private Boolean mute_upon_entry;
-        private Boolean participant_video;
-        private Boolean registrants_confirmation_email;
-        private Boolean registrants_email_notification;
-        private Boolean request_permission_to_unmute_participants;
-        private Boolean show_share_button;
-        private Boolean use_pmi;
-        private Boolean waiting_room;
+
+        @JsonProperty("auto_recording")
+        private String autoRecording;
+
+        @JsonProperty("breakout_room")
+        private BreakoutRoom breakoutRoom;
+
+        @JsonProperty("close_registration")
+        private Boolean closeRegistration;
+
+        @JsonProperty("cn_meeting")
+        private Boolean cnMeeting;
+
+        @JsonProperty("device_testing")
+        private Boolean deviceTesting;
+
+        @JsonProperty("encryption_type")
+        private String encryptionType;
+
+        @JsonProperty("enforce_login")
+        private Boolean enforceLogin;
+
+        @JsonProperty("enforceLogin_domains")
+        private String enforceLoginDomains;
+
+        @JsonProperty("host_video")
+        private Boolean hostVideo;
+
+        @JsonProperty("in_meeting")
+        private Boolean inMeeting;
+
+        @JsonProperty("jbh_time")
+        private Integer jbhTime;
+
+        @JsonProperty("join_beforeHost")
+        private Boolean joinBeforeHost;
+
+        @JsonProperty("meeting_authentication")
+        private Boolean meetingAuthentication;
+
+        @JsonProperty("mute_upon_entry")
+        private Boolean muteUponEntry;
+
+        @JsonProperty("participant_video")
+        private Boolean participantVideo;
+
+        @JsonProperty("registrants_confirmation_email")
+        private Boolean registrantsConfirmationEmail;
+
+        @JsonProperty("registrants_email_notification")
+        private Boolean registrantsEmailNotification;
+
+        @JsonProperty("request_permission_to_unmute_participants")
+        private Boolean requestPermissionToUnmuteParticipants;
+
+        @JsonProperty("show_share_button")
+        private Boolean showShareButton;
+
+        @JsonProperty("use_pmi")
+        private Boolean usePmi;
+
+        @JsonProperty("waiting_room")
+        private Boolean waitingRoom;
+
         private Boolean watermark;
 
         @Getter
         @EqualsAndHashCode
-        public class ApprovedOrDeniedCountriesOrRegions {
+        public static class ApprovedOrDeniedCountriesOrRegions {
 
             private Boolean enable;
 
@@ -240,7 +315,7 @@ class ResZoomMeeting {
 
         @Getter
         @EqualsAndHashCode
-        public class BreakoutRoom {
+        public static class BreakoutRoom {
 
             private Boolean enable;
 

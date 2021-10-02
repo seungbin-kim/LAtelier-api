@@ -209,7 +209,7 @@ public class CourseService {
                 .map(CourseFile::getFile)
                 .collect(Collectors.toList());
 
-        boolean hasPaid = memberId != null && enrollmentRepository.existsByMemberIdAndCourse(memberId, course);
+        boolean hasPaid = memberId != null && enrollmentRepository.existsByMemberIdAndCourseId(memberId, course.getId());
         return ResCourseDetails.of(hasPaid, course, categories, files);
     }
 

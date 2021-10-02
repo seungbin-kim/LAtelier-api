@@ -20,9 +20,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
@@ -48,12 +51,44 @@ public class CourseController {
             @ApiImplicitParam(name = "courseId", value = "강의 ID", required = true, dataTypeClass = Long.class, paramType = "path")})
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "입장정보 반환 성공"),
+            @ApiResponse(responseCode = "400", description = "등록하지 않은 강의"),
             @ApiResponse(responseCode = "401", description = "로그인하지 않음"),
             @ApiResponse(responseCode = "404", description = "사용자 혹은 입장정보를 찾을 수 없음")})
     public ResponseEntity<Result<ResMeetingInformation>> getMeeting(@PathVariable final Long courseId) {
 
-        // TODO 로그인 된 사용자 정보 사용해야함 SecurityUtil
-        return ResponseEntity.ok(Result.of(meetingInformationService.getMeetingInformation(courseId)));
+        ResMeetingInformation response = meetingInformationService.getMeetingInformation(securityUtil.getMemberId(), courseId);
+//        ResMeetingInformation response = meetingInformationService.getMeetingInformation(1L, courseId);
+        return ResponseEntity.ok(Result.of(response));
+    }
+
+
+    @PreAuthorize("hasRole('INSTRUCTOR')")
+    @GetMapping("/{courseId}/status")
+    @ApiOperation(
+            value = "강의를 미팅상태 체크",
+            notes = "강의를 열기 전 이미 진행중인 강의인지, 혹은 강사가 다른 강의를 열어놓았는지 확인합니다.",
+            authorizations = {@Authorization(value = "jwt")})
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "courseId", value = "강의 ID", required = true, dataTypeClass = Long.class, paramType = "path")})
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "현재 미팅 예약이 된 강의"),
+            @ApiResponse(responseCode = "204", description = "미팅 예약이 되어있지 않음"),
+            @ApiResponse(responseCode = "400", description = "강사의 강의가 아님"),
+            @ApiResponse(responseCode = "403", description = "강사가 아님"),
+            @ApiResponse(responseCode = "404", description = "사용자 혹은 강의를 찾을 수 없음"),
+            @ApiResponse(responseCode = "409", description = "강사의 다른 강의가 이미 진행중")})
+    public ResponseEntity<Result<Map<String, String>>> checkCourseMeeting(@PathVariable Long courseId) {
+
+        meetingInformationService.checkCourseAndMeeting(securityUtil.getMemberId(), courseId); // 404, 409
+//        meetingInformationService.checkCourseAndMeeting(1L, courseId);
+        // 강의 조회와 강의 미팅 url 반환
+        String joinUrl = meetingInformationService.getJoinUrl(courseId);// 200, 204, 404(강의)
+        if (StringUtils.hasText(joinUrl)) {
+            Map<String, String> response = new HashMap<>();
+            response.put("joinUrl", joinUrl);
+            return ResponseEntity.ok(Result.of(response));
+        }
+        return ResponseEntity.noContent().build();
     }
 
 

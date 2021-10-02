@@ -1,6 +1,7 @@
 package com.latelier.api.domain.member.controller;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.latelier.api.domain.course.service.ZoomService;
 import com.latelier.api.domain.member.entity.Member;
 import com.latelier.api.domain.member.packet.request.ReqSignIn;
 import com.latelier.api.domain.member.packet.request.ReqSignUp;
@@ -10,14 +11,10 @@ import com.latelier.api.domain.member.packet.response.ResSignIn;
 import com.latelier.api.domain.member.packet.response.ResSignUp;
 import com.latelier.api.domain.member.service.MemberService;
 import com.latelier.api.domain.member.service.SmsService;
-import com.latelier.api.domain.member.service.ZoomService;
 import com.latelier.api.domain.model.Result;
 import com.latelier.api.domain.util.SecurityUtil;
 import com.latelier.api.domain.util.TokenProvider;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.Authorization;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
@@ -30,8 +27,6 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 import static org.springframework.http.HttpStatus.CREATED;
 
@@ -134,36 +129,6 @@ public class AuthController {
         }
         return ResponseEntity.ok()
                 .body(Result.of(ResSignIn.of(member)));
-    }
-
-
-    @PreAuthorize("hasRole('INSTRUCTOR')")
-    @GetMapping("/zoom/callback")
-    @ApiOperation(
-            value = "Zoom OAuth 인증과 회의생성 API 호출",
-            notes = "Zoom OAuth 인증 후 회의생성 API 를 호출하여 start url 을 반환합니다.",
-            authorizations = {@Authorization(value = "jwt")})
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "code", value = "authorization code", required = true, dataTypeClass = String.class, paramType = "query"),
-            @ApiImplicitParam(name = "state", value = "회의를 생성할 강의 ID", required = true, dataTypeClass = Long.class, paramType = "query")})
-    @ApiResponses({
-            @ApiResponse(responseCode = "303", description = "성공적으로 회의가 생성되어 start url 반환"),
-            @ApiResponse(responseCode = "403", description = "강사가 아님"),
-            @ApiResponse(responseCode = "500", description = "액세스 토큰을 얻지 못하거나 회의 생성에 실패")})
-    public ResponseEntity<Void> callback(@RequestParam final String code,
-                                         @RequestParam(name = "state") final Long courseId) throws URISyntaxException {
-
-    /*
-    TODO 이미 회의가 생성된경우(미팅정보존재시), 또 생성하지 못하게 해야함(시작 버튼을 2번누를시 문제)
-          미팅정보가 들어가는 테이블 유니크조건걸기(동일강의 2개가있으면 안됨)
-          강의종료시 테이블내용은 지워져야함...!
-     */
-
-        String startUrl = zoomService.createCourseMeeting(code, courseId);
-
-        URI uri = new URI(startUrl);
-        return ResponseEntity.status(HttpStatus.SEE_OTHER)
-                .location(uri).build();
     }
 
 

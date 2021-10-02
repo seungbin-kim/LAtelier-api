@@ -201,7 +201,7 @@ public class MemberService {
 
         if (cartRepository.existsByMemberAndCourse(member, course)) {
             throw new BusinessException(ErrorCode.CART_DUPLICATE);
-        } else if (enrollmentRepository.existsByMemberIdAndCourse(member.getId(), course)) {
+        } else if (enrollmentRepository.existsByMemberIdAndCourseId(member.getId(), course.getId())) {
             throw new BusinessException(ErrorCode.ALREADY_ENROLLED);
         }
     }
