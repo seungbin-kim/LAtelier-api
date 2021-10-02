@@ -13,25 +13,48 @@ import java.util.List;
 
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-@ApiModel("장바구니 목록")
+@ApiModel("장바구니")
 public class ResMyCart {
 
     @ApiModelProperty(
-            value = "강의 고유번호",
-            name = "id",
-            example = "1")
+            value = "장바구니에 담긴 강의들",
+            name = "list")
     private final List<CartElement> list;
 
+    @ApiModelProperty(
+            value = "전체 가격",
+            name = "totalPrice",
+            example = "1000")
     private final Integer totalPrice;
 
+    @ApiModelProperty(
+            value = "장바구니 제목(구매 이름)",
+            name = "title",
+            example = "XXX 외 2건")
     private final String title;
 
+    @ApiModelProperty(
+            value = "유저 고유번호",
+            name = "userId",
+            example = "1")
     private final Long userId;
 
+    @ApiModelProperty(
+            value = "유저 이름",
+            name = "userName",
+            example = "홍길동")
     private final String userName;
 
+    @ApiModelProperty(
+            value = "유저 email",
+            name = "email",
+            example = "abc123@a.b")
     private final String email;
 
+    @ApiModelProperty(
+            value = "유저 휴대폰번호",
+            name = "phoneNumber",
+            example = "01011112222")
     private final String phoneNumber;
 
 
