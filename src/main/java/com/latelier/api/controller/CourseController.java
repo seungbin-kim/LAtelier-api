@@ -92,7 +92,7 @@ public class CourseController {
     }
 
 
-    //    @PreAuthorize("hasRole('INSTRUCTOR')")
+    @PreAuthorize("hasRole('INSTRUCTOR')")
     @PostMapping(consumes = "multipart/form-data")
     @ApiOperation(
             value = "강의 등록(신청)",
@@ -105,8 +105,7 @@ public class CourseController {
             @ApiResponse(responseCode = "500", description = "파일 입출력 실패 등 내부 서버에러")})
     public ResponseEntity<Result<ResCourseRegister>> registerCourse(@Valid final ReqCourseRegister reqCourseRegister) {
 
-//        ResCourseRegister response = courseService.addCourse(securityUtil.getMemberId(), reqCourseRegister);
-        ResCourseRegister response = courseService.addCourse(1L, reqCourseRegister);
+        ResCourseRegister response = courseService.addCourse(securityUtil.getMemberId(), reqCourseRegister);
         return ResponseEntity.status(CREATED)
                 .body(Result.of(response));
     }

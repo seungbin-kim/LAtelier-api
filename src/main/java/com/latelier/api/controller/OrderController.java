@@ -21,7 +21,7 @@ import java.io.IOException;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
-public class PaymentController {
+public class OrderController {
 
     private final OrderService orderService;
 
@@ -43,8 +43,7 @@ public class PaymentController {
                                             @RequestParam(defaultValue = "false") final boolean isTest)
             throws IamportResponseException, IOException {
 
-//        orderService.verifyAndProcess(securityUtil.getMemberId(), verification.userId, verification.impUid, isTest && securityUtil.isAdmin());
-        orderService.verifyAndProcess(1L, verification.userId, verification.impUid, isTest && securityUtil.isAdmin());
+        orderService.verifyAndProcess(securityUtil.getMemberId(), verification.userId, verification.impUid, isTest && securityUtil.isAdmin());
         return ResponseEntity.noContent().build();
     }
 
