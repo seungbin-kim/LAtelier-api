@@ -1,4 +1,4 @@
-package com.latelier.api.domain.chat.controller;
+package com.latelier.api.controller;
 
 import com.latelier.api.domain.member.packet.request.ReqChatRoom;
 import com.latelier.api.domain.member.packet.response.ResChatMessage;

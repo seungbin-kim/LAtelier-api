@@ -1,4 +1,4 @@
-package com.latelier.api.domain.course.controller;
+package com.latelier.api.controller;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.latelier.api.domain.course.service.MeetingInformationService;

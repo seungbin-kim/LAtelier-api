@@ -1,4 +1,4 @@
-package com.latelier.api.domain.course.controller;
+package com.latelier.api.controller;
 
 import com.latelier.api.domain.course.packet.response.ResCategory;
 import com.latelier.api.domain.course.service.CategoryService;

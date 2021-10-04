@@ -1,4 +1,4 @@
-package com.latelier.api.domain.course.controller;
+package com.latelier.api.controller;
 
 import com.latelier.api.domain.course.packet.request.ReqCourseRegister;
 import com.latelier.api.domain.course.packet.response.ResCourseDetails;

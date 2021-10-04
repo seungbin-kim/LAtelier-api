@@ -1,4 +1,4 @@
-package com.latelier.api.domain.member.controller;
+package com.latelier.api.controller;
 
 import com.latelier.api.domain.member.service.OrderService;
 import com.latelier.api.domain.util.SecurityUtil;

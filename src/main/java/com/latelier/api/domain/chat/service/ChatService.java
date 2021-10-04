@@ -1,6 +1,6 @@
 package com.latelier.api.domain.chat.service;
 
-import com.latelier.api.domain.chat.controller.ChatController;
+import com.latelier.api.controller.ChatController;
 import com.latelier.api.domain.chat.entity.ChatMessage;
 import com.latelier.api.domain.chat.entity.ChatRoom;
 import com.latelier.api.domain.chat.entity.ChatRoomJoin;

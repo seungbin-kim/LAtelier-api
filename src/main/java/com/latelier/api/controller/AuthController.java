@@ -1,4 +1,4 @@
-package com.latelier.api.domain.member.controller;
+package com.latelier.api.controller;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.latelier.api.domain.course.service.ZoomService;

@@ -1,4 +1,4 @@
-package com.latelier.api.domain.member.controller;
+package com.latelier.api.controller;
 
 import com.latelier.api.domain.member.packet.response.ResAddCart;
 import com.latelier.api.domain.member.packet.response.ResMyCart;
