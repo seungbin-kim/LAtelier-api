@@ -17,6 +17,7 @@ import com.latelier.api.global.error.exception.BusinessException;
 import com.latelier.api.global.error.exception.ErrorCode;
 import com.siot.IamportRestClient.IamportClient;
 import com.siot.IamportRestClient.exception.IamportResponseException;
+import com.siot.IamportRestClient.response.Payment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,9 +50,8 @@ public class OrderService {
      *
      * @param currentMemberId 현재 로그인 한 유저의 ID
      * @param orderMemberId   결제한 유저의 ID
-     * @param impUid          Iamport 결제 고유 ID
-     * @throws IamportResponseException
-     * @throws IOException
+     * @param impUid          Iamport 결제 ID
+     * @param isTest          테스트 여부(관리자)
      */
     @Transactional
     public void verifyAndProcess(final Long currentMemberId,
@@ -66,25 +66,30 @@ public class OrderService {
                 .map(Cart::getCourse)
                 .collect(Collectors.toList());
 
-        int paid = verifyAmount(impUid, courses, isTest);
-        orderProcess(impUid, member, courses, paid);
+        Payment payment = iamportClient.paymentByImpUid(impUid).getResponse();
+        int paidAmount = payment.getAmount().intValue();
+        verifyAmount(paidAmount, courses, isTest);
+        String orderName = payment.getName();
+        orderProcess(impUid, member, courses, orderName, paidAmount);
     }
 
 
     /**
-     * 구매처리 과정을 진행
+     * 구매처리
      *
-     * @param impUid  결제 고유 ID
-     * @param member  사용자
-     * @param courses 강의목록
-     * @param paid    지불 금액
+     * @param impUid     iamport 결제 ID
+     * @param member     사용자
+     * @param courses    구매 강의목록
+     * @param orderName  주문 이름
+     * @param paidAmount 지불 금액
      */
     private void orderProcess(final String impUid,
                               final Member member,
                               final List<Course> courses,
-                              final int paid) {
+                              final String orderName,
+                              final int paidAmount) {
 
-        Order order = Order.of(impUid, member, paid, OrderState.PAID);
+        Order order = Order.of(impUid, member, orderName, paidAmount, OrderState.PAID);
         orderRepository.save(order);
         saveOrderCourses(courses, order);
         enrollCourses(member, courses);
@@ -125,24 +130,21 @@ public class OrderService {
     /**
      * 결제금액 검증
      *
-     * @param impUid  Iamport 결제 고유 ID
-     * @param courses 강의 리스트
-     * @return 결제된 금액
-     * @throws IamportResponseException
-     * @throws IOException
+     * @param paidAmount 결제된 금액
+     * @param courses    강의 리스트
+     * @param isTest     테스트 여부(관리자)
      */
-    private int verifyAmount(final String impUid,
-                             final List<Course> courses,
-                             final boolean isTest) throws IamportResponseException, IOException {
+    private void verifyAmount(final int paidAmount,
+                              final List<Course> courses,
+                              final boolean isTest) {
 
-        int amount = isTest ? 0 : iamportClient.paymentByImpUid(impUid).getResponse().getAmount().intValue();
+        int amount = isTest ? 0 : paidAmount;
         int amountToBePaid = courses.stream()
                 .mapToInt(Course::getCoursePrice)
                 .sum();
         if (!isTest && amount != amountToBePaid) {
             throw new BusinessException(ErrorCode.PAYMENT_FORGERY);
         }
-        return amountToBePaid;
     }
 
 

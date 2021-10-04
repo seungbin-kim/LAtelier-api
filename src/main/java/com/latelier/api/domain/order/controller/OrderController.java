@@ -28,7 +28,7 @@ public class OrderController {
     private final SecurityUtil securityUtil;
 
 
-    @PostMapping("/verification")
+    @PostMapping("/verify")
     @ApiOperation(
             value = "주문 처리",
             notes = "결제 금액을 검증하고, 주문을 처리합니다.",

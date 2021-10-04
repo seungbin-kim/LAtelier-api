@@ -36,6 +36,9 @@ public class Order extends BaseTimeEntity {
     @JoinColumn(name = "member_id", columnDefinition = "bigint")
     private Member member;
 
+    @Column(length = 60)
+    private String name;
+
     @Column(columnDefinition = "int")
     private Integer totalPrice;
 
@@ -48,11 +51,13 @@ public class Order extends BaseTimeEntity {
 
     private Order(final String impUid,
                   final Member member,
+                  final String name,
                   final Integer totalPrice,
                   final OrderState state) {
 
         this.impUid = impUid;
         this.member = member;
+        this.name = name;
         this.totalPrice = totalPrice;
         this.state = state;
     }
@@ -60,10 +65,11 @@ public class Order extends BaseTimeEntity {
 
     public static Order of(final String impUid,
                            final Member member,
+                           final String name,
                            final Integer totalPrice,
                            final OrderState state) {
 
-        return new Order(impUid, member, totalPrice, state);
+        return new Order(impUid, member, name, totalPrice, state);
     }
 
 }

@@ -28,10 +28,10 @@ public class ResMyCart {
     private final Integer totalPrice;
 
     @ApiModelProperty(
-            value = "장바구니 제목(구매 이름)",
-            name = "title",
+            value = "장바구니 이름(구매 이름)",
+            name = "name",
             example = "XXX 외 2건")
-    private final String title;
+    private final String name;
 
     @ApiModelProperty(
             value = "유저 고유번호",
@@ -63,14 +63,14 @@ public class ResMyCart {
                                final Member member) {
 
         int elementSize = cartList.size();
-        final String title =
+        final String name =
                 elementSize == 0 ? "" : elementSize == 1 ?
                         cartList.get(0).courseName : cartList.get(0).courseName + " 외 " + (elementSize - 1) + "개";
 
         return new ResMyCart(
                 cartList,
                 totalPrice,
-                title,
+                name,
                 member.getId(),
                 member.getUsername(),
                 member.getEmail(),

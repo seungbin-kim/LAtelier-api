@@ -54,57 +54,61 @@ public class ZoomController {
 
 
     @PostMapping("/event")
+    @ApiOperation(
+            value = "Zoom 이벤트를 받음",
+            notes = "Zoom 으로부터 이벤트를 받는 End-Point")
     public void zoomEvent(@RequestBody final ZoomEvent zoomEvent) {
 
         String meetingId = zoomEvent.getPayload().getObject().getId();
         meetingInformationService.deleteMeetingInformation(meetingId);
     }
 
-}
-
-@Getter
-@ToString
-class ZoomEvent {
-
-    private String event;
-
-    @JsonProperty("event_ts")
-    private Long eventTs;
-
-    private PayLoad payload;
 
     @Getter
     @ToString
-    public static class PayLoad {
+    static class ZoomEvent {
 
-        @JsonProperty("account_id")
-        private String accountId;
+        private String event;
 
-        private Object object;
+        @JsonProperty("event_ts")
+        private Long eventTs;
+
+        private PayLoad payload;
 
         @Getter
         @ToString
-        public static class Object {
+        public static class PayLoad {
 
-            private String uuid;
+            @JsonProperty("account_id")
+            private String accountId;
 
-            private String id;
+            private Object object;
 
-            @JsonProperty("host_id")
-            private String hostId;
+            @Getter
+            @ToString
+            public static class Object {
 
-            private String topic;
+                private String uuid;
 
-            private Integer type;
+                private String id;
 
-            @JsonProperty("start_time")
-            private String startTime;
+                @JsonProperty("host_id")
+                private String hostId;
 
-            private Integer duration;
+                private String topic;
 
-            private String timezone;
+                private Integer type;
 
-            private String endTime;
+                @JsonProperty("start_time")
+                private String startTime;
+
+                private Integer duration;
+
+                private String timezone;
+
+                private String endTime;
+
+            }
 
         }
 

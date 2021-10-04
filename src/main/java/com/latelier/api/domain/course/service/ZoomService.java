@@ -138,186 +138,186 @@ public class ZoomService {
         }
     }
 
-}
-
-
-@Getter
-@EqualsAndHashCode
-class ResZoomOAuthToken {
-
-    @JsonProperty("access_token")
-    private String accessToken;
-
-    @JsonProperty("token_type")
-    private String tokenYype;
-
-    @JsonProperty("refresh_token")
-    private String refreshToken;
-
-    @JsonProperty("expires_in")
-    private int expiresIn;
-
-    private String scope;
-
-}
-
-
-@Getter
-@EqualsAndHashCode
-@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-class ReqZoomMeeting {
-
-    private final String topic;
-
-    private final int type;
-
-    private final String timezone;
-
-
-    public static ReqZoomMeeting of(final String topic) {
-
-        return new ReqZoomMeeting(topic, 1, "Asia/Seoul");
-    }
-
-}
-
-
-@Getter
-@EqualsAndHashCode
-class ResZoomMeeting {
-
-    @JsonProperty("created_at")
-    private String createdAt;
-
-    @JsonProperty("encrypted_password")
-    private String encryptedPassword;
-
-    @JsonProperty("h323_password")
-    private String h323Password;
-
-    @JsonProperty("host_email")
-    private String hostEmail;
-
-    @JsonProperty("host_id")
-    private String hostId;
-
-    private String id;
-
-    @JsonProperty("join_url")
-    private String joinUrl;
-
-    private String password;
-
-    @JsonProperty("pstn_password")
-    private String pstnPassword;
-
-    private Settings settings;
-
-    @JsonProperty("start_url")
-    private String startUrl;
-
-    private String status;
-    private String timezone;
-    private String topic;
-    private Integer type;
-    private String uuid;
 
     @Getter
     @EqualsAndHashCode
-    public static class Settings {
+    static class ResZoomOAuthToken {
 
-        @JsonProperty("allow_multiple_devices")
-        private Boolean allowMultipleDevices;
+        @JsonProperty("access_token")
+        private String accessToken;
 
-        @JsonProperty("alternative_hosts")
-        private String alternativeHosts;
+        @JsonProperty("token_type")
+        private String tokenType;
 
-        @JsonProperty("approval_type")
-        private Integer approvalType;
+        @JsonProperty("refresh_token")
+        private String refreshToken;
 
-        @JsonProperty("approved_or_denied_countries_or_regions")
-        private ApprovedOrDeniedCountriesOrRegions approvedOrDeniedCountriesOrRegions;
+        @JsonProperty("expires_in")
+        private int expiresIn;
 
-        private String audio;
+        private String scope;
 
-        @JsonProperty("auto_recording")
-        private String autoRecording;
+    }
 
-        @JsonProperty("breakout_room")
-        private BreakoutRoom breakoutRoom;
 
-        @JsonProperty("close_registration")
-        private Boolean closeRegistration;
+    @Getter
+    @EqualsAndHashCode
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    static class ReqZoomMeeting {
 
-        @JsonProperty("cn_meeting")
-        private Boolean cnMeeting;
+        private final String topic;
 
-        @JsonProperty("device_testing")
-        private Boolean deviceTesting;
+        private final int type;
 
-        @JsonProperty("encryption_type")
-        private String encryptionType;
+        private final String timezone;
 
-        @JsonProperty("enforce_login")
-        private Boolean enforceLogin;
 
-        @JsonProperty("enforceLogin_domains")
-        private String enforceLoginDomains;
+        public static ReqZoomMeeting of(final String topic) {
 
-        @JsonProperty("host_video")
-        private Boolean hostVideo;
-
-        @JsonProperty("in_meeting")
-        private Boolean inMeeting;
-
-        @JsonProperty("jbh_time")
-        private Integer jbhTime;
-
-        @JsonProperty("join_beforeHost")
-        private Boolean joinBeforeHost;
-
-        @JsonProperty("meeting_authentication")
-        private Boolean meetingAuthentication;
-
-        @JsonProperty("mute_upon_entry")
-        private Boolean muteUponEntry;
-
-        @JsonProperty("participant_video")
-        private Boolean participantVideo;
-
-        @JsonProperty("registrants_confirmation_email")
-        private Boolean registrantsConfirmationEmail;
-
-        @JsonProperty("registrants_email_notification")
-        private Boolean registrantsEmailNotification;
-
-        @JsonProperty("request_permission_to_unmute_participants")
-        private Boolean requestPermissionToUnmuteParticipants;
-
-        @JsonProperty("show_share_button")
-        private Boolean showShareButton;
-
-        @JsonProperty("use_pmi")
-        private Boolean usePmi;
-
-        @JsonProperty("waiting_room")
-        private Boolean waitingRoom;
-
-        private Boolean watermark;
-
-        @Getter
-        @EqualsAndHashCode
-        public static class ApprovedOrDeniedCountriesOrRegions {
-
-            private Boolean enable;
-
+            return new ReqZoomMeeting(topic, 1, "Asia/Seoul");
         }
 
+    }
+
+
+    @Getter
+    @EqualsAndHashCode
+    static class ResZoomMeeting {
+
+        @JsonProperty("created_at")
+        private String createdAt;
+
+        @JsonProperty("encrypted_password")
+        private String encryptedPassword;
+
+        @JsonProperty("h323_password")
+        private String h323Password;
+
+        @JsonProperty("host_email")
+        private String hostEmail;
+
+        @JsonProperty("host_id")
+        private String hostId;
+
+        private String id;
+
+        @JsonProperty("join_url")
+        private String joinUrl;
+
+        private String password;
+
+        @JsonProperty("pstn_password")
+        private String pstnPassword;
+
+        private Settings settings;
+
+        @JsonProperty("start_url")
+        private String startUrl;
+
+        private String status;
+        private String timezone;
+        private String topic;
+        private Integer type;
+        private String uuid;
+
         @Getter
         @EqualsAndHashCode
-        public static class BreakoutRoom {
+        public static class Settings {
 
-            private Boolean enable;
+            @JsonProperty("allow_multiple_devices")
+            private Boolean allowMultipleDevices;
+
+            @JsonProperty("alternative_hosts")
+            private String alternativeHosts;
+
+            @JsonProperty("approval_type")
+            private Integer approvalType;
+
+            @JsonProperty("approved_or_denied_countries_or_regions")
+            private ApprovedOrDeniedCountriesOrRegions approvedOrDeniedCountriesOrRegions;
+
+            private String audio;
+
+            @JsonProperty("auto_recording")
+            private String autoRecording;
+
+            @JsonProperty("breakout_room")
+            private BreakoutRoom breakoutRoom;
+
+            @JsonProperty("close_registration")
+            private Boolean closeRegistration;
+
+            @JsonProperty("cn_meeting")
+            private Boolean cnMeeting;
+
+            @JsonProperty("device_testing")
+            private Boolean deviceTesting;
+
+            @JsonProperty("encryption_type")
+            private String encryptionType;
+
+            @JsonProperty("enforce_login")
+            private Boolean enforceLogin;
+
+            @JsonProperty("enforceLogin_domains")
+            private String enforceLoginDomains;
+
+            @JsonProperty("host_video")
+            private Boolean hostVideo;
+
+            @JsonProperty("in_meeting")
+            private Boolean inMeeting;
+
+            @JsonProperty("jbh_time")
+            private Integer jbhTime;
+
+            @JsonProperty("join_beforeHost")
+            private Boolean joinBeforeHost;
+
+            @JsonProperty("meeting_authentication")
+            private Boolean meetingAuthentication;
+
+            @JsonProperty("mute_upon_entry")
+            private Boolean muteUponEntry;
+
+            @JsonProperty("participant_video")
+            private Boolean participantVideo;
+
+            @JsonProperty("registrants_confirmation_email")
+            private Boolean registrantsConfirmationEmail;
+
+            @JsonProperty("registrants_email_notification")
+            private Boolean registrantsEmailNotification;
+
+            @JsonProperty("request_permission_to_unmute_participants")
+            private Boolean requestPermissionToUnmuteParticipants;
+
+            @JsonProperty("show_share_button")
+            private Boolean showShareButton;
+
+            @JsonProperty("use_pmi")
+            private Boolean usePmi;
+
+            @JsonProperty("waiting_room")
+            private Boolean waitingRoom;
+
+            private Boolean watermark;
+
+            @Getter
+            @EqualsAndHashCode
+            public static class ApprovedOrDeniedCountriesOrRegions {
+
+                private Boolean enable;
+
+            }
+
+            @Getter
+            @EqualsAndHashCode
+            public static class BreakoutRoom {
+
+                private Boolean enable;
+
+            }
 
         }
 
