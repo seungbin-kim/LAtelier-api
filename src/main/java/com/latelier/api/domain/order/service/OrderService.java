@@ -122,7 +122,7 @@ public class OrderService {
                                   final Order order) {
 
         orderCourseRepository.saveAll(courses.stream()
-                .map(course -> OrderCourse.of(order, course, 1, course.getCoursePrice()))
+                .map(course -> OrderCourse.of(order, course, 1, course.getPrice()))
                 .collect(Collectors.toList()));
     }
 
@@ -140,7 +140,7 @@ public class OrderService {
 
         int amount = isTest ? 0 : paidAmount;
         int amountToBePaid = courses.stream()
-                .mapToInt(Course::getCoursePrice)
+                .mapToInt(Course::getPrice)
                 .sum();
         if (!isTest && amount != amountToBePaid) {
             throw new BusinessException(ErrorCode.PAYMENT_FORGERY);

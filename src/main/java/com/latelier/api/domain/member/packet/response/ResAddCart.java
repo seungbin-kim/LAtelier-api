@@ -49,7 +49,7 @@ public class ResAddCart {
                 cart.getMember().getId(),
                 cart.getMember().getUsername(),
                 cart.getCourse().getId(),
-                cart.getCourse().getCourseName());
+                cart.getCourse().getName());
     }
 
 }

@@ -42,7 +42,7 @@ public class CourseFile {
                                 final File file) {
 
         CourseFile courseFile = new CourseFile(course, file);
-        course.getCourseFiles().add(courseFile);
+        course.getFiles().add(courseFile);
         return courseFile;
     }
 

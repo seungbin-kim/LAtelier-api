@@ -58,7 +58,7 @@ public class ZoomService {
         String accessToken = requestAccessToken(code)
                 .orElseThrow(AccessTokenNotBeObtainedException::new);
         // 액세스 토큰으로 회의생성
-        ResZoomMeeting resZoomMeeting = requestMeetingCreation(accessToken, course.getCourseName())
+        ResZoomMeeting resZoomMeeting = requestMeetingCreation(accessToken, course.getName())
                 .orElseThrow(MeetingInformationNotBeObtainedException::new);
         // 회의정보 저장
         meetingInformationService.addMeetingInformation(

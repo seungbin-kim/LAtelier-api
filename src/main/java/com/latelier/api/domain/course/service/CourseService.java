@@ -92,7 +92,7 @@ public class CourseService {
         List<Category> categories = categoryRepository.findAllById(categoryIds);
         categories.stream()
                 .map(category -> CourseCategory.of(course, category))
-                .forEach(courseCategory -> course.getCourseCategories().add(courseCategory));
+                .forEach(courseCategory -> course.getCategories().add(courseCategory));
         return categories;
     }
 

@@ -119,8 +119,8 @@ public class ResMyCart {
             return new CartElement(
                     cart.getId(),
                     cart.getCourse().getId(),
-                    cart.getCourse().getCourseName(),
-                    cart.getCourse().getCoursePrice(),
+                    cart.getCourse().getName(),
+                    cart.getCourse().getPrice(),
                     file.getUri());
         }
     }

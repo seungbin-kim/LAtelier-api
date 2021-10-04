@@ -32,13 +32,13 @@ public class Course extends BaseTimeEntity {
     private Member instructor;
 
     @Column(length = 50, nullable = false)
-    private String courseName;
+    private String name;
 
     @Column(length = 500)
     private String explanation;
 
     @Column(columnDefinition = "int")
-    private Integer coursePrice;
+    private Integer price;
 
     @Column(columnDefinition = "int")
     private Integer currentHeadCount = 0;
@@ -51,10 +51,10 @@ public class Course extends BaseTimeEntity {
     private LocalDateTime endDate;
 
     @OneToMany(mappedBy = "course", orphanRemoval = true)
-    private List<CourseFile> courseFiles = new ArrayList<>();
+    private List<CourseFile> files = new ArrayList<>();
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CourseCategory> courseCategories = new ArrayList<>();
+    private List<CourseCategory> categories = new ArrayList<>();
 
     @Column(length = 20)
     @Enumerated(EnumType.STRING)
@@ -62,17 +62,17 @@ public class Course extends BaseTimeEntity {
 
 
     private Course(final Member instructor,
-                   final String courseName,
+                   final String name,
                    final String explanation,
-                   final Integer coursePrice,
+                   final Integer price,
                    final Integer maxHeadCount,
                    final LocalDateTime startDate,
                    final LocalDateTime endDate) {
 
         this.instructor = instructor;
-        this.courseName = courseName;
+        this.name = name;
         this.explanation = explanation;
-        this.coursePrice = coursePrice;
+        this.price = price;
         this.maxHeadCount = maxHeadCount;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -80,18 +80,18 @@ public class Course extends BaseTimeEntity {
 
 
     public static Course of(final Member instructor,
-                            final String courseName,
+                            final String name,
                             final String explanation,
-                            final Integer coursePrice,
+                            final Integer price,
                             final Integer maxHeadCount,
                             final LocalDateTime startDate,
                             final LocalDateTime endDate) {
 
         return new Course(
                 instructor,
-                courseName,
+                name,
                 explanation,
-                coursePrice,
+                price,
                 maxHeadCount,
                 startDate,
                 endDate);

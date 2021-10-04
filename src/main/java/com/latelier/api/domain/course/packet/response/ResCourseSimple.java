@@ -79,9 +79,9 @@ public class ResCourseSimple {
 
         return new ResCourseSimple(
                 course.getId(),
-                course.getCourseName(),
+                course.getName(),
                 course.getInstructor().getUsername(),
-                course.getCoursePrice(),
+                course.getPrice(),
                 course.getMaxHeadCount(),
                 course.getCurrentHeadCount(),
                 course.getState(),

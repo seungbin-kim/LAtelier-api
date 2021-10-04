@@ -103,10 +103,10 @@ public class ResCourseDetails {
         return new ResCourseDetails(
                 hasPaid,
                 course.getId(),
-                course.getCourseName(),
+                course.getName(),
                 course.getInstructor().getUsername(),
                 course.getExplanation(),
-                course.getCoursePrice(),
+                course.getPrice(),
                 course.getMaxHeadCount(),
                 course.getCurrentHeadCount(),
                 course.getState(),

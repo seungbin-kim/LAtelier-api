@@ -89,10 +89,10 @@ public class ResCourseRegister {
 
         return new ResCourseRegister(
                 course.getId(),
-                course.getCourseName(),
+                course.getName(),
                 course.getInstructor().getUsername(),
                 course.getExplanation(),
-                course.getCoursePrice(),
+                course.getPrice(),
                 course.getMaxHeadCount(),
                 course.getState(),
                 course.getStartDate(),
