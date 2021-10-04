@@ -1,11 +1,11 @@
 package com.latelier.api.domain.member.service;
 
 import com.latelier.api.domain.member.exception.PhoneNumberDuplicateException;
-import com.latelier.api.domain.member.exception.SmsApiRequestException;
-import com.latelier.api.domain.member.exception.SmsVerificationException;
 import com.latelier.api.domain.member.repository.MemberRepository;
 import com.latelier.api.domain.member.repository.SmsCertificationRepository;
 import com.latelier.api.domain.util.SignatureGenerator;
+import com.latelier.api.global.error.exception.BusinessException;
+import com.latelier.api.global.error.exception.ErrorCode;
 import com.latelier.api.global.properties.NaverProperties;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
@@ -65,7 +65,7 @@ public class SmsService {
     public void verifySMS(final String phoneNumber, final String certificationNumber) {
 
         if (!isVerify(phoneNumber, certificationNumber)) {
-            throw new SmsVerificationException();
+            throw new BusinessException(ErrorCode.SMS_VERIFICATION_FAILED);
         }
         smsCertificationRepository.removeSmsCertification(phoneNumber);
     }
@@ -125,7 +125,7 @@ public class SmsService {
                     body,
                     ResSms.class);
         } catch (Exception e) {
-            throw new SmsApiRequestException();
+            throw new BusinessException(ErrorCode.SMS_API_CALL_FAILED);
         }
     }
 

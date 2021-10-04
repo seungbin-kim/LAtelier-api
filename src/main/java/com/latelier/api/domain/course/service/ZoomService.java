@@ -2,12 +2,9 @@ package com.latelier.api.domain.course.service;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.latelier.api.domain.course.entity.Course;
-import com.latelier.api.domain.course.exception.CourseNotFoundException;
 import com.latelier.api.domain.course.repository.CourseRepository;
-import com.latelier.api.domain.member.exception.AccessTokenNotBeObtainedException;
-import com.latelier.api.domain.member.exception.MeetingInformationNotBeObtainedException;
-import com.latelier.api.domain.member.exception.ZoomAccessTokenRequestException;
-import com.latelier.api.domain.member.exception.ZoomApiRequestException;
+import com.latelier.api.global.error.exception.BusinessException;
+import com.latelier.api.global.error.exception.ErrorCode;
 import com.latelier.api.global.properties.ZoomProperties;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -53,13 +50,13 @@ public class ZoomService {
 
         // 존재하는 강의인가?
         Course course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new CourseNotFoundException(courseId));
+                .orElseThrow(() -> new BusinessException(ErrorCode.COURSE_NOT_FOUND));
         // 사용자 액세스토큰 얻기
         String accessToken = requestAccessToken(code)
-                .orElseThrow(AccessTokenNotBeObtainedException::new);
+                .orElseThrow(() -> new BusinessException(ErrorCode.ACCESS_TOKEN_NOT_OBTAIN));
         // 액세스 토큰으로 회의생성
         ResZoomMeeting resZoomMeeting = requestMeetingCreation(accessToken, course.getName())
-                .orElseThrow(MeetingInformationNotBeObtainedException::new);
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_INFORMATION_NOT_OBTAIN));
         // 회의정보 저장
         meetingInformationService.addMeetingInformation(
                 course,
@@ -98,7 +95,7 @@ public class ZoomService {
 
             return Optional.ofNullable(resZoomMeeting);
         } catch (Exception e) {
-            throw new ZoomApiRequestException();
+            throw new BusinessException(ErrorCode.ZOOM_API_CALL_FAILED);
         }
     }
 
@@ -134,7 +131,7 @@ public class ZoomService {
 
             return Optional.ofNullable(zoomOAuthToken).map(ResZoomOAuthToken::getAccessToken);
         } catch (Exception e) {
-            throw new ZoomAccessTokenRequestException();
+            throw new BusinessException(ErrorCode.ACCESS_TOKEN_REQUEST_FAILED);
         }
     }
 

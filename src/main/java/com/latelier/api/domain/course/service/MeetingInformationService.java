@@ -3,10 +3,12 @@ package com.latelier.api.domain.course.service;
 import com.latelier.api.domain.course.entity.Course;
 import com.latelier.api.domain.course.entity.MeetingInformation;
 import com.latelier.api.domain.course.exception.CourseMeetingNotFoundException;
+import com.latelier.api.domain.course.exception.CourseNotFoundException;
 import com.latelier.api.domain.course.packet.response.ResMeetingInformation;
 import com.latelier.api.domain.course.repository.CourseRepository;
 import com.latelier.api.domain.course.repository.MeetingInformationRepository;
 import com.latelier.api.domain.member.entity.Member;
+import com.latelier.api.domain.member.exception.MemberNotFoundException;
 import com.latelier.api.domain.member.repository.EnrollmentRepository;
 import com.latelier.api.domain.member.repository.MemberRepository;
 import com.latelier.api.domain.util.SignatureGenerator;
@@ -109,10 +111,10 @@ public class MeetingInformationService {
 
         // 사용자 존재여부 확인
         Member currentMember = memberRepository.findById(instructorId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new MemberNotFoundException(String.valueOf(instructorId)));
         // 강의 존재여부 확인
         Course course = courseRepository.findByIdAndStateLike(courseId, APPROVED)
-                .orElseThrow(() -> new BusinessException(ErrorCode.COURSE_NOT_FOUND));
+                .orElseThrow(() -> new CourseNotFoundException(courseId));
         // 현재 강사의 강의인지 확인
         if (!currentMember.getId().equals(course.getInstructor().getId())) {
             throw new BusinessException(ErrorCode.COURSE_INSTRUCTOR_NOT_MATCH);

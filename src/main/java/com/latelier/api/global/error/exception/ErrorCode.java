@@ -39,10 +39,10 @@ public enum ErrorCode {
     COURSE_INSTRUCTOR_NOT_MATCH(400, "CS005", "강사님의 강의가 아닙니다."),
     NOT_ENROLLED(400, "CS006", "해당 강의에 등록되지 않았습니다."),
 
-    // Order
-    IAMPORT_ERROR(500, "OD001", "결제 검증 응답 에러. 또는 잘못된 impUid"),
-    MEMBER_NOT_MATCH(400, "OD002", "로그인 유저와 주문 유저가 다릅니다."),
-    PAYMENT_FORGERY(400, "OD003", "위조된 결제. 결제된 금액과 주문 금액이 다릅니다."),
+    // Payment
+    IAMPORT_ERROR(500, "P001", "결제 검증 응답 에러. 또는 잘못된 impUid"),
+    MEMBER_NOT_MATCH(400, "P002", "로그인 유저와 결제 유저가 다릅니다."),
+    PAYMENT_FORGERY(400, "P003", "위조된 결제. 결제된 금액과 주문 금액이 다릅니다."),
 
     // CHAT
     CHAT_ROOM_NOT_FOUND(404, "CH001", "채팅방을 찾을 수 없습니다."),
