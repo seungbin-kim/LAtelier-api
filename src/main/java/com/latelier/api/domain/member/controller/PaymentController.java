@@ -1,6 +1,6 @@
-package com.latelier.api.domain.order.controller;
+package com.latelier.api.domain.member.controller;
 
-import com.latelier.api.domain.order.service.OrderService;
+import com.latelier.api.domain.member.service.OrderService;
 import com.latelier.api.domain.util.SecurityUtil;
 import com.siot.IamportRestClient.exception.IamportResponseException;
 import io.swagger.annotations.ApiModel;
@@ -20,21 +20,21 @@ import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/orders")
-public class OrderController {
+@RequestMapping("/api")
+public class PaymentController {
 
     private final OrderService orderService;
 
     private final SecurityUtil securityUtil;
 
 
-    @PostMapping("/verify")
+    @PostMapping("/payment-verification")
     @ApiOperation(
-            value = "주문 처리",
+            value = "결제 처리",
             notes = "결제 금액을 검증하고, 주문을 처리합니다.",
             authorizations = {@Authorization(value = "jwt")})
     @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "주문처리 성공"),
+            @ApiResponse(responseCode = "204", description = "결제 검증, 주문처리 성공"),
             @ApiResponse(responseCode = "400", description = "주문한 사용자가 다르거나 위조된 결제"),
             @ApiResponse(responseCode = "401", description = "로그인하지 않아 주문처리 불가"),
             @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없음"),

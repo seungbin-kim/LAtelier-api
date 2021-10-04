@@ -1,4 +1,4 @@
-package com.latelier.api.domain.member.entity;
+package com.latelier.api.domain.chat.entity;
 
 import com.latelier.api.domain.model.BaseTimeEntity;
 import lombok.Getter;

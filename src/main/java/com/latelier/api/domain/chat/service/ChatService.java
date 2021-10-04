@@ -1,16 +1,17 @@
-package com.latelier.api.domain.member.service;
+package com.latelier.api.domain.chat.service;
 
-import com.latelier.api.domain.member.controller.SocketController;
-import com.latelier.api.domain.member.entity.ChatMessage;
-import com.latelier.api.domain.member.entity.ChatRoom;
-import com.latelier.api.domain.member.entity.ChatRoomJoin;
+import com.latelier.api.domain.chat.controller.ChatController;
+import com.latelier.api.domain.chat.entity.ChatMessage;
+import com.latelier.api.domain.chat.entity.ChatRoom;
+import com.latelier.api.domain.chat.entity.ChatRoomJoin;
+import com.latelier.api.domain.chat.exception.ChatRoomNotFound;
+import com.latelier.api.domain.chat.repository.ChatMessageRepository;
+import com.latelier.api.domain.chat.repository.ChatRoomJoinRepository;
+import com.latelier.api.domain.chat.repository.ChatRoomRepository;
 import com.latelier.api.domain.member.entity.Member;
-import com.latelier.api.domain.member.exception.ChatRoomNotFound;
 import com.latelier.api.domain.member.packet.response.ResChatMessage;
 import com.latelier.api.domain.member.packet.response.ResChatRoom;
-import com.latelier.api.domain.member.repository.ChatMessageRepository;
-import com.latelier.api.domain.member.repository.ChatRoomJoinRepository;
-import com.latelier.api.domain.member.repository.ChatRoomRepository;
+import com.latelier.api.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -77,7 +78,7 @@ public class ChatService {
      * @return 저장된 채팅 메세지
      */
     @Transactional
-    public ResChatMessage saveChatMessage(final SocketController.ChatMessage chatMessage) {
+    public ResChatMessage saveChatMessage(final ChatController.ChatMessage chatMessage) {
 
         Member sender = memberService.getMemberById(chatMessage.getSenderId());
         Long chatRoomId = chatMessage.getChatRoomId();

@@ -1,4 +1,4 @@
-package com.latelier.api.domain.order.service;
+package com.latelier.api.domain.member.service;
 
 import com.latelier.api.domain.course.entity.Course;
 import com.latelier.api.domain.member.entity.Cart;
@@ -8,11 +8,11 @@ import com.latelier.api.domain.member.exception.MemberNotFoundException;
 import com.latelier.api.domain.member.repository.CartRepository;
 import com.latelier.api.domain.member.repository.EnrollmentRepository;
 import com.latelier.api.domain.member.repository.MemberRepository;
-import com.latelier.api.domain.order.entity.Order;
-import com.latelier.api.domain.order.entity.OrderCourse;
-import com.latelier.api.domain.order.enumeration.OrderState;
-import com.latelier.api.domain.order.repository.OrderCourseRepository;
-import com.latelier.api.domain.order.repository.OrderRepository;
+import com.latelier.api.domain.member.entity.Order;
+import com.latelier.api.domain.member.entity.OrderCourse;
+import com.latelier.api.domain.member.enumeration.OrderState;
+import com.latelier.api.domain.member.repository.OrderCourseRepository;
+import com.latelier.api.domain.member.repository.OrderRepository;
 import com.latelier.api.global.error.exception.BusinessException;
 import com.latelier.api.global.error.exception.ErrorCode;
 import com.siot.IamportRestClient.IamportClient;

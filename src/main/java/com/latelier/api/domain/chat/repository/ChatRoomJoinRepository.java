@@ -1,6 +1,6 @@
-package com.latelier.api.domain.member.repository;
+package com.latelier.api.domain.chat.repository;
 
-import com.latelier.api.domain.member.entity.ChatRoomJoin;
+import com.latelier.api.domain.chat.entity.ChatRoomJoin;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

@@ -1,6 +1,6 @@
 package com.latelier.api.domain.member.packet.response;
 
-import com.latelier.api.domain.member.entity.ChatMessage;
+import com.latelier.api.domain.chat.entity.ChatMessage;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AccessLevel;

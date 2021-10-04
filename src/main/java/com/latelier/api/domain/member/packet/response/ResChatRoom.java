@@ -1,7 +1,7 @@
 package com.latelier.api.domain.member.packet.response;
 
-import com.latelier.api.domain.member.entity.ChatRoom;
-import com.latelier.api.domain.member.entity.ChatRoomJoin;
+import com.latelier.api.domain.chat.entity.ChatRoom;
+import com.latelier.api.domain.chat.entity.ChatRoomJoin;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AccessLevel;

@@ -1,4 +1,4 @@
-package com.latelier.api.domain.member.exception;
+package com.latelier.api.domain.chat.exception;
 
 import com.latelier.api.global.error.exception.ErrorCode;
 import com.latelier.api.global.error.exception.NotFoundException;

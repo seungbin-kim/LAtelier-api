@@ -1,6 +1,6 @@
-package com.latelier.api.domain.member.repository;
+package com.latelier.api.domain.chat.repository;
 
-import com.latelier.api.domain.member.entity.ChatMessage;
+import com.latelier.api.domain.chat.entity.ChatMessage;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
