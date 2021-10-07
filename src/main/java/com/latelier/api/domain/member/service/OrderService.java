@@ -107,7 +107,9 @@ public class OrderService {
                                final List<Course> courses) {
 
         enrollmentRepository.saveAll(courses.stream()
-                .map(course -> Enrollment.of(member, course))
+                .map(course -> {
+                    return Enrollment.of(member, course);
+                })
                 .collect(Collectors.toList()));
     }
 

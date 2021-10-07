@@ -100,7 +100,13 @@ public class Course extends BaseTimeEntity {
 
     public void changeState(final CourseState newState) {
 
-        state = newState;
+        this.state = newState;
+    }
+
+
+    public void increaseHeadCount() {
+
+        this.currentHeadCount++;
     }
 
 }

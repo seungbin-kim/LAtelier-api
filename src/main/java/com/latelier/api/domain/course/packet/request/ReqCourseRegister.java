@@ -67,21 +67,21 @@ public class ReqCourseRegister implements ValidPeriod {
             required = true)
     private Integer headCount;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     @NotNull(message = "강의 시작일은 필수입니다.")
     @ApiModelProperty(
             value = "강의 시작일",
             name = "startDate",
-            example = "2021-08-08T18:00:00",
+            example = "2021-08-08T18:00",
             required = true)
     private LocalDateTime startDate;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     @NotNull(message = "강의 종료일은 필수입니다.")
     @ApiModelProperty(
             value = "강의 종료일",
             name = "endDate",
-            example = "2021-09-10T18:00:00",
+            example = "2021-09-10T18:00",
             required = true)
     private LocalDateTime endDate;
 

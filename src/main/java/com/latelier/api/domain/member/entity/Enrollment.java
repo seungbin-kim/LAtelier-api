@@ -40,6 +40,7 @@ public class Enrollment {
     public static Enrollment of(final Member member,
                                 final Course course) {
 
+        course.increaseHeadCount();
         return new Enrollment(member, course);
     }
 }
