@@ -66,10 +66,10 @@ public class OrderService {
                 .map(Cart::getCourse)
                 .collect(Collectors.toList());
 
-        Payment payment = iamportClient.paymentByImpUid(impUid).getResponse();
-        int paidAmount = payment.getAmount().intValue();
+        Payment payment = isTest ? null : iamportClient.paymentByImpUid(impUid).getResponse();
+        int paidAmount = isTest ? 0 : payment.getAmount().intValue();
+        String orderName = isTest ? "테스트결제" : payment.getName();
         verifyAmount(paidAmount, courses, isTest);
-        String orderName = payment.getName();
         orderProcess(impUid, member, courses, orderName, paidAmount);
     }
 
@@ -134,17 +134,16 @@ public class OrderService {
      *
      * @param paidAmount 결제된 금액
      * @param courses    강의 리스트
-     * @param isTest     테스트 여부(관리자)
      */
     private void verifyAmount(final int paidAmount,
                               final List<Course> courses,
                               final boolean isTest) {
 
-        int amount = isTest ? 0 : paidAmount;
+        if (isTest) return;
         int amountToBePaid = courses.stream()
                 .mapToInt(Course::getPrice)
                 .sum();
-        if (!isTest && amount != amountToBePaid) {
+        if (paidAmount != amountToBePaid) {
             throw new BusinessException(ErrorCode.PAYMENT_FORGERY);
         }
     }
