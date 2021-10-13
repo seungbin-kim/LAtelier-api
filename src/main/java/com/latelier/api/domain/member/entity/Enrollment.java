@@ -2,11 +2,13 @@ package com.latelier.api.domain.member.entity;
 
 import com.latelier.api.domain.course.entity.Course;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SequenceGenerator(
         name = "ENROLLMENT_SEQ_GENERATOR",

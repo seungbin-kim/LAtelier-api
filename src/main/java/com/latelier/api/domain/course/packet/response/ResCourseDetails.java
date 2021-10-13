@@ -25,6 +25,12 @@ public class ResCourseDetails {
     private final boolean hasPaid;
 
     @ApiModelProperty(
+            value = "강의 종료여부",
+            name = "hasEnded",
+            example = "false")
+    private final boolean hasEnded;
+
+    @ApiModelProperty(
             value = "강의 고유번호",
             name = "id",
             example = "1")
@@ -102,6 +108,7 @@ public class ResCourseDetails {
 
         return new ResCourseDetails(
                 hasPaid,
+                course.getEndDate().isBefore(LocalDateTime.now()),
                 course.getId(),
                 course.getName(),
                 course.getInstructor().getUsername(),

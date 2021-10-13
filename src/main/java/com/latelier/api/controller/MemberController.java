@@ -1,7 +1,9 @@
 package com.latelier.api.controller;
 
+import com.latelier.api.domain.course.service.CourseService;
 import com.latelier.api.domain.member.packet.response.ResAddCart;
 import com.latelier.api.domain.member.packet.response.ResMyCart;
+import com.latelier.api.domain.member.packet.response.ResMyCourse;
 import com.latelier.api.domain.member.service.MemberService;
 import com.latelier.api.domain.model.Result;
 import com.latelier.api.domain.util.SecurityUtil;
@@ -12,7 +14,10 @@ import io.swagger.annotations.Authorization;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.HttpStatus.CREATED;
@@ -24,6 +29,8 @@ import static org.springframework.http.HttpStatus.NO_CONTENT;
 public class MemberController {
 
     private final MemberService memberService;
+
+    private final CourseService courseService;
 
     private final SecurityUtil securityUtil;
 
@@ -96,6 +103,39 @@ public class MemberController {
 
         memberService.deleteAllInUserCart(securityUtil.getMemberId());
         return ResponseEntity.status(NO_CONTENT).build();
+    }
+
+
+    @PreAuthorize("hasRole('INSTRUCTOR')")
+    @GetMapping("/me/teaching-courses")
+    @ApiOperation(
+            value = "강사 강의목록 얻기",
+            protocols = "강사의 강의목록들을 조회합니다.",
+            authorizations = {@Authorization(value = "jwt")})
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "403", description = "강사가 아님"),
+            @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없음")})
+    public ResponseEntity<Page<ResMyCourse>> getTeachingCourses(final Pageable pageable) {
+
+        Page<ResMyCourse> response = courseService.getMyCourses(securityUtil.getMemberId(), pageable, true);
+        return ResponseEntity.ok(response);
+    }
+
+
+    @GetMapping("/me/courses")
+    @ApiOperation(
+            value = "나의 강의목록 얻기",
+            protocols = "수강하는 강의목록들을 조회합니다.",
+            authorizations = {@Authorization(value = "jwt")})
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "401", description = "로그인중이 아님"),
+            @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없음")})
+    public ResponseEntity<Page<ResMyCourse>> getCourses(final Pageable pageable) {
+
+        Page<ResMyCourse> response = courseService.getMyCourses(securityUtil.getMemberId(), pageable, false);
+        return ResponseEntity.ok(response);
     }
 
 }

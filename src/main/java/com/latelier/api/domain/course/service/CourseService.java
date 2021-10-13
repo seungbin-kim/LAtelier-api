@@ -18,7 +18,9 @@ import com.latelier.api.domain.file.entity.File;
 import com.latelier.api.domain.file.enumuration.FileGroup;
 import com.latelier.api.domain.file.repository.CourseFileRepository;
 import com.latelier.api.domain.file.service.FileService;
+import com.latelier.api.domain.member.entity.Enrollment;
 import com.latelier.api.domain.member.entity.Member;
+import com.latelier.api.domain.member.packet.response.ResMyCourse;
 import com.latelier.api.domain.member.repository.EnrollmentRepository;
 import com.latelier.api.domain.member.service.MemberService;
 import com.latelier.api.global.error.exception.BusinessException;
@@ -168,21 +170,47 @@ public class CourseService {
                                         final Pageable pageable) {
 
         Page<Course> coursePage = courseRepositoryCustom.searchWithMember(state, search, pageable);
-        List<CourseFile> courseFiles = courseFileRepository
-                .findWithFileByFileGroupAndCourses(FileGroup.COURSE_THUMBNAIL_IMAGE, coursePage.getContent());
-        Map<Course, File> courseImageFileMap = mappingCourseThumbnail(courseFiles);
+        Map<Course, File> courseImageFileMap = getCourseFileMap(coursePage.getContent());
         return coursePage.map(course -> ResCourseSimple.of(course, courseImageFileMap.get(course)));
+    }
+
+
+    /**
+     * 강사의 강의목록 또는 수강 강의목록 조회
+     *
+     * @param memberId 회원 ID
+     * @param pageable 페이징 정보
+     * @return 강사의 강의목록 또는 수강생의 강의목록
+     */
+    public Page<ResMyCourse> getMyCourses(final Long memberId,
+                                                    final Pageable pageable,
+                                                    final boolean isTeaching) {
+
+        Member member = memberService.getMemberById(memberId);
+        Page<Course> coursePage;
+        if (isTeaching) {
+            coursePage = courseRepository.findByInstructor(member, pageable);
+        } else {
+            coursePage = enrollmentRepository.findByMember(member, pageable)
+                    .map(Enrollment::getCourse);
+        }
+        Map<Course, File> courseImageFileMap = getCourseFileMap(coursePage.getContent());
+        return coursePage.map(course -> isTeaching ?
+                ResMyCourse.forInstructor(course, courseImageFileMap.get(course))
+                : ResMyCourse.forMember(course, courseImageFileMap.get(course)));
     }
 
 
     /**
      * 강의와 강의 썸네일 이미지를 매핑
      *
-     * @param courseFiles 강의파일 리스트
-     * @return 매핑된 Map
+     * @param courses 강의들
+     * @return <강의, 썸네일 파일> Map
      */
-    private Map<Course, File> mappingCourseThumbnail(final List<CourseFile> courseFiles) {
+    private Map<Course, File> getCourseFileMap(final List<Course> courses) {
 
+        List<CourseFile> courseFiles = courseFileRepository
+                .findWithFileByFileGroupAndCourses(FileGroup.COURSE_THUMBNAIL_IMAGE, courses);
         Map<Course, File> courseImageFileMap = new HashMap<>();
         courseFiles.forEach(courseFile -> courseImageFileMap.put(courseFile.getCourse(), courseFile.getFile()));
         return courseImageFileMap;

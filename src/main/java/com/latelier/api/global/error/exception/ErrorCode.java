@@ -32,7 +32,7 @@ public enum ErrorCode {
     ALREADY_ENROLLED(400, "M013", "이미 구매한 강의입니다."),
 
     // Course
-    COURSE_NOT_FOUND(404, "CS001", "강의를 찾을 수 없습니다."),
+    COURSE_NOT_FOUND(404, "CS001", "강의를 찾을 수 없거나 승인된 강의가 아닙니다."),
     COURSE_MEETING_NOT_FOUND(404, "CS002", "강의 진행정보가 없습니다."),
     COURSE_STATE_ALREADY_APPROVED(400, "CS003", "이미 승인된 강의입니다."),
     COURSE_MEETING_ALREADY_EXIST(409, "CS004", "이미 현재 진행중인 강의가 있습니다."),

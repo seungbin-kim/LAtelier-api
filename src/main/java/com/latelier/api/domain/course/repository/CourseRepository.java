@@ -3,6 +3,8 @@ package com.latelier.api.domain.course.repository;
 import com.latelier.api.domain.course.entity.Course;
 import com.latelier.api.domain.course.enumuration.CourseState;
 import com.latelier.api.domain.member.entity.Member;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -23,5 +25,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
     List<Course> findAllByInstructor(Member instructor);
 
     List<Course> findAllByInstructorAndIdIsNotAndStateLike(Member instructor, Long courseId, CourseState state);
+
+    Page<Course> findByInstructor(Member instructor, Pageable pageable);
 
 }

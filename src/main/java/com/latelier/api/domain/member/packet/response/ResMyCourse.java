@@ -1,7 +1,7 @@
-package com.latelier.api.domain.course.packet.response;
+package com.latelier.api.domain.member.packet.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.latelier.api.domain.course.entity.Course;
-import com.latelier.api.domain.course.enumuration.CourseState;
 import com.latelier.api.domain.file.entity.File;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AccessLevel;
@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public class ResCourseSimple {
+public class ResMyCourse {
 
     @ApiModelProperty(
             value = "강의 종료여부",
@@ -33,34 +33,18 @@ public class ResCourseSimple {
     private final String courseName;
 
     @ApiModelProperty(
-            value = "강사 이름",
-            name = "instructor",
-            example = "홍길동")
-    private final String instructor;
-
-    @ApiModelProperty(
-            value = "강의 가격",
-            name = "price",
-            example = "10000")
-    private final Integer coursePrice;
-
-    @ApiModelProperty(
             value = "강의 최대 인원수",
             name = "maxHeadCount",
             example = "1000")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private final Integer maxHeadCount;
 
     @ApiModelProperty(
             value = "강의 현재 인원수",
             name = "currentHeadCount",
             example = "1000")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private final Integer currentHeadCount;
-
-    @ApiModelProperty(
-            value = "강의 상태",
-            name = "state",
-            example = "APPROVED")
-    private final CourseState state;
 
     @ApiModelProperty(
             value = "강의 시작일",
@@ -80,21 +64,32 @@ public class ResCourseSimple {
     private final String thumbnailImageUri;
 
 
-    public static ResCourseSimple of(final Course course,
-                                     final File file) {
+    public static ResMyCourse forInstructor(final Course course,
+                                            final File file) {
 
-        return new ResCourseSimple(
+        return new ResMyCourse(
                 course.getEndDate().isBefore(LocalDateTime.now()),
                 course.getId(),
                 course.getName(),
-                course.getInstructor().getUsername(),
-                course.getPrice(),
                 course.getMaxHeadCount(),
                 course.getCurrentHeadCount(),
-                course.getState(),
                 course.getStartDate(),
                 course.getEndDate(),
-                file != null ? file.getUri() : null);
+                file.getUri());
+    }
+
+    public static ResMyCourse forMember(final Course course,
+                                        final File file) {
+
+        return new ResMyCourse(
+                course.getEndDate().isBefore(LocalDateTime.now()),
+                course.getId(),
+                course.getName(),
+                null,
+                null,
+                course.getStartDate(),
+                course.getEndDate(),
+                file.getUri());
     }
 
 }
