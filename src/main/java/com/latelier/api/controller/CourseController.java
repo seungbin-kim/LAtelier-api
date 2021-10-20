@@ -7,8 +7,12 @@ import com.latelier.api.domain.course.packet.response.ResCourseSimple;
 import com.latelier.api.domain.course.packet.response.ResMeetingInformation;
 import com.latelier.api.domain.course.service.CourseService;
 import com.latelier.api.domain.course.service.MeetingInformationService;
+import com.latelier.api.domain.member.entity.Enrollment;
+import com.latelier.api.domain.member.service.SmsService;
 import com.latelier.api.domain.model.Result;
 import com.latelier.api.domain.util.SecurityUtil;
+import com.latelier.api.global.error.exception.BusinessException;
+import com.latelier.api.global.error.exception.ErrorCode;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -25,10 +29,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.NO_CONTENT;
+import static org.springframework.http.HttpStatus.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -38,6 +42,8 @@ public class CourseController {
     private final MeetingInformationService meetingInformationService;
 
     private final CourseService courseService;
+
+    private final SmsService smsService;
 
     private final SecurityUtil securityUtil;
 
@@ -106,6 +112,7 @@ public class CourseController {
     public ResponseEntity<Result<ResCourseRegister>> registerCourse(@Valid final ReqCourseRegister reqCourseRegister) {
 
         ResCourseRegister response = courseService.addCourse(securityUtil.getMemberId(), reqCourseRegister);
+//        ResCourseRegister response = courseService.addCourse(1L, reqCourseRegister);
         return ResponseEntity.status(CREATED)
                 .body(Result.of(response));
     }
@@ -166,4 +173,42 @@ public class CourseController {
         return ResponseEntity.status(NO_CONTENT).build();
     }
 
+
+    @PreAuthorize("hasRole('INSTRUCTOR')")
+    @PostMapping("/{courseId}/sms-notification")
+    @ApiOperation(
+            value = "강의 시작 문자메세지 전송",
+            notes = "수강생들에게 강의가 시작됨을 알리는 문자메세지를 전송합니다.",
+            authorizations = {@Authorization(value = "jwt")})
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "courseId", value = "강의 ID", required = true, dataTypeClass = Long.class, paramType = "path")})
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "전송 성공"),
+            @ApiResponse(responseCode = "400", description = "강사의 강의가 아님"),
+            @ApiResponse(responseCode = "400", description = "강의 수강생이 없음"),
+            @ApiResponse(responseCode = "403", description = "강사가 아님"),
+            @ApiResponse(responseCode = "404", description = "강사를 찾지 못함"),
+            @ApiResponse(responseCode = "404", description = "강의를 찾지 못함")})
+    public ResponseEntity<Void> noticeCourseStarting(@PathVariable final Long courseId) {
+
+        List<Enrollment> enrollmentList = courseService.getEnrollmentList(securityUtil.getMemberId(), courseId);
+//        List<Enrollment> enrollmentList = courseService.getEnrollmentList(1L, courseId);
+        if (enrollmentList.size() == 0) {
+            throw new BusinessException(ErrorCode.COURSE_STUDENT_EMPTY);
+        }
+
+        Map<String, String> toAndContent = new HashMap<>();
+        for (Enrollment enrollment : enrollmentList) {
+            String message = makeNotificationMessage(enrollment.getMember().getUsername(), enrollment.getCourse().getName());
+            toAndContent.put(enrollment.getMember().getPhoneNumber(), message);
+        }
+        SmsService.ReqSms reqSms = smsService.makeSmsRequest(toAndContent);
+        smsService.callApi(reqSms);
+        return ResponseEntity.status(OK).build();
+    }
+
+    private String makeNotificationMessage(final String userName, final String courseName) {
+
+        return "[Latelier] " + userName + "님의 \"" + courseName + "\" 수업이 시작되었습니다.";
+    }
 }

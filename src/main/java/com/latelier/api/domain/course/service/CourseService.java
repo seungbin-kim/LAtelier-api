@@ -88,6 +88,113 @@ public class CourseService {
     }
 
 
+    /**
+     * 강의목록을 검색합니다.
+     *
+     * @param state    강의 상태 문자열
+     *                 com.latelier.api.domain.course.enumuration.CourseState
+     * @param search   검색어
+     * @param pageable 페이징, 정렬정보
+     * @return 검색된 강의목록 페이지
+     */
+    public Page<ResCourseSimple> search(final String state,
+                                        final String search,
+                                        final Pageable pageable) {
+
+        Page<Course> coursePage = courseRepositoryCustom.searchWithMember(state, search, pageable);
+        Map<Course, File> courseImageFileMap = getCourseFileMap(coursePage.getContent());
+        return coursePage.map(course -> ResCourseSimple.of(course, courseImageFileMap.get(course)));
+    }
+
+
+    /**
+     * 강사의 강의목록 또는 수강 강의목록 조회
+     *
+     * @param memberId 회원 ID
+     * @param pageable 페이징 정보
+     * @return 강사의 강의목록 또는 수강생의 강의목록
+     */
+    public Page<ResMyCourse> getMyCourses(final Long memberId,
+                                          final Pageable pageable,
+                                          final boolean isTeaching) {
+
+        Member member = memberService.getMemberById(memberId);
+        Page<Course> coursePage;
+        if (isTeaching) {
+            coursePage = courseRepository.findByInstructor(member, pageable);
+        } else {
+            coursePage = enrollmentRepository.findByMember(member, pageable)
+                    .map(Enrollment::getCourse);
+        }
+        Map<Course, File> courseImageFileMap = getCourseFileMap(coursePage.getContent());
+        return coursePage.map(course -> isTeaching ?
+                ResMyCourse.forInstructor(course, courseImageFileMap.get(course))
+                : ResMyCourse.forMember(course, courseImageFileMap.get(course)));
+    }
+
+
+    /**
+     * 강의 상세정보를 반환합니다.
+     *
+     * @param memberId 사용자 ID
+     * @param courseId 강의 ID
+     * @return 강의 상세정보
+     */
+    public ResCourseDetails getCourseDetails(@Nullable final Long memberId,
+                                             final Long courseId) {
+
+        Course course = getCourseWithInstructor(courseId);
+
+        List<Category> categories = courseCategoryRepository.findAllWithCategoryByCourse(course).stream()
+                .map(CourseCategory::getCategory)
+                .collect(Collectors.toList());
+
+        List<File> files = courseFileRepository.findAllWithFileByCourse(course).stream()
+                .map(CourseFile::getFile)
+                .collect(Collectors.toList());
+
+        boolean hasPaid = memberId != null && enrollmentRepository.existsByMemberIdAndCourseId(memberId, course.getId());
+        return ResCourseDetails.of(hasPaid, course, categories, files);
+    }
+
+
+    /**
+     * WAITING 강의상태를 APPROVED 으로 변경합니다.
+     *
+     * @param courseId 허용할 강의 ID
+     */
+    @Transactional
+    public void approveCourse(final Long courseId) {
+
+        Course course = getCourseWithoutGraph(courseId);
+
+        switch (course.getState()) {
+            case APPROVED:
+                throw new BusinessException(ErrorCode.COURSE_STATE_ALREADY_APPROVED);
+            case WAITING:
+                course.changeState(CourseState.APPROVED);
+        }
+    }
+
+
+    /**
+     * 강의 ID에 대한 등록정보들을 조회합니다.
+     *
+     * @param memberId 강사 ID
+     * @param courseId 강의 ID
+     * @return 등록정보 리스트
+     */
+    public List<Enrollment> getEnrollmentList(final Long memberId, final Long courseId) {
+
+        Member currentMember = memberService.getMemberById(memberId);
+        Course course = getCourseWithInstructor(courseId);
+        if (!course.getInstructor().getId().equals(memberId)) {
+            throw new BusinessException(ErrorCode.COURSE_INSTRUCTOR_NOT_MATCH);
+        }
+        return enrollmentRepository.findByCourse(course);
+    }
+
+
     private List<Category> setCategories(final List<Long> categoryIds,
                                          final Course course) {
 
@@ -157,51 +264,6 @@ public class CourseService {
 
 
     /**
-     * 강의목록을 검색합니다.
-     *
-     * @param state    강의 상태 문자열
-     *                 com.latelier.api.domain.course.enumuration.CourseState
-     * @param search   검색어
-     * @param pageable 페이징, 정렬정보
-     * @return 검색된 강의목록 페이지
-     */
-    public Page<ResCourseSimple> search(final String state,
-                                        final String search,
-                                        final Pageable pageable) {
-
-        Page<Course> coursePage = courseRepositoryCustom.searchWithMember(state, search, pageable);
-        Map<Course, File> courseImageFileMap = getCourseFileMap(coursePage.getContent());
-        return coursePage.map(course -> ResCourseSimple.of(course, courseImageFileMap.get(course)));
-    }
-
-
-    /**
-     * 강사의 강의목록 또는 수강 강의목록 조회
-     *
-     * @param memberId 회원 ID
-     * @param pageable 페이징 정보
-     * @return 강사의 강의목록 또는 수강생의 강의목록
-     */
-    public Page<ResMyCourse> getMyCourses(final Long memberId,
-                                                    final Pageable pageable,
-                                                    final boolean isTeaching) {
-
-        Member member = memberService.getMemberById(memberId);
-        Page<Course> coursePage;
-        if (isTeaching) {
-            coursePage = courseRepository.findByInstructor(member, pageable);
-        } else {
-            coursePage = enrollmentRepository.findByMember(member, pageable)
-                    .map(Enrollment::getCourse);
-        }
-        Map<Course, File> courseImageFileMap = getCourseFileMap(coursePage.getContent());
-        return coursePage.map(course -> isTeaching ?
-                ResMyCourse.forInstructor(course, courseImageFileMap.get(course))
-                : ResMyCourse.forMember(course, courseImageFileMap.get(course)));
-    }
-
-
-    /**
      * 강의와 강의 썸네일 이미지를 매핑
      *
      * @param courses 강의들
@@ -217,54 +279,10 @@ public class CourseService {
     }
 
 
-    /**
-     * 강의 상세정보를 반환합니다.
-     *
-     * @param memberId 사용자 ID
-     * @param courseId 강의 ID
-     * @return 강의 상세정보
-     */
-    public ResCourseDetails getCourseDetails(@Nullable final Long memberId,
-                                             final Long courseId) {
-
-        Course course = getCourseWithInstructor(courseId);
-
-        List<Category> categories = courseCategoryRepository.findAllWithCategoryByCourse(course).stream()
-                .map(CourseCategory::getCategory)
-                .collect(Collectors.toList());
-
-        List<File> files = courseFileRepository.findAllWithFileByCourse(course).stream()
-                .map(CourseFile::getFile)
-                .collect(Collectors.toList());
-
-        boolean hasPaid = memberId != null && enrollmentRepository.existsByMemberIdAndCourseId(memberId, course.getId());
-        return ResCourseDetails.of(hasPaid, course, categories, files);
-    }
-
-
     private Course getCourseWithInstructor(final Long courseId) {
 
         return courseRepository.findWithInstructorById(courseId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.COURSE_NOT_FOUND));
-    }
-
-
-    /**
-     * WAITING 강의상태를 APPROVED 으로 변경합니다.
-     *
-     * @param courseId 허용할 강의 ID
-     */
-    @Transactional
-    public void approveCourse(final Long courseId) {
-
-        Course course = getCourseWithoutGraph(courseId);
-
-        switch (course.getState()) {
-            case APPROVED:
-                throw new BusinessException(ErrorCode.COURSE_STATE_ALREADY_APPROVED);
-            case WAITING:
-                course.changeState(CourseState.APPROVED);
-        }
     }
 
 

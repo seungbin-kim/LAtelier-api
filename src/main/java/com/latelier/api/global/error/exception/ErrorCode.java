@@ -38,6 +38,7 @@ public enum ErrorCode {
     COURSE_MEETING_ALREADY_EXIST(409, "CS004", "이미 현재 진행중인 강의가 있습니다."),
     COURSE_INSTRUCTOR_NOT_MATCH(400, "CS005", "강사님의 강의가 아닙니다."),
     NOT_ENROLLED(400, "CS006", "해당 강의에 등록되지 않았습니다."),
+    COURSE_STUDENT_EMPTY(400, "CS007", "수강생이 단 한명도 없습니다."),
 
     // Payment
     IAMPORT_ERROR(500, "P001", "결제 검증 응답 에러. 또는 잘못된 impUid"),

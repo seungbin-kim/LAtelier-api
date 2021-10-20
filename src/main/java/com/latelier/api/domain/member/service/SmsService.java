@@ -18,6 +18,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -49,10 +50,31 @@ public class SmsService {
         }
 
         int randomNumber = getRandomNumber();
-        ReqSms smsRequest = makeSmsRequest(phoneNumber, randomNumber);
+        ReqSms smsRequest = makeSmsRequestForVerification(phoneNumber, randomNumber);
         callApi(smsRequest);
 
         smsCertificationRepository.saveSmsCertification(phoneNumber, randomNumber);
+    }
+
+
+    /**
+     * 개별 메세지 전송을 위한 요청을 만듭니다.
+     *
+     * @param toAndContent Map<수신번호, 내용>
+     * @return 메세지 전송 요청객체
+     */
+    public ReqSms makeSmsRequest(final Map<String, String> toAndContent) {
+
+        String from = naverProperties.getCloudPlatform().getSens().getSmsFrom();
+
+        List<ReqSms.Message> messages = new ArrayList<>();
+        for (Map.Entry<String, String> entry : toAndContent.entrySet()) {
+
+            ReqSms.Message message = ReqSms.Message.ofEach(entry.getKey(), entry.getValue());
+            messages.add(message);
+        }
+
+        return ReqSms.of(from, "[Latelier]",messages);
     }
 
 
@@ -62,6 +84,7 @@ public class SmsService {
      * @param phoneNumber         휴대폰번호
      * @param certificationNumber 인증번호
      */
+    @Transactional
     public void verifySMS(final String phoneNumber, final String certificationNumber) {
 
         if (!isVerify(phoneNumber, certificationNumber)) {
@@ -87,7 +110,7 @@ public class SmsService {
      * @param randomNumber 랜덤으로 생성된 번호
      * @return 6자리의 랜덤 인증번호가 설정된 요청
      */
-    private ReqSms makeSmsRequest(final String phoneNumber, final int randomNumber) {
+    private ReqSms makeSmsRequestForVerification(final String phoneNumber, final int randomNumber) {
 
         String from = naverProperties.getCloudPlatform().getSens().getSmsFrom();
 
@@ -104,7 +127,7 @@ public class SmsService {
      *
      * @param smsRequest SMS 요청 객체
      */
-    private void callApi(final ReqSms smsRequest) {
+    public void callApi(final ReqSms smsRequest) {
 
         final String time = Long.toString(System.currentTimeMillis());
         final String serviceId = naverProperties.getCloudPlatform().getSens().getServiceId();
@@ -137,10 +160,9 @@ public class SmsService {
 
 
     @Getter
-    @Setter
     @EqualsAndHashCode
     @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-    static class ReqSms {
+    public static class ReqSms {
 
         private final String type;
 
@@ -160,7 +182,6 @@ public class SmsService {
             return new ReqSms("SMS", from, content, messages);
         }
 
-
         @Getter
         @Setter
         @EqualsAndHashCode
@@ -172,9 +193,19 @@ public class SmsService {
             private String content;
 
 
+            private Message(String to, String content) {
+                this.to = to;
+                this.content = content;
+            }
+
             public static Message of(final String to) {
 
                 return new Message(to);
+            }
+
+            public static Message ofEach(final String to, final String content) {
+
+                return new Message(to, content);
             }
 
         }
