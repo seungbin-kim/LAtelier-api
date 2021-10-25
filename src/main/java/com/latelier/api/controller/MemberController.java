@@ -92,8 +92,8 @@ public class MemberController {
     
     @DeleteMapping("/me/cart")
     @ApiOperation(
-            value = "장바구니 강의 제거",
-            notes = "장바구니에 있는 특정 강의를 제거합니다.",
+            value = "장바구니 강의 모두 제거",
+            notes = "장바구니에 있는 모든 강의를 제거합니다.",
             authorizations = {@Authorization(value = "jwt")})
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "제거 성공"),
