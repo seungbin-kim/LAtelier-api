@@ -1,7 +1,7 @@
 package com.latelier.api.domain.member.packet.response;
 
+import com.latelier.api.domain.course.entity.Course;
 import com.latelier.api.domain.file.entity.File;
-import com.latelier.api.domain.member.entity.Cart;
 import com.latelier.api.domain.member.entity.Member;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -9,6 +9,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -84,12 +85,6 @@ public class ResMyCart {
     public static class CartElement {
 
         @ApiModelProperty(
-                value = "요소의 ID",
-                name = "id",
-                example = "1")
-        private final Long id;
-
-        @ApiModelProperty(
                 value = "강의 ID",
                 name = "courseId",
                 example = "1")
@@ -108,19 +103,33 @@ public class ResMyCart {
         private final Integer coursePrice;
 
         @ApiModelProperty(
+                value = "강의 시작일",
+                name = "startDate",
+                example = "2021-08-08T18:00:00")
+        private final LocalDateTime startDate;
+
+        @ApiModelProperty(
+                value = "강의 종료일",
+                name = "endDate",
+                example = "2021-09-10T18:00:00")
+        private final LocalDateTime endDate;
+
+        @ApiModelProperty(
                 value = "다운로드 주소",
                 name = "thumbnailImageUri",
                 example = "https://blabla...")
         private final String thumbnailImageUri;
 
 
-        public static CartElement of(final Cart cart, final File file) {
+        public static CartElement of(final Course course,
+                                     final File file) {
 
             return new CartElement(
-                    cart.getId(),
-                    cart.getCourse().getId(),
-                    cart.getCourse().getName(),
-                    cart.getCourse().getPrice(),
+                    course.getId(),
+                    course.getName(),
+                    course.getPrice(),
+                    course.getStartDate(),
+                    course.getEndDate(),
                     file.getUri());
         }
     }

@@ -1,5 +1,6 @@
 package com.latelier.api.domain.course.packet.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.latelier.api.domain.course.entity.Course;
 import com.latelier.api.domain.course.enumuration.CourseState;
 import com.latelier.api.domain.file.entity.File;
@@ -77,6 +78,7 @@ public class ResCourseSimple {
     @ApiModelProperty(
             value = "썸네일 이미지 URI",
             name = "thumbnailImage")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private final String thumbnailImageUri;
 
 
@@ -84,7 +86,7 @@ public class ResCourseSimple {
                                      final File file) {
 
         return new ResCourseSimple(
-                course.getEndDate().isBefore(LocalDateTime.now()),
+                course.hasEnded(),
                 course.getId(),
                 course.getName(),
                 course.getInstructor().getUsername(),

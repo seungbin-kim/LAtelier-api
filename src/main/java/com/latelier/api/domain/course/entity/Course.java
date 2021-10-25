@@ -4,7 +4,10 @@ import com.latelier.api.domain.course.enumuration.CourseState;
 import com.latelier.api.domain.file.entity.CourseFile;
 import com.latelier.api.domain.member.entity.Member;
 import com.latelier.api.domain.model.BaseTimeEntity;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -107,6 +110,18 @@ public class Course extends BaseTimeEntity {
     public void increaseHeadCount() {
 
         this.currentHeadCount++;
+    }
+
+
+    public boolean isFull() {
+
+        return this.getCurrentHeadCount().equals(this.getMaxHeadCount());
+    }
+
+
+    public boolean hasEnded() {
+
+        return this.getEndDate().isBefore(LocalDateTime.now());
     }
 
 }

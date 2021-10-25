@@ -135,43 +135,50 @@ public class MemberService {
      * @param memberId 사용자 ID
      * @return 사용자 장바구니
      */
+    @Transactional
     public ResMyCart getUserCartList(final Long memberId) {
 
         Member member = getMemberById(memberId);
 
         // 사용자의 장바구니 목록 얻어와 강의들을 추출
         List<Cart> cartList = cartRepository.findAllWithCourseByMember(member);
-        List<Course> courseList = cartList.stream()
-                .map(Cart::getCourse)
-                .collect(Collectors.toList());
+        Map<Boolean, List<Cart>> toBeDeletedAndToBeReturned = cartList.stream()
+                .collect(Collectors.partitioningBy(cart -> cart.getCourse().isFull() || cart.getCourse().hasEnded()));
+        List<Cart> toBeDeleted = toBeDeletedAndToBeReturned.get(true);
+        if (!toBeDeleted.isEmpty())
+            cartRepository.deleteInBatch(toBeDeleted); // 인원이 다 차거나 종료일이 지난것들은 카트에서 삭제
 
         // 장바구니 목록 강의들의 썸네일 이미지 추출
+        List<Course> courseList = toBeDeletedAndToBeReturned.get(false).stream()
+                .map(Cart::getCourse)
+                .collect(Collectors.toList());
         List<CourseFile> courseFileList = courseFileRepository
                 .findWithFileByFileGroupAndCourses(FileGroup.COURSE_THUMBNAIL_IMAGE, courseList);
         Map<Course, File> courseFileMap = mappingCourseThumbnail(courseFileList);
 
         // 강의와 강의 썸네일 이미지 주소 결합, 장바구니에 담긴 전체요소의 가격 구하기
-        List<ResMyCart.CartElement> cartElements = cartList.stream()
-                .map(cart -> ResMyCart.CartElement.of(cart, courseFileMap.get(cart.getCourse())))
+        List<ResMyCart.CartElement> cartElements = courseList.stream()
+                .map(course -> ResMyCart.CartElement.of(course, courseFileMap.get(course)))
                 .collect(Collectors.toList());
         int totalPrice = cartElements.stream()
                 .mapToInt(ResMyCart.CartElement::getCoursePrice)
                 .sum();
+
         return ResMyCart.of(cartElements, totalPrice, member);
     }
 
 
     /**
-     * 장바구니에서 특정 요소를 제거
+     * 장바구니에 있는 강의를 제거
      *
      * @param memberId 사용자 ID
-     * @param cartId   장바구니 요소 ID
+     * @param courseId 강의 ID
      */
     @Transactional
-    public void deleteInUserCart(final Long memberId, final Long cartId) {
+    public void deleteInUserCart(final Long memberId, final Long courseId) {
 
         Member member = getMemberById(memberId);
-        if (cartRepository.deleteByIdAndMember(cartId, member) == 0) {
+        if (cartRepository.deleteByCourseIdAndMember(courseId, member) == 0) {
             throw new BusinessException(ErrorCode.CART_NOT_FOUND);
         }
     }
@@ -191,7 +198,7 @@ public class MemberService {
 
 
     /**
-     * 이미 구매하였거나 장바구니에 있는 강의인지 확인합니다.
+     * 인원초과는 없는지, 기한은 지났는지, 이미 구매하였거나 장바구니에 이미 있는 강의인지 확인합니다.
      *
      * @param member 사용자
      * @param course 강의
@@ -199,9 +206,16 @@ public class MemberService {
     private void checkCanAdd(final Member member,
                              final Course course) {
 
+        if (course.isFull()) {
+            throw new BusinessException(ErrorCode.COURSE_MAX_HEAD_COUNT_EXCEEDED);
+        }
+        if (course.hasEnded()) {
+            throw new BusinessException(ErrorCode.COURSE_PERIOD_ENDED);
+        }
         if (cartRepository.existsByMemberAndCourse(member, course)) {
             throw new BusinessException(ErrorCode.CART_DUPLICATE);
-        } else if (enrollmentRepository.existsByMemberIdAndCourseId(member.getId(), course.getId())) {
+        }
+        if (enrollmentRepository.existsByMemberIdAndCourseId(member.getId(), course.getId())) {
             throw new BusinessException(ErrorCode.ALREADY_ENROLLED);
         }
     }

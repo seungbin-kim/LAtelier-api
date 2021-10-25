@@ -13,12 +13,6 @@ import lombok.RequiredArgsConstructor;
 public class ResAddCart {
 
     @ApiModelProperty(
-            value = "추가된 요소의 ID",
-            name = "id",
-            example = "1")
-    private final Long id;
-
-    @ApiModelProperty(
             value = "장바구니 유저 ID",
             name = "memberId",
             example = "1")
@@ -45,7 +39,6 @@ public class ResAddCart {
     public static ResAddCart of(final Cart cart) {
 
         return new ResAddCart(
-                cart.getId(),
                 cart.getMember().getId(),
                 cart.getMember().getUsername(),
                 cart.getCourse().getId(),

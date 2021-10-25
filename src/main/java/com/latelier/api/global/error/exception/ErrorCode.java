@@ -39,11 +39,14 @@ public enum ErrorCode {
     COURSE_INSTRUCTOR_NOT_MATCH(400, "CS005", "강사님의 강의가 아닙니다."),
     NOT_ENROLLED(400, "CS006", "해당 강의에 등록되지 않았습니다."),
     COURSE_STUDENT_EMPTY(400, "CS007", "수강생이 단 한명도 없습니다."),
+    COURSE_MAX_HEAD_COUNT_EXCEEDED(400, "CS008", "최대 수강인원을 초과합니다."),
+    COURSE_PERIOD_ENDED(400, "CS009", "종료된 강의입니다."),
 
     // Payment
-    IAMPORT_ERROR(500, "P001", "결제 검증 응답 에러. 또는 잘못된 impUid"),
-    MEMBER_NOT_MATCH(400, "P002", "로그인 유저와 결제 유저가 다릅니다."),
-    PAYMENT_FORGERY(400, "P003", "위조된 결제. 결제된 금액과 주문 금액이 다릅니다."),
+    IAMPORT_ERROR(500, "P001", "잘못된 impUid 등으로 인해 결제 검증시 API 호출 에러. 관리자 문의 필요"),
+    MEMBER_NOT_MATCH(400, "P002", "로그인 유저와 결제 유저가 달라 결제 취소처리 되었습니다."),
+    PAYMENT_FORGERY(400, "P003", "위조된 결제. 결제된 금액과 주문 금액이 달라 결제가 취소되었습니다."),
+    PAYMENT_CANCEL(400, "P004", "결제중 수강인원 초과 혹은 강의 종료일이 지난 항목이 있어 결제가 취소되었습니다."),
 
     // CHAT
     CHAT_ROOM_NOT_FOUND(404, "CH001", "채팅방을 찾을 수 없습니다."),

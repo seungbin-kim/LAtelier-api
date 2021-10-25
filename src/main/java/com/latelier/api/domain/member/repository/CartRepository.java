@@ -21,9 +21,12 @@ public interface CartRepository extends JpaRepository<Cart, Long> {
     boolean existsByMemberAndCourse(final Member member, final Course course);
 
     @Modifying
-    long deleteByIdAndMember(final Long cartId, final Member member);
+    long deleteByCourseIdAndMember(final Long courseId, final Member member);
 
     @Modifying
     void deleteAllByMember(final Member member);
+
+    @Modifying
+    void deleteByCourseIn(final List<Course> courses);
 
 }

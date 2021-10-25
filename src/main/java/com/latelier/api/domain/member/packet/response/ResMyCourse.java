@@ -68,7 +68,7 @@ public class ResMyCourse {
                                             final File file) {
 
         return new ResMyCourse(
-                course.getEndDate().isBefore(LocalDateTime.now()),
+                course.hasEnded(),
                 course.getId(),
                 course.getName(),
                 course.getMaxHeadCount(),
@@ -82,7 +82,7 @@ public class ResMyCourse {
                                         final File file) {
 
         return new ResMyCourse(
-                course.getEndDate().isBefore(LocalDateTime.now()),
+                course.hasEnded(),
                 course.getId(),
                 course.getName(),
                 null,

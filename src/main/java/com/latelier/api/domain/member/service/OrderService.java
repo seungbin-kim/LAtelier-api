@@ -1,22 +1,17 @@
 package com.latelier.api.domain.member.service;
 
 import com.latelier.api.domain.course.entity.Course;
-import com.latelier.api.domain.member.entity.Cart;
-import com.latelier.api.domain.member.entity.Enrollment;
-import com.latelier.api.domain.member.entity.Member;
-import com.latelier.api.domain.member.exception.MemberNotFoundException;
-import com.latelier.api.domain.member.repository.CartRepository;
-import com.latelier.api.domain.member.repository.EnrollmentRepository;
-import com.latelier.api.domain.member.repository.MemberRepository;
-import com.latelier.api.domain.member.entity.Order;
-import com.latelier.api.domain.member.entity.OrderCourse;
+import com.latelier.api.domain.course.packet.response.ResCourseSimple;
+import com.latelier.api.domain.member.entity.*;
 import com.latelier.api.domain.member.enumeration.OrderState;
-import com.latelier.api.domain.member.repository.OrderCourseRepository;
-import com.latelier.api.domain.member.repository.OrderRepository;
+import com.latelier.api.domain.member.exception.MemberNotFoundException;
+import com.latelier.api.domain.member.packet.response.ResOrder;
+import com.latelier.api.domain.member.repository.*;
 import com.latelier.api.global.error.exception.BusinessException;
 import com.latelier.api.global.error.exception.ErrorCode;
 import com.siot.IamportRestClient.IamportClient;
 import com.siot.IamportRestClient.exception.IamportResponseException;
+import com.siot.IamportRestClient.request.CancelData;
 import com.siot.IamportRestClient.response.Payment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -54,23 +50,38 @@ public class OrderService {
      * @param isTest          테스트 여부(관리자)
      */
     @Transactional
-    public void verifyAndProcess(final Long currentMemberId,
-                                 final Long orderMemberId,
-                                 final String impUid,
-                                 final boolean isTest) throws IamportResponseException, IOException {
+    public ResOrder verifyAndProcess(final Long currentMemberId,
+                                     final Long orderMemberId,
+                                     final String impUid,
+                                     final boolean isTest) throws IamportResponseException, IOException {
 
-        if (!currentMemberId.equals(orderMemberId)) throw new BusinessException(ErrorCode.MEMBER_NOT_MATCH);
+        if (!currentMemberId.equals(orderMemberId)) {
+            if (!isTest) iamportClient.cancelPaymentByImpUid(new CancelData(impUid, true));
+            throw new BusinessException(ErrorCode.MEMBER_NOT_MATCH);
+        }
 
         Member member = getMemberById(currentMemberId);
-        List<Course> courses = cartRepository.findAllWithCourseByMember(member).stream()
-                .map(Cart::getCourse)
-                .collect(Collectors.toList());
+        Map<Boolean, List<Course>> toBeDeletedAndToBeOrdered =
+                cartRepository.findAllWithCourseByMember(member).stream()
+                        .map(Cart::getCourse)
+                        .collect(Collectors.partitioningBy(course -> course.isFull() || course.hasEnded()));
+        List<Course> toBeDeletedCoursesAtCart = toBeDeletedAndToBeOrdered.get(true);
 
-        Payment payment = isTest ? null : iamportClient.paymentByImpUid(impUid).getResponse();
-        int paidAmount = isTest ? 0 : payment.getAmount().intValue();
-        String orderName = isTest ? "테스트결제" : payment.getName();
-        verifyAmount(paidAmount, courses, isTest);
-        orderProcess(impUid, member, courses, orderName, paidAmount);
+        if (toBeDeletedCoursesAtCart.isEmpty()) { // 기간이 지났거나 인원이 초과되는 강의가 없다면 정상진행
+            List<Course> courses = toBeDeletedAndToBeOrdered.get(false);
+            Payment payment = isTest ? null : iamportClient.paymentByImpUid(impUid).getResponse(); // 결제정보 얻어오기
+            int paidAmount = isTest ? 0 : payment.getAmount().intValue();
+            String orderName = isTest ? "테스트결제" : payment.getName();
+            if (!isSameAmount(paidAmount, courses, isTest)) {
+                iamportClient.cancelPaymentByImpUid(new CancelData(impUid, true));
+                throw new BusinessException(ErrorCode.PAYMENT_FORGERY);
+            }
+            return orderProcess(impUid, member, courses, orderName, paidAmount);
+        } else { // 기간이 지났거나 인원이 초과된다면 결제를 취소하고 해당되는 항목들을 장바구니에서 삭제
+            if (!isTest) iamportClient.cancelPaymentByImpUid(new CancelData(impUid, true));
+            cartRepository.deleteByCourseIn(toBeDeletedCoursesAtCart);
+            return null;
+        }
     }
 
 
@@ -82,18 +93,24 @@ public class OrderService {
      * @param courses    구매 강의목록
      * @param orderName  주문 이름
      * @param paidAmount 지불 금액
+     * @return 주문처리 결과
      */
-    private void orderProcess(final String impUid,
-                              final Member member,
-                              final List<Course> courses,
-                              final String orderName,
-                              final int paidAmount) {
+    private ResOrder orderProcess(final String impUid,
+                                  final Member member,
+                                  final List<Course> courses,
+                                  final String orderName,
+                                  final int paidAmount) {
 
         Order order = Order.of(impUid, member, orderName, paidAmount, OrderState.PAID);
         orderRepository.save(order);
         saveOrderCourses(courses, order);
         enrollCourses(member, courses);
         cartRepository.deleteAllByMember(member);
+        return ResOrder.of(order.getId(),
+                paidAmount, order.getCreatedAt(),
+                courses.stream()
+                        .map(c -> ResCourseSimple.of(c, null))
+                        .collect(Collectors.toList()));
     }
 
 
@@ -134,18 +151,17 @@ public class OrderService {
      *
      * @param paidAmount 결제된 금액
      * @param courses    강의 리스트
+     * @return 검증
      */
-    private void verifyAmount(final int paidAmount,
-                              final List<Course> courses,
-                              final boolean isTest) {
+    private boolean isSameAmount(final int paidAmount,
+                                 final List<Course> courses,
+                                 final boolean isTest) {
 
-        if (isTest) return;
+        if (isTest) return true;
         int amountToBePaid = courses.stream()
                 .mapToInt(Course::getPrice)
                 .sum();
-        if (paidAmount != amountToBePaid) {
-            throw new BusinessException(ErrorCode.PAYMENT_FORGERY);
-        }
+        return paidAmount == amountToBePaid;
     }
 
 

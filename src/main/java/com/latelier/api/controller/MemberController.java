@@ -45,6 +45,8 @@ public class MemberController {
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "장바구니 추가 성공"),
             @ApiResponse(responseCode = "400", description = "이미 구매한 강의"),
+            @ApiResponse(responseCode = "400", description = "수강인원 초과"),
+            @ApiResponse(responseCode = "400", description = "종료된 강의"),
             @ApiResponse(responseCode = "401", description = "로그인하지 않아 추가불가"),
             @ApiResponse(responseCode = "404", description = "강의 또는 현재 유저를 찾지 못함"),
             @ApiResponse(responseCode = "409", description = "이미 장바구니에 있음")})
@@ -59,7 +61,7 @@ public class MemberController {
     @GetMapping("/me/cart")
     @ApiOperation(
             value = "장바구니 목록 조회",
-            notes = "유저의 장바구니에 목록을 조회합니다.",
+            notes = "유저의 장바구니에 목록을 조회합니다. 단, 기존 목록중 인원이 초과되거나 종료일이 지난 강의는 삭제됩니다.",
             authorizations = {@Authorization(value = "jwt")})
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "장바구니 추가 성공"),
@@ -72,20 +74,20 @@ public class MemberController {
     }
 
     
-    @DeleteMapping("/me/cart/{cartId}")
+    @DeleteMapping("/me/cart/{courseId}")
     @ApiOperation(
             value = "장바구니 강의 제거",
             notes = "장바구니에 있는 특정 요소를 제거합니다.",
             authorizations = {@Authorization(value = "jwt")})
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "cartId", value = "장바구니 요소 ID", required = true, dataTypeClass = Long.class, paramType = "path")})
+            @ApiImplicitParam(name = "courseId", value = "강의 ID", required = true, dataTypeClass = Long.class, paramType = "path")})
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "제거 성공"),
             @ApiResponse(responseCode = "401", description = "로그인하지 않음"),
             @ApiResponse(responseCode = "404", description = "장바구니에 있는 대상 또는 유저를 찾지 못함")})
-    public ResponseEntity<Void> deleteMyCart(@PathVariable final Long cartId) {
+    public ResponseEntity<Void> deleteMyCart(@PathVariable final Long courseId) {
 
-        memberService.deleteInUserCart(securityUtil.getMemberId(), cartId);
+        memberService.deleteInUserCart(securityUtil.getMemberId(), courseId);
         return ResponseEntity.status(NO_CONTENT).build();
     }
 

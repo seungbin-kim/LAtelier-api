@@ -108,7 +108,7 @@ public class ResCourseDetails {
 
         return new ResCourseDetails(
                 hasPaid,
-                course.getEndDate().isBefore(LocalDateTime.now()),
+                course.hasEnded(),
                 course.getId(),
                 course.getName(),
                 course.getInstructor().getUsername(),
