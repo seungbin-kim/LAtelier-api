@@ -32,7 +32,7 @@ public class CourseRepositoryCustom extends Querydsl4RepositorySupport {
     private BooleanExpression keywordLike(final String search) {
 
         return StringUtils.hasText(search) ?
-                course.courseName.containsIgnoreCase(search)
+                course.name.containsIgnoreCase(search)
                         .or(course.explanation.containsIgnoreCase(search))
                         .or(member.username.containsIgnoreCase(search))
                         .or(member.nickname.containsIgnoreCase(search)) : null;
