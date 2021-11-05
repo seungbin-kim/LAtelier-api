@@ -97,16 +97,10 @@ public class Member extends BaseTimeEntity {
 
 
     private static void setAuthority(final Member member, final String role) {
-        switch (role) {
-            case "admin":
-                member.authority = Role.ROLE_ADMIN;
-                break;
-            case "instructor":
-                member.authority = Role.ROLE_INSTRUCTOR;
-                break;
-            case "user":
-                member.authority = Role.ROLE_USER;
-                break;
+        if ("instructor".equals(role)) {
+            member.authority = Role.ROLE_INSTRUCTOR;
+        } else {
+            member.authority = Role.ROLE_USER;
         }
     }
 
