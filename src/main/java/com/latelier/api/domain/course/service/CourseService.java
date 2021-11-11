@@ -69,7 +69,7 @@ public class CourseService {
      * @param request      강의등록 요청
      * @return 등록 결과
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public ResCourseRegister addCourse(final Long instructorId,
                                        final ReqCourseRegister request) {
 
@@ -163,7 +163,7 @@ public class CourseService {
      *
      * @param courseId 허용할 강의 ID
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void approveCourse(final Long courseId) {
 
         Course course = getCourseWithoutGraph(courseId);

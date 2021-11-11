@@ -44,7 +44,7 @@ public class ZoomService {
      * @param courseId Course ID
      * @return redirect url
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public String createCourseMeeting(final String code,
                                       final Long courseId) {
 

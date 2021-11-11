@@ -42,7 +42,7 @@ public class SmsService {
      *
      * @param phoneNumber 수신 휴대폰번호
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void sendCertificationNumber(final String phoneNumber) {
 
         if (memberRepository.existsByPhoneNumber(phoneNumber)) {
@@ -84,7 +84,7 @@ public class SmsService {
      * @param phoneNumber         휴대폰번호
      * @param certificationNumber 인증번호
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void verifySMS(final String phoneNumber, final String certificationNumber) {
 
         if (!isVerify(phoneNumber, certificationNumber)) {

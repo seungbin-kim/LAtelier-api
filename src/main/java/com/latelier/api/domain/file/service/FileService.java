@@ -34,7 +34,7 @@ public class FileService {
      * @param uploadRequests  업로드 요청 객체(파일, 파일의 분류)
      * @return File 엔티티 리스트
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public List<File> uploadFile(final boolean willPerpetuated,
                                  final Long identifier,
                                  final String basePath,
