@@ -41,7 +41,7 @@ public class ChatService {
      * @param receiverId 받는 사람 ID
      * @return 생성된 채팅방
      */
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Throwable.class)
     public ResChatRoom addChatRoom(final Long senderId,
                                    final Long receiverId) {
 
@@ -78,7 +78,7 @@ public class ChatService {
      * @param chatMessage 채팅 메세지
      * @return 저장된 채팅 메세지
      */
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Throwable.class)
     public ResChatMessage saveChatMessage(final ChatController.ChatMessage chatMessage) {
 
         Member sender = memberService.getMemberById(chatMessage.getSenderId());

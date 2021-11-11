@@ -49,7 +49,7 @@ public class OrderService {
      * @param impUid          Iamport 결제 ID
      * @param isTest          테스트 여부(관리자)
      */
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Throwable.class)
     public ResOrder verifyAndProcess(final Long currentMemberId,
                                      final Long orderMemberId,
                                      final String impUid,

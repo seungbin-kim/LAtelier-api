@@ -88,7 +88,7 @@ public class MemberService {
      * @param reqSignUp 회원등록 요청정보
      * @return 등록한 회원
      */
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Throwable.class)
     public Member addMember(final ReqSignUp reqSignUp) {
 
         checkDuplicateEmailAndPhoneNumber(reqSignUp.getEmail(), reqSignUp.getPhoneNumber());
@@ -117,7 +117,7 @@ public class MemberService {
      * @param memberId 사용자 ID
      * @param courseId 강의 ID
      */
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Throwable.class)
     public ResAddCart addInUserCart(final Long memberId,
                                     final Long courseId) {
 
@@ -135,7 +135,7 @@ public class MemberService {
      * @param memberId 사용자 ID
      * @return 사용자 장바구니
      */
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Throwable.class)
     public ResMyCart getUserCartList(final Long memberId) {
 
         Member member = getMemberById(memberId);
@@ -174,7 +174,7 @@ public class MemberService {
      * @param memberId 사용자 ID
      * @param courseId 강의 ID
      */
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Throwable.class)
     public void deleteInUserCart(final Long memberId, final Long courseId) {
 
         Member member = getMemberById(memberId);
@@ -189,7 +189,7 @@ public class MemberService {
      *
      * @param memberId 사용자 ID
      */
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Throwable.class)
     public void deleteAllInUserCart(final Long memberId) {
 
         Member member = getMemberById(memberId);

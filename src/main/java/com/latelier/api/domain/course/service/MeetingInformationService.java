@@ -49,7 +49,7 @@ public class MeetingInformationService {
      * @param meetingId 생성된 회의 ID
      * @param meetingPw 생성된 회의 비밀번호
      */
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Throwable.class)
     public void addMeetingInformation(final Course course,
                                       final String meetingId,
                                       final String meetingPw,
@@ -64,7 +64,7 @@ public class MeetingInformationService {
      *
      * @param meetingId Meeting ID
      */
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Throwable.class)
     public void deleteMeetingInformation(final String meetingId) {
 
         meetingInformationRepository.deleteByMeetingId(meetingId);
