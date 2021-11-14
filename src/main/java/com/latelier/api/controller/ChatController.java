@@ -37,7 +37,6 @@ public class ChatController {
     }
 
 
-    //    @PreAuthorize("hasRole('USER')")
     @PostMapping("/api/chat/rooms")
     @ApiOperation(
             value = "1:1 채팅방정보 생성",
@@ -53,7 +52,6 @@ public class ChatController {
     }
 
 
-    //    @PreAuthorize("hasRole('USER')")
     @GetMapping("/api/chat/rooms/{roomId}/messages")
     @ApiOperation(
             value = "채팅방 메세지 반환",
