@@ -91,14 +91,13 @@ public class AuthController {
     }
 
 
-    @PreAuthorize("hasRole('USER')")
     @PostMapping("/sign-out")
     @ApiOperation(
             value = "로그아웃",
             notes = "쿠키의 JWT 를 삭제합니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "로그아웃 성공"),
-            @ApiResponse(responseCode = "403", description = "이미 로그아웃 되어있는 경우")})
+            @ApiResponse(responseCode = "401", description = "이미 로그아웃 되어있는 경우")})
     public ResponseEntity<Void> signOut() {
 
         ResponseCookie responseCookie = tokenProvider.createTokenCookie("");

@@ -41,6 +41,7 @@ public class ZoomController {
             @ApiImplicitParam(name = "state", value = "회의를 생성할 강의 ID", required = true, dataTypeClass = Long.class, paramType = "query")})
     @ApiResponses({
             @ApiResponse(responseCode = "303", description = "성공적으로 회의가 생성되어 start url 반환"),
+            @ApiResponse(responseCode = "401", description = "로그인하지 않음"),
             @ApiResponse(responseCode = "403", description = "강사가 아님"),
             @ApiResponse(responseCode = "500", description = "액세스 토큰을 얻지 못하거나 회의 생성에 실패")})
     public ResponseEntity<Void> callback(@RequestParam final String code,

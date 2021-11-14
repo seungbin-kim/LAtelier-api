@@ -80,6 +80,7 @@ public class CourseController {
             @ApiResponse(responseCode = "200", description = "현재 미팅 예약이 된 강의"),
             @ApiResponse(responseCode = "204", description = "미팅 예약이 되어있지 않음"),
             @ApiResponse(responseCode = "400", description = "강사의 강의가 아님"),
+            @ApiResponse(responseCode = "401", description = "로그인하지 않음"),
             @ApiResponse(responseCode = "403", description = "강사가 아님"),
             @ApiResponse(responseCode = "404", description = "사용자 혹은 강의를 찾을 수 없음"),
             @ApiResponse(responseCode = "409", description = "강사의 다른 강의가 이미 진행중")})
@@ -106,6 +107,7 @@ public class CourseController {
             authorizations = {@Authorization(value = "jwt")})
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "강의등록(신청) 성공"),
+            @ApiResponse(responseCode = "401", description = "로그인하지 않음"),
             @ApiResponse(responseCode = "403", description = "강사가 아님"),
             @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없음"),
             @ApiResponse(responseCode = "500", description = "파일 입출력 실패 등 내부 서버에러")})
@@ -165,6 +167,7 @@ public class CourseController {
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "강의 승인 성공"),
             @ApiResponse(responseCode = "400", description = "이미 강의가 승인됨"),
+            @ApiResponse(responseCode = "401", description = "로그인하지 않음"),
             @ApiResponse(responseCode = "403", description = "관리자가 아님"),
             @ApiResponse(responseCode = "404", description = "강의를 찾지 못함")})
     public ResponseEntity<Void> approveCourse(@PathVariable final Long courseId) {
@@ -186,6 +189,7 @@ public class CourseController {
             @ApiResponse(responseCode = "200", description = "전송 성공"),
             @ApiResponse(responseCode = "400", description = "강사의 강의가 아님"),
             @ApiResponse(responseCode = "400", description = "강의 수강생이 없음"),
+            @ApiResponse(responseCode = "401", description = "로그인하지 않음"),
             @ApiResponse(responseCode = "403", description = "강사가 아님"),
             @ApiResponse(responseCode = "404", description = "강사를 찾지 못함"),
             @ApiResponse(responseCode = "404", description = "강의를 찾지 못함")})
