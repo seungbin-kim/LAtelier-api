@@ -63,7 +63,7 @@ public class CourseController {
     public ResponseEntity<Result<ResMeetingInformation>> getMeeting(@PathVariable final Long courseId) {
 
 //        ResMeetingInformation response = meetingInformationService.getMeetingInformation(securityUtil.getMemberId(), courseId);
-        ResMeetingInformation response = meetingInformationService.getMeetingInformation(52L, courseId);
+        ResMeetingInformation response = meetingInformationService.getMeetingInformation(154L, courseId);
         return ResponseEntity.ok(Result.of(response));
     }
 
