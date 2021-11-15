@@ -62,13 +62,13 @@ public class CourseController {
             @ApiResponse(responseCode = "404", description = "사용자 혹은 입장정보를 찾을 수 없음")})
     public ResponseEntity<Result<ResMeetingInformation>> getMeeting(@PathVariable final Long courseId) {
 
-        ResMeetingInformation response = meetingInformationService.getMeetingInformation(securityUtil.getMemberId(), courseId);
-//        ResMeetingInformation response = meetingInformationService.getMeetingInformation(1L, courseId);
+//        ResMeetingInformation response = meetingInformationService.getMeetingInformation(securityUtil.getMemberId(), courseId);
+        ResMeetingInformation response = meetingInformationService.getMeetingInformation(52L, courseId);
         return ResponseEntity.ok(Result.of(response));
     }
 
 
-    @PreAuthorize("hasRole('INSTRUCTOR')")
+//    @PreAuthorize("hasRole('INSTRUCTOR')")
     @GetMapping("/{courseId}/status")
     @ApiOperation(
             value = "강의를 미팅상태 체크",
@@ -86,8 +86,8 @@ public class CourseController {
             @ApiResponse(responseCode = "409", description = "강사의 다른 강의가 이미 진행중")})
     public ResponseEntity<Result<Map<String, String>>> checkCourseMeeting(@PathVariable Long courseId) {
 
-        meetingInformationService.checkCourseAndMeeting(securityUtil.getMemberId(), courseId); // 404, 409
-//        meetingInformationService.checkCourseAndMeeting(1L, courseId);
+//        meetingInformationService.checkCourseAndMeeting(securityUtil.getMemberId(), courseId); // 404, 409
+        meetingInformationService.checkCourseAndMeeting(52L, courseId);
         // 강의 조회와 강의 미팅 url 반환
         String joinUrl = meetingInformationService.getJoinUrl(courseId);// 200, 204, 404(강의)
         if (StringUtils.hasText(joinUrl)) {

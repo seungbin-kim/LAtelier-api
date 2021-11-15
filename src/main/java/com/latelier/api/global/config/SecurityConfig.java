@@ -6,7 +6,6 @@ import com.latelier.api.global.error.JwtAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.access.vote.RoleHierarchyVoter;
@@ -62,15 +61,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .and()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/api/auth/members").permitAll()
-                .antMatchers(HttpMethod.POST, "/api/auth/sms").permitAll()
-                .antMatchers(HttpMethod.POST, "/api/auth/sms/verification").permitAll()
-                .antMatchers(HttpMethod.POST, "/api/auth/sign-in").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/courses").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/courses/*").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/categories").permitAll()
-                .antMatchers(HttpMethod.POST, "/api/courses").hasRole("INSTRUCTOR")
-                .anyRequest().authenticated()
+//                .antMatchers(HttpMethod.POST, "/api/auth/members").permitAll()
+//                .antMatchers(HttpMethod.POST, "/api/auth/sms").permitAll()
+//                .antMatchers(HttpMethod.POST, "/api/auth/sms/verification").permitAll()
+//                .antMatchers(HttpMethod.POST, "/api/auth/sign-in").permitAll()
+//                .antMatchers(HttpMethod.GET, "/api/courses").permitAll()
+//                .antMatchers(HttpMethod.GET, "/api/courses/*").permitAll()
+//                .antMatchers(HttpMethod.GET, "/api/categories").permitAll()
+//                .antMatchers(HttpMethod.POST, "/api/courses").hasRole("INSTRUCTOR")
+//                .anyRequest().authenticated()
+                .anyRequest().permitAll()
 
                 .and()
                 .apply(new JwtSecurityConfig(tokenProvider));
