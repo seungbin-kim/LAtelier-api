@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -29,7 +30,7 @@ public class ZoomController {
     private final MeetingInformationService meetingInformationService;
 
 
-//    @PreAuthorize("hasRole('INSTRUCTOR')")
+    @PreAuthorize("hasRole('INSTRUCTOR')")
     @GetMapping("/callback")
     @ApiOperation(
             value = "Zoom OAuth 인증과 회의생성 API 호출",

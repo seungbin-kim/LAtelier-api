@@ -62,13 +62,12 @@ public class CourseController {
             @ApiResponse(responseCode = "404", description = "사용자 혹은 입장정보를 찾을 수 없음")})
     public ResponseEntity<Result<ResMeetingInformation>> getMeeting(@PathVariable final Long courseId) {
 
-//        ResMeetingInformation response = meetingInformationService.getMeetingInformation(securityUtil.getMemberId(), courseId);
-        ResMeetingInformation response = meetingInformationService.getMeetingInformation(154L, courseId);
+        ResMeetingInformation response = meetingInformationService.getMeetingInformation(securityUtil.getMemberId(), courseId);
         return ResponseEntity.ok(Result.of(response));
     }
 
 
-//    @PreAuthorize("hasRole('INSTRUCTOR')")
+    @PreAuthorize("hasRole('INSTRUCTOR')")
     @GetMapping("/{courseId}/status")
     @ApiOperation(
             value = "강의를 미팅상태 체크",
@@ -86,8 +85,7 @@ public class CourseController {
             @ApiResponse(responseCode = "409", description = "강사의 다른 강의가 이미 진행중")})
     public ResponseEntity<Result<Map<String, String>>> checkCourseMeeting(@PathVariable Long courseId) {
 
-//        meetingInformationService.checkCourseAndMeeting(securityUtil.getMemberId(), courseId); // 404, 409
-        meetingInformationService.checkCourseAndMeeting(52L, courseId);
+        meetingInformationService.checkCourseAndMeeting(securityUtil.getMemberId(), courseId); // 404, 409
         // 강의 조회와 강의 미팅 url 반환
         String joinUrl = meetingInformationService.getJoinUrl(courseId);// 200, 204, 404(강의)
         if (StringUtils.hasText(joinUrl)) {
@@ -114,7 +112,6 @@ public class CourseController {
     public ResponseEntity<Result<ResCourseRegister>> registerCourse(@Valid final ReqCourseRegister reqCourseRegister) {
 
         ResCourseRegister response = courseService.addCourse(securityUtil.getMemberId(), reqCourseRegister);
-//        ResCourseRegister response = courseService.addCourse(1L, reqCourseRegister);
         return ResponseEntity.status(CREATED)
                 .body(Result.of(response));
     }
@@ -196,7 +193,6 @@ public class CourseController {
     public ResponseEntity<Void> noticeCourseStarting(@PathVariable final Long courseId) {
 
         List<Enrollment> enrollmentList = courseService.getEnrollmentList(securityUtil.getMemberId(), courseId);
-//        List<Enrollment> enrollmentList = courseService.getEnrollmentList(1L, courseId);
         if (enrollmentList.size() == 0) {
             throw new BusinessException(ErrorCode.COURSE_STUDENT_EMPTY);
         }
